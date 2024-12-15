@@ -1,12 +1,21 @@
-import sql from 'mssql'
+import dotenv from "dotenv";
+import { ConnectionConfiguration } from "tedious";
 
-export var config: sql.config = {
-    user: '',
-    password: '',
-    server: 'localhost',
-    database: "testing",
+const serverName: string = process.env.DB_SERVER_NAME || "";
+const dbAdminPass: string = process.env.DB_ADMIN_PASS || "";
+
+export const config: ConnectionConfiguration = {
+  server: serverName,
+  authentication: {
+    type: "default",
     options: {
-        encrypt: false,
-        trustServerCertificate: true
-    }
-}
+      userName: "henry",
+      password: dbAdminPass,
+    },
+  },
+  options: {
+    encrypt: false, // not using Microsoft Azure
+    database: "testing_db",
+    trustServerCertificate: true,
+  },
+};
