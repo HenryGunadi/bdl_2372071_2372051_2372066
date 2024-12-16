@@ -1,6 +1,7 @@
 import express, { Express } from "express";
 import cookieParser from "cookie-parser";
 import setCorsHeaders from "../middlewares/cors";
+import authRouter from "../routes/auth";
 
 export class APIServer {
   private _APIServer: Express;
@@ -18,6 +19,8 @@ export class APIServer {
     this._APIServer.use(setCorsHeaders);
     this._APIServer.use(cookieParser());
 
+    // auth routes
+    this._APIServer.use("/auth", authRouter);
     this._APIServer.listen(this._PORT, () => console.log(`Server started on PORT : ${this._PORT}`));
   }
 }

@@ -1,35 +1,27 @@
 import { exit } from "process";
 import dotenv from "dotenv";
 import sql from "mssql";
-import { Connection, ConnectionConfiguration } from "tedious";
 
 dotenv.config();
 
 export class DB {
-  private _conn: Connection;
+  private _config: sql.config;
+  private _conn: sql.ConnectionPool | null = null;
 
-  constructor(config: ConnectionConfiguration) {
-    this._conn = new Connection(config);
-
-    // if there is connection error
-    this._conn.on("error", (err) => {
-      console.error("Connection error : ", err.message);
-      exit(1);
-    });
+  constructor(config: sql.config) {
+    this._config = config;
   }
 
-  connect(): void {
-    this._conn.on("connect", (err) => {
-      // if there is error
-      if (err) {
-        console.error("Error connecting to database : ", err.message);
-        return;
+  async connect(): Promise<sql.ConnectionPool> {
+    try {
+      if (!this._conn) {
+        this._conn = await sql.connect(this._config);
+        console.log("Connected to database.");
       }
 
-      // if no error
-      console.log("Connected to database.");
-    });
-
-    this._conn.connect();
+      return this._conn;
+    } catch (err) {
+      throw new Error("Database connection failed");
+    }
   }
 }
