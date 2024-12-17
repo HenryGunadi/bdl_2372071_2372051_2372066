@@ -6,10 +6,10 @@ import authRouter from "../routes/auth";
 
 export class APIServer {
   private _APIServer: Express;
-  private _PORT: string;
+  private _PORT: number;
   private _DB: DB;
 
-  constructor(port: string, db: DB) {
+  constructor(port: number, db: DB) {
     this._APIServer = express();
     this._PORT = port;
     this._DB = db;
@@ -24,6 +24,11 @@ export class APIServer {
 
     // auth routes
     this._APIServer.use("/auth", authRouter(this._DB));
-    this._APIServer.listen(this._PORT, () => console.log(`Server started on PORT : ${this._PORT}`));
+
+    this._APIServer
+      .listen(this._PORT, () => console.log(`Server started on PORT : ${this._PORT}`))
+      .on("error", (err) => {
+        console.error("Server failed to start: ", err);
+      });
   }
 }

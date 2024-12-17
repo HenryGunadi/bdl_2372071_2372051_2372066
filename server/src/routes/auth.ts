@@ -4,12 +4,8 @@ import AdminController from "../controller/adminController";
 import { loginValidator, registerValidator } from "../validators/authValidator";
 import { validationResult } from "express-validator";
 import BadRequestError from "../classes/BadReqError";
-import exp from "constants";
 import { DB } from "../db/db";
-import { config } from "../env/config";
 import errorMiddleware from "../middlewares/error";
-
-// handlers
 
 const authRouter = (db: DB): Router => {
   const router = express.Router();
@@ -20,8 +16,7 @@ const authRouter = (db: DB): Router => {
   router.post("/register", registerValidator, (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      const error = new BadRequestError({ code: 400, message: "Invalid payload validation" });
-      next(error);
+      res.status(400).setHeader("Content-Type", "application/json").json({ message: `Invalid register payload validation`, error: errors.array() });
       return;
     }
 
@@ -32,20 +27,18 @@ const authRouter = (db: DB): Router => {
   router.post("/login", loginValidator, (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      const error = new BadRequestError({ code: 400, message: "Invalid payload validation" });
-      next(error);
+      res.status(400).setHeader("Content-Type", "application/json").json({ message: `Invalid login payload validation`, error: errors.array() });
       return;
     }
 
-    adminController.login(req, res, next)
-  })
-
-  router.get('/', )
+    adminController.login(req, res, next);
+  });
 
   // error middleware
-  router.use(errorMiddleware)
+  router.use((err: BadRequestError, req: Request, res: Response) => {
+    errorMiddleware(err, res);
+  });
 
-  // login router
   return router;
 };
 

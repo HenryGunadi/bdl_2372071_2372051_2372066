@@ -7,7 +7,7 @@ const startServer = async () => {
   const db = new DB(config);
   await db.connect();
 
-  const server = new APIServer("8080", db);
+  const server = new APIServer(8080, db);
   server.run();
 };
 
