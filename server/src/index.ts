@@ -3,11 +3,11 @@ import { DB } from "../src/db/db";
 import { config } from "./env/config";
 import AdminStore from "./services/adminStore";
 
-const server = new APIServer("8080");
-const db = new DB(config);
-
 const startServer = async () => {
+  const db = new DB(config);
   await db.connect();
+
+  const server = new APIServer("8080", db);
   server.run();
 };
 

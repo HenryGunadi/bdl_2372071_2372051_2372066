@@ -7,11 +7,11 @@ const dbAdminPass: string = process.env.DB_ADMIN_PASS || "";
 
 export const config: sql.config = {
   user: "henry",
-  password: dbAdminPass,
+  password: "09desember2004Hen.",
   server: "localhost",
   database: "inventory_management",
   options: {
-    encrypt: true, // Use encryption for Azure SQL databases
+    encrypt: false, // Use encryption for Azure SQL databases
     trustServerCertificate: true, // Set to true if self-signed certs are used
   },
 };
