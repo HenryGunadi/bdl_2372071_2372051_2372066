@@ -1,19 +1,19 @@
-import { Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import BadRequestError from "../classes/BadReqError";
 
-const errorMiddleware = (err: BadRequestError, res: Response) => {
+export const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunction) => {
   console.log("Error in middleware:", err);
 
+  // return custom error
   if (err instanceof BadRequestError) {
-    res
-      .status(err.statusCode || 400)
+    return res
+      .status(err.statusCode | 400)
       .setHeader("Content-Type", "application/json")
-      .json({ message: err.message });
+      .json(err.errors);
   }
 
-  return res.status(500).setHeader("Content-Type", "application/json").json({
-    message: "Internal Server Error",
+  // handle the unexpected error
+  return res.status(400).setHeader("Content-Type", "application/json").json({
+    message: "Something went wrong",
   });
 };
-
-export default errorMiddleware;

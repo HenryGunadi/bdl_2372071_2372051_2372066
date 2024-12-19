@@ -20,15 +20,13 @@ class AdminController {
 
       // check if there is internal server error
       if (response instanceof BadRequestError) {
-        next(response);
-        return;
+        return next(response);
       } else {
         // if admin exists
         if (response.length != 0) {
           console.log("Admin already exists");
           const error = new BadRequestError({ code: 400, message: "Admin already exists." });
-          next(error);
-          return;
+          return next(error);
         }
       }
 
@@ -41,15 +39,13 @@ class AdminController {
 
       // Internal Server Error
       if (insertRes instanceof BadRequestError) {
-        next(insertRes);
-        return;
+        return next(insertRes);
       }
 
       // no rows affected
       if (!insertRes) {
         const error = new BadRequestError({ code: 500, message: "Something went wrong" });
-        next(error);
-        return;
+        return next(error);
       }
 
       // register success
@@ -67,22 +63,19 @@ class AdminController {
 
       // check if there is internal server errror in querying
       if (queryRes instanceof BadRequestError) {
-        next(queryRes);
-        return;
+        return next(queryRes);
       } else {
         // check if admin doesnt exists
         if (queryRes.length == 0) {
           const error = new BadRequestError({ code: 400, message: "Admin doesnt exists." });
-          next(error);
-          return;
+          return next(error);
         }
 
         // check password
         const passMatch = await bcrypt.compare(payload.password, queryRes[0].password);
         if (!passMatch) {
           const error = new BadRequestError({ code: 400, message: "Invalid password" });
-          next(error);
-          return;
+          return next(error);
         }
 
         // create jwt token and sign the admin with secret key

@@ -1,8 +1,9 @@
-import express, { Express } from "express";
+import express, { Express, NextFunction, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import setCorsHeaders from "../middlewares/cors";
 import { DB } from "../db/db";
 import authRouter from "../routes/auth";
+import { errorMiddleware } from "../middlewares/error";
 
 export class APIServer {
   private _APIServer: Express;
@@ -24,6 +25,11 @@ export class APIServer {
 
     // auth routes
     this._APIServer.use("/auth", authRouter(this._DB));
+
+    // error middleware
+    this._APIServer.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+      errorMiddleware(err, req, res, next);
+    });
 
     this._APIServer
       .listen(this._PORT, () => console.log(`Server started on PORT : ${this._PORT}`))

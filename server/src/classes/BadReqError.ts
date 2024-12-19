@@ -38,4 +38,8 @@ export default class BadRequestError extends CustomError {
   public set message(msg: string) {
     this.message = msg;
   }
+
+  get context() {
+    return this._context;
+  }
 }

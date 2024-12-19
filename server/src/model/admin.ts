@@ -1,11 +1,11 @@
 class Admin {
-  private _id: string | null = null;
+  private _id: string | undefined = undefined;
   private _name: string;
   private _password: string;
   private _email: string;
   private _phone_number: string;
 
-  constructor(id: string | null, name: string, password: string, email: string, phone_number: string) {
+  constructor(name: string, password: string, email: string, phone_number: string, id?: string) {
     this._id = id;
     this._name = name;
     this._password = password;
@@ -14,7 +14,7 @@ class Admin {
   }
 
   // Getters
-  get id(): string | null {
+  get id(): string | undefined {
     return this._id;
   }
 
