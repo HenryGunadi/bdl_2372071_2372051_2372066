@@ -1,9 +1,8 @@
-class Items {
+class Item {
   private _id: string | undefined = undefined;
   private _nama: string;
   private _qrcode: string;
   private _price: number;
-  private _quantity: number;
   private _supplier_id: string;
   private _expired_date: Date;
   private _desc: string;
@@ -11,12 +10,11 @@ class Items {
   private _image_url: string;
   private _category_id: string;
 
-  constructor(nama: string, qrcode: string, price: number, quantity: number, supplier_id: string, expired_date: Date, desc: string, discount: number, image_url: string, category_id: string, id?: string) {
+  constructor(nama: string, qrcode: string, price: number, supplier_id: string, expired_date: Date, desc: string, discount: number, image_url: string, category_id: string, id?: string) {
     this._id = id;
     this._nama = nama;
     this._qrcode = qrcode;
     this._price = price;
-    this._quantity = quantity;
     this._supplier_id = supplier_id;
     this._expired_date = expired_date;
     this._desc = desc;
@@ -40,10 +38,6 @@ class Items {
 
   get price(): number {
     return this._price;
-  }
-
-  get quantity(): number {
-    return this._quantity;
   }
 
   get supplierId(): string {
@@ -83,10 +77,6 @@ class Items {
     this._price = price;
   }
 
-  set quantity(quantity: number) {
-    this._quantity = quantity;
-  }
-
   set supplierId(supplierId: string) {
     this._supplier_id = supplierId;
   }
@@ -112,4 +102,4 @@ class Items {
   }
 }
 
-export default Items;
+export default Item;

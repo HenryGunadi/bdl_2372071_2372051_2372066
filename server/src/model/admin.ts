@@ -4,13 +4,15 @@ class Admin {
   private _password: string;
   private _email: string;
   private _phone_number: string;
+  private _created_at: Date | undefined = undefined;
 
-  constructor(name: string, password: string, email: string, phone_number: string, id?: string) {
+  constructor(name: string, password: string, email: string, phone_number: string, created_at?: Date, id?: string) {
     this._id = id;
     this._name = name;
     this._password = password;
     this._email = email;
     this._phone_number = phone_number;
+    this._created_at = created_at;
   }
 
   // Getters
@@ -34,6 +36,10 @@ class Admin {
     return this._phone_number;
   }
 
+  get created_at(): Date | undefined {
+    return this._created_at;
+  }
+
   // Setters
   set id(value: string) {
     this._id = value;
@@ -41,6 +47,10 @@ class Admin {
 
   set name(value: string) {
     this._name = value;
+  }
+
+  set created_at(value: Date) {
+    this._created_at = value;
   }
 
   set password(value: string) {

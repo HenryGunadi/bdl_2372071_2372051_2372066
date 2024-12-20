@@ -1,7 +1,7 @@
 import BadRequestError from "../classes/BadReqError";
 import Admin from "../model/admin";
-import { AdminStoreInterface, IAdmin } from "../types/types";
-import sql, { IRecordSet, IResult } from "mssql";
+import { AdminStoreInterface } from "../types/types";
+import sql, { IRecordSet } from "mssql";
 
 class AdminStore implements AdminStoreInterface {
   private _dbConn: sql.ConnectionPool;
@@ -10,7 +10,7 @@ class AdminStore implements AdminStoreInterface {
     this._dbConn = dbConn;
   }
 
-  async getAllAdmin(): Promise<IRecordSet<IAdmin> | BadRequestError> {
+  async getAllAdmin(): Promise<IRecordSet<Admin> | BadRequestError> {
     try {
       const res = await this._dbConn.request().query("SELECT * FROM admin");
       return res.recordset;
@@ -20,7 +20,7 @@ class AdminStore implements AdminStoreInterface {
     }
   }
 
-  async findAdmin(email: string): Promise<IRecordSet<IAdmin> | BadRequestError> {
+  async findAdmin(email: string): Promise<IRecordSet<Admin> | BadRequestError> {
     try {
       // check if admin exists
       const res = await this._dbConn.request().input("email", sql.NVarChar, email).query("SELECT * FROM admin WHERE email = @email");

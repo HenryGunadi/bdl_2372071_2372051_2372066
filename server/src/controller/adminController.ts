@@ -34,7 +34,7 @@ class AdminController {
       const hashedPass = await bcrypt.hash(payload.password, 10);
 
       // register new admin
-      const newAdmin = new Admin("1", payload.name, hashedPass, payload.email, payload.phone_number);
+      const newAdmin = new Admin(payload.name, hashedPass, payload.email, payload.phone_number);
       const insertRes = await this._store.insertAdmin(newAdmin);
 
       // Internal Server Error
