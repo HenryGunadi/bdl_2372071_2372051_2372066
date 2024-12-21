@@ -6,6 +6,7 @@ import authRouter from "../routes/auth";
 import { errorMiddleware } from "../middlewares/error";
 import itemsRouter from "../routes/items";
 import categoryRouter from "../routes/category";
+import inventoryRouter from "../routes/inventory";
 
 export class APIServer {
   private _APIServer: Express;
@@ -29,6 +30,7 @@ export class APIServer {
     this._APIServer.use("/api/auth", authRouter(this._DB));
     this._APIServer.use("/api/items", itemsRouter(this._DB));
     this._APIServer.use("/api/category", categoryRouter(this._DB));
+    this._APIServer.use("/api/inventory", inventoryRouter(this._DB));
 
     // error middleware
     this._APIServer.use((err: Error, req: Request, res: Response, next: NextFunction) => {

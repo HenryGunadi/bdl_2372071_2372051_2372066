@@ -5,6 +5,8 @@ import { Request } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import Item from "../model/item";
 import Category from "../model/category";
+import exp from "constants";
+import Inventory from "../model/inventory";
 
 // interfaces
 export interface AdminStoreInterface {
@@ -27,6 +29,32 @@ export interface CategoryStoreInterface {
   getCategoryByName(category_name: string): Promise<IRecordSet<Category> | BadRequestError>;
   updateCategory(updated_category: UpdateCategoryPayload): Promise<boolean | BadRequestError>;
 }
+
+export interface InventoryStoreInterface {
+  getInventories(): Promise<IRecordSet<ViewInventory> | BadRequestError>;
+  updateInventory(value: UpdateInventoryPayload): Promise<boolean | BadRequestError>;
+  insertInventory(inventory: Inventory): Promise<boolean | BadRequestError>;
+  deleteInventory(id: number): Promise<boolean | BadRequestError>;
+}
+
+export type UpdateInventoryPayload = {
+  id: number;
+  quantity: number;
+};
+
+export type InsertInventoryPayload = {
+  item_id: string;
+  quantity: number;
+};
+
+export type ViewInventory = {
+  inventory_id: number;
+  item_id: string;
+  quantity: number;
+  last_updated: Date;
+  nama: string;
+  image_url: string;
+};
 
 export interface ReqValidated extends Request {
   user: string | JwtPayload;
