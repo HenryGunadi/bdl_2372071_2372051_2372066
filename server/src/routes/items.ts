@@ -11,7 +11,7 @@ const itemsAuth = (db: DB): Router => {
   const itemController = new ItemController(itemStore);
 
   // add items
-  router.post("/", insertItemValidator, (req: Request, res: Response, next: NextFunction));
+  router.post("/", insertItemValidator, (req: Request, res: Response, next: NextFunction) => {});
 
   return router;
 };

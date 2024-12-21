@@ -4,7 +4,9 @@ import BadRequestError from "../classes/BadReqError";
 import { Request } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import Item from "../model/item";
+import Category from "../model/category";
 
+// interfaces
 export interface AdminStoreInterface {
   getAllAdmin(): Promise<IRecordSet<Admin> | BadRequestError>;
   findAdmin(email: string): Promise<IRecordSet<Admin> | BadRequestError>;
@@ -19,6 +21,13 @@ export interface ItemStoreInterface {
   getItemByCategory(category: string): Promise<IRecordSet<Item> | BadRequestError>;
 }
 
+export interface CategoryStoreInterface {
+  getAllCategories(): Promise<IRecordSet<Category> | BadRequestError>;
+  deleteCategory(category_id: string): Promise<boolean | BadRequestError>;
+  insertCategory(category: Category): Promise<boolean | BadRequestError>;
+  getCategoryByName(category_name: string): Promise<IRecordSet<Category> | BadRequestError>;
+}
+
 export interface ReqValidated extends Request {
   user: string | JwtPayload;
 }
@@ -28,6 +37,7 @@ export type CustomErrorContent = {
   context?: { [key: string]: any };
 };
 
+// auth route
 export type RegisterPayload = {
   name: string;
   email: string;
@@ -40,6 +50,7 @@ export type LoginPayload = {
   password: string;
 };
 
+// item route
 export type CreateItemPayload = {
   nama: string;
   qrcode: string;
