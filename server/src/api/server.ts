@@ -4,7 +4,8 @@ import setCorsHeaders from "../middlewares/cors";
 import { DB } from "../db/db";
 import authRouter from "../routes/auth";
 import { errorMiddleware } from "../middlewares/error";
-import inventoryAuth from "../routes/items";
+import itemsRouter from "../routes/items";
+import categoryRouter from "../routes/category";
 
 export class APIServer {
   private _APIServer: Express;
@@ -25,8 +26,9 @@ export class APIServer {
     this._APIServer.use(cookieParser());
 
     // routes
-    this._APIServer.use("/auth", authRouter(this._DB));
-    this._APIServer.use("/inventory", inventoryAuth(this._DB));
+    this._APIServer.use("/api/auth", authRouter(this._DB));
+    this._APIServer.use("/api/items", itemsRouter(this._DB));
+    this._APIServer.use("/api/category", categoryRouter(this._DB));
 
     // error middleware
     this._APIServer.use((err: Error, req: Request, res: Response, next: NextFunction) => {

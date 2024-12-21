@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ItemStore } from "../services/itemStore";
 import BadRequestError from "../classes/BadReqError";
-import { CreateItemPayload, DeleteItemPayload, FindItemByName, GetItemsByCategory } from "../types/types";
+import { CreateItemPayload, DeleteItemPayload, FindItemByName, GetItemsByCategory, SearchParameterPayload } from "../types/types";
 import Item from "../model/item";
 
 // NOTE : Still confused on how to identify unique item when inserting
@@ -65,34 +65,23 @@ class ItemController {
     }
   };
 
-  findItemByName = async (req: Request, res: Response, next: NextFunction) => {
+  getItem = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const payload = req.body as FindItemByName;
-      const queryRes = await this._store.findItemByName(payload.name);
+      const { name, category_id, qrcode } = req.query as SearchParameterPayload;
 
-      // check if there is internal server error
+      const searchParams: SearchParameterPayload = {
+        name: name || "",
+        category_id: category_id || "",
+        qrcode: qrcode || "",
+      };
+
+      const queryRes = await this._store.getItems(searchParams);
+
       if (queryRes instanceof BadRequestError) {
         return next(queryRes);
       }
 
-      return res.status(200).setHeader("Content-Type", "application/json").json({ message: "The item has been deleted" });
-    } catch (err) {
-      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { erorr: `${err}` } });
-      next(error);
-    }
-  };
-
-  getItemsByCategory = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const payload = req.body as GetItemsByCategory;
-      const queryRes = await this._store.getItemByCategory(payload.category_id);
-
-      // check if there is internal server error
-      if (queryRes instanceof BadRequestError) {
-        return next(queryRes);
-      }
-
-      return res.status(200).setHeader("Content-Type", "application/json").json({ status: "success", items: queryRes });
+      res.status(200).setHeader("Content-Type", "application/json").json({ message: "success", items: queryRes });
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: "Internal server error", context: { erorr: `${err}` } });
       next(error);

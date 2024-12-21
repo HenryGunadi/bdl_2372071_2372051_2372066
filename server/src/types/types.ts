@@ -14,11 +14,10 @@ export interface AdminStoreInterface {
 }
 
 export interface ItemStoreInterface {
-  findItemByName(name: string): Promise<IRecordSet<Item> | BadRequestError>;
   insertItem(item: Item): Promise<boolean | BadRequestError>;
   updateItem(updateValues: CreateItemPayload): Promise<boolean | BadRequestError>;
   deleteItem(id: string): Promise<boolean | BadRequestError>;
-  getItemByCategory(category: string): Promise<IRecordSet<Item> | BadRequestError>;
+  getItems(searchParameter: SearchParameterPayload): Promise<IRecordSet<Item> | BadRequestError>;
 }
 
 export interface CategoryStoreInterface {
@@ -26,6 +25,7 @@ export interface CategoryStoreInterface {
   deleteCategory(category_id: string): Promise<boolean | BadRequestError>;
   insertCategory(category: Category): Promise<boolean | BadRequestError>;
   getCategoryByName(category_name: string): Promise<IRecordSet<Category> | BadRequestError>;
+  updateCategory(updated_category: UpdateCategoryPayload): Promise<boolean | BadRequestError>;
 }
 
 export interface ReqValidated extends Request {
@@ -63,6 +63,12 @@ export type CreateItemPayload = {
   category_id: string;
 };
 
+export type SearchParameterPayload = {
+  name: string;
+  category_id: string;
+  qrcode: string;
+};
+
 export type DeleteItemPayload = {
   id: string;
 };
@@ -73,4 +79,13 @@ export type FindItemByName = {
 
 export type GetItemsByCategory = {
   category_id: string;
+};
+
+export type CategoryPayload = {
+  category_name: string;
+};
+
+export type UpdateCategoryPayload = {
+  id: number;
+  category_name: string;
 };

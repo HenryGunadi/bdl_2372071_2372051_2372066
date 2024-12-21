@@ -1,5 +1,5 @@
 import sql from "mssql";
-import { CreateItemPayload, ItemStoreInterface } from "../types/types";
+import { CreateItemPayload, ItemStoreInterface, SearchParameterPayload } from "../types/types";
 import BadRequestError from "../classes/BadReqError";
 import Item from "../model/item";
 import { Decimal } from "msnodesqlv8";
@@ -11,12 +11,45 @@ export class ItemStore implements ItemStoreInterface {
     this._dbConn = dbConn;
   }
 
-  async findItemByName(name: string): Promise<sql.IRecordSet<Item> | BadRequestError> {
+  async getItems(searchParameter: SearchParameterPayload): Promise<sql.IRecordSet<Item> | BadRequestError> {
     try {
-      const res = await this._dbConn.request().input("nama", name).query("SELECT * FROM items WHERE name = @nama");
-      return res.recordset;
+      let query = "SELECT * FROM items";
+      const parameters: any[] = [];
+      let whereClause: string[] = [];
+
+      if (searchParameter.name) {
+        whereClause.push("nama = @nama");
+        parameters.push({ name: "nama", value: searchParameter.name });
+      }
+
+      if (searchParameter.qrcode) {
+        whereClause.push("qrcode = @qrcode");
+        parameters.push({ name: "qrcode", value: searchParameter.qrcode });
+      }
+
+      if (searchParameter.category_id) {
+        whereClause.push("category_id = @category_id");
+        parameters.push({ name: "category_id", value: searchParameter.category_id });
+      }
+
+      if (whereClause.length > 0) {
+        query += " WHERE " + whereClause.join(" AND ");
+      }
+
+      const res = this._dbConn.request();
+
+      parameters.forEach((param) => {
+        const sqlType = param.name === "category_id" ? sql.Int : sql.VarChar;
+        res.input(param.name, sqlType, param.value);
+      });
+
+      console.log("QUERY : ", query);
+
+      const response = await res.query(query);
+
+      return response.recordset;
     } catch (err) {
-      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error finding item by name : ${err}` } });
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error finding item : ${err}` } });
       return error;
     }
   }
@@ -45,6 +78,7 @@ export class ItemStore implements ItemStoreInterface {
     }
   }
 
+  // FIX Update
   async updateItem(udpateValues: CreateItemPayload): Promise<boolean | BadRequestError> {
     try {
       const res = await this._dbConn
@@ -76,19 +110,6 @@ export class ItemStore implements ItemStoreInterface {
       // check if insert successful
       const success = res.rowsAffected[0] > 0;
       return success;
-    } catch (err) {
-      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error deleting item : ${err}` } });
-      return error;
-    }
-  }
-
-  // FIX whether using category_id or category_name for searching
-  // FIX if using SP
-  async getItemByCategory(category_id: string): Promise<sql.IRecordSet<Item> | BadRequestError> {
-    try {
-      const res = await this._dbConn.request().input("category_id", category_id).query("SELECT * FROM items WHERE category_id = @category_id");
-
-      return res.recordset;
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error deleting item : ${err}` } });
       return error;

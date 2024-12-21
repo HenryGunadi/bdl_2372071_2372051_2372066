@@ -1,6 +1,7 @@
+import { SuiteContext } from "node:test";
 import BadRequestError from "../classes/BadReqError";
 import Category from "../model/category";
-import { CategoryStoreInterface } from "../types/types";
+import { CategoryStoreInterface, UpdateCategoryPayload } from "../types/types";
 import sql from "mssql";
 
 export class CategoryStore implements CategoryStoreInterface {
@@ -29,7 +30,7 @@ export class CategoryStore implements CategoryStoreInterface {
       const success = res.rowsAffected[0] > 0;
       return success;
     } catch (err) {
-      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { erorr: "Something went wrong deleting category" } });
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: "Something went wrong deleting category" } });
       return error;
     }
   }
@@ -37,13 +38,13 @@ export class CategoryStore implements CategoryStoreInterface {
   // FIX if SP ready
   async insertCategory(category: Category): Promise<boolean | BadRequestError> {
     try {
-      const res = await this._dbConn.request().input("id", category.id).input("category_name", category.category_name).execute("sp_insert_category");
+      const res = await this._dbConn.request().input("category_name", category.category_name).execute("sp_insert_category");
 
       // check if any rows are affected
       const success = res.rowsAffected[0] > 0;
       return success;
     } catch (err) {
-      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { erorr: "Something went wrong inserting new category" } });
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Something went wrong inserting new category : ${err}` } });
       return error;
     }
   }
@@ -55,6 +56,18 @@ export class CategoryStore implements CategoryStoreInterface {
       return res.recordset;
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: "Internal server error", context: { erorr: "Something went wrong finding category" } });
+      return error;
+    }
+  }
+
+  async updateCategory(updated_category: UpdateCategoryPayload): Promise<boolean | BadRequestError> {
+    try {
+      const res = await this._dbConn.request().input("id", updated_category.id).input("category_name", updated_category.category_name).execute("sp_update_category");
+
+      const success = res.rowsAffected[0] > 0;
+      return success;
+    } catch (err) {
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error updating category : ${err}` } });
       return error;
     }
   }
