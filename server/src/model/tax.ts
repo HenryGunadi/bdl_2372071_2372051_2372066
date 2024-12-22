@@ -3,10 +3,10 @@ class Tax {
   private _tax_rate: number;
   private _start_date: Date;
   private _end_date: Date;
-  private _created_at: Date;
+  private _created_at: Date | undefined = undefined;
 
   // Constructor
-  constructor(tax_rate: number, start_date: Date, end_date: Date, created_at: Date, id?: string) {
+  constructor(tax_rate: number, start_date: Date, end_date: Date, created_at?: Date, id?: string) {
     this._id = id;
     this._tax_rate = tax_rate;
     this._start_date = start_date;
@@ -47,7 +47,7 @@ class Tax {
   }
 
   // Getter and Setter for Created At
-  get createdAt(): Date {
+  get createdAt(): Date | undefined {
     return this._created_at;
   }
   set createdAt(created_at: Date) {

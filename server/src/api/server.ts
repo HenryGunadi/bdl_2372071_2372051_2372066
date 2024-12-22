@@ -7,6 +7,7 @@ import { errorMiddleware } from "../middlewares/error";
 import itemsRouter from "../routes/items";
 import categoryRouter from "../routes/category";
 import inventoryRouter from "../routes/inventory";
+import taxRouter from "../routes/tax";
 
 export class APIServer {
   private _APIServer: Express;
@@ -31,6 +32,7 @@ export class APIServer {
     this._APIServer.use("/api/items", itemsRouter(this._DB));
     this._APIServer.use("/api/category", categoryRouter(this._DB));
     this._APIServer.use("/api/inventory", inventoryRouter(this._DB));
+    this._APIServer.use("/api/tax", taxRouter(this._DB));
 
     // error middleware
     this._APIServer.use((err: Error, req: Request, res: Response, next: NextFunction) => {

@@ -7,6 +7,8 @@ import Item from "../model/item";
 import Category from "../model/category";
 import exp from "constants";
 import Inventory from "../model/inventory";
+import Receipt from "../model/receipt";
+import Tax from "../model/tax";
 
 // interfaces
 export interface AdminStoreInterface {
@@ -36,6 +38,28 @@ export interface InventoryStoreInterface {
   insertInventory(inventory: Inventory): Promise<boolean | BadRequestError>;
   deleteInventory(id: number): Promise<boolean | BadRequestError>;
 }
+
+export interface ReceiptStoreInterface {
+  getReceipt(): Promise<IRecordSet<Receipt> | BadRequestError>;
+  createReceipt(receipt: Receipt): Promise<boolean | BadRequestError>;
+  deleteReceipt(id: string): Promise<boolean | BadRequestError>;
+}
+
+export interface TaxStoreInterface {
+  createTax(tax: Tax): Promise<boolean | BadRequestError>;
+  deleteTax(id: string): Promise<boolean | BadRequestError>;
+  updateTax(updateValue: TaxPayload): Promise<boolean | BadRequestError>;
+  getTaxes(): Promise<IRecordSet<Tax> | BadRequestError>;
+}
+
+export type TaxPayload = {
+  id: string;
+  tax_rate: number;
+  start_date: Date;
+  end_date: Date;
+};
+
+export type CreateReceiptPayload = {};
 
 export type UpdateInventoryPayload = {
   id: number;
