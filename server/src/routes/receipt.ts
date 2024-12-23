@@ -12,7 +12,11 @@ const receiptRouter = (db: DB): Router => {
   const receiptStore = new ReceiptStore(db.getConn());
   const receiptController = new ReceiptController(receiptStore);
 
-  router.post("/create", (req: Request, res: Response, next: NextFunction) => {});
+  router.post("/create", (req: Request, res: Response, next: NextFunction) => {
+    receiptController.createReceipt(req, res, next);
+  });
 
   return router;
 };
+
+export default receiptRouter;

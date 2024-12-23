@@ -41,7 +41,7 @@ export interface InventoryStoreInterface {
 
 export interface ReceiptStoreInterface {
   getReceipt(): Promise<IRecordSet<Receipt> | BadRequestError>;
-  createReceipt(receipt: Receipt): Promise<boolean | BadRequestError>;
+  createReceipt(receipt: CreateReceiptPayload): Promise<boolean | BadRequestError>;
   deleteReceipt(id: string): Promise<boolean | BadRequestError>;
 }
 
@@ -59,7 +59,19 @@ export type TaxPayload = {
   end_date: Date;
 };
 
-export type CreateReceiptPayload = {};
+export type CreateReceiptPayload = {
+  payment_method: string;
+  total_subtotal: number;
+  total_discount: number;
+  total_amount: number;
+  tax_id: string;
+  items: [
+    {
+      item_id: string;
+      quantity: number;
+    }
+  ];
+};
 
 export type UpdateInventoryPayload = {
   id: number;

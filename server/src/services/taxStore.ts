@@ -36,7 +36,7 @@ class TaxStore implements TaxStoreInterface {
 
   async updateTax(updateValue: TaxPayload): Promise<boolean | BadRequestError> {
     try {
-      const res = await this._dbConn.request();
+      const res = this._dbConn.request();
 
       for (const [key, value] of Object.entries(updateValue)) {
         const sqlType = typeof value === "string" ? sql.VarChar : typeof value === "number" ? sql.Int : sql.DateTime;
