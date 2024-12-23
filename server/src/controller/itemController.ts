@@ -19,7 +19,7 @@ class ItemController {
       const payload = req.body as CreateItemPayload;
 
       // create new item
-      const newItem = new Item(payload.nama, payload.qrcode, payload.price, payload.supplier_id, payload.expired_date, payload.description, payload.discount, payload.image_url, payload.category_id);
+      const newItem = new Item(payload.nama, payload.qrcode, payload.price, payload.supplier_id, payload.expired_date, payload.description, payload.image_url, payload.category_id, payload.discount);
 
       const queryRes = await this._store.insertItem(newItem);
 
@@ -33,7 +33,7 @@ class ItemController {
           next(error);
         }
 
-        return res.status(200).setHeader("Content-Type", "application/json").json({ message: "The item has been created successfully" });
+        return res.status(200).json({ message: "The item has been created successfully" });
       }
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `${err}` } });
@@ -57,7 +57,7 @@ class ItemController {
           next(error);
         }
 
-        return res.status(200).setHeader("Content-Type", "application/json").json({ message: "The item has been deleted" });
+        return res.status(200).json({ message: "The item has been deleted" });
       }
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `${err}` } });
@@ -81,7 +81,7 @@ class ItemController {
         return next(queryRes);
       }
 
-      res.status(200).setHeader("Content-Type", "application/json").json({ message: "success", items: queryRes });
+      res.status(200).json({ message: "success", items: queryRes });
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: "Internal server error", context: { erorr: `${err}` } });
       next(error);

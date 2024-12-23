@@ -39,7 +39,7 @@ class TaxStore implements TaxStoreInterface {
       const res = this._dbConn.request();
 
       for (const [key, value] of Object.entries(updateValue)) {
-        const sqlType = typeof value === "string" ? sql.VarChar : typeof value === "number" ? sql.Int : sql.DateTime;
+        const sqlType = typeof value === "string" ? sql.VarChar : typeof value === "number" ? sql.Decimal(5, 2) : sql.DateTime;
 
         res.input(key, sqlType, value);
       }

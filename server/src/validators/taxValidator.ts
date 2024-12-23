@@ -1,5 +1,6 @@
 import exp from "constants";
 import { body } from "express-validator";
+import { query } from "express-validator";
 
 export const createTaxValidator = [
   // Tax rate validation (ensure it's numeric and a decimal if necessary)
@@ -25,14 +26,8 @@ export const createTaxValidator = [
 
 export const updateTaxValidator = [
   body("id").not().isEmpty().withMessage("Tax id is required"),
-
-  // Tax rate validation (ensure it's numeric and a decimal if necessary)
   body("tax_rate").not().isEmpty().withMessage("Tax rate is required").isDecimal().withMessage("Tax rate must be a valid decimal number"),
-
-  // Start date validation (ISO 8601 format, or specific format like YYYY-MM-DD)
   body("start_date").not().isEmpty().withMessage("Start date is required").isISO8601().withMessage("Start date must be a valid ISO 8601 date"),
-
-  // End date validation (ISO 8601 format, or specific format like YYYY-MM-DD)
   body("end_date")
     .not()
     .isEmpty()
@@ -47,4 +42,4 @@ export const updateTaxValidator = [
     }),
 ];
 
-export const deleteTaxValidator = [body("id").not().isEmpty().withMessage("Tax id is missing")];
+export const deleteTaxValidator = [query("id").not().isEmpty().withMessage("Tax id is missing")];

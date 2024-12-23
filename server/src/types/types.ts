@@ -53,7 +53,7 @@ export interface TaxStoreInterface {
 }
 
 export type TaxPayload = {
-  id: string;
+  id?: string;
   tax_rate: number;
   start_date: Date;
   end_date: Date;
@@ -122,7 +122,7 @@ export type CreateItemPayload = {
   supplier_id: string;
   expired_date: Date;
   description: string;
-  discount: number;
+  discount: number | null;
   image_url: string;
   category_id: string;
 };

@@ -51,7 +51,7 @@ class TaxController {
 
   deleteTax = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const payload = req.body as { id: string };
+      const payload = req.query as { id: string };
 
       const queryRes = await this._store.deleteTax(payload.id);
 
@@ -75,13 +75,13 @@ class TaxController {
     try {
       const payload = req.body as TaxPayload;
 
-      const queryRes = await this._store.deleteTax(payload.id);
+      const queryRes = await this._store.updateTax(payload);
 
       if (queryRes instanceof BadRequestError) {
         return next(queryRes);
       } else {
         if (!queryRes) {
-          const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `No rows are affected` } });
+          const error = new BadRequestError({ code: 500, message: "Something went wrong", context: { error: `No rows are affected` } });
           return next(error);
         }
 

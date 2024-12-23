@@ -2,7 +2,6 @@ import sql from "mssql";
 import { CreateItemPayload, ItemStoreInterface, SearchParameterPayload } from "../types/types";
 import BadRequestError from "../classes/BadReqError";
 import Item from "../model/item";
-import { Decimal } from "msnodesqlv8";
 
 export class ItemStore implements ItemStoreInterface {
   private _dbConn: sql.ConnectionPool;

@@ -30,6 +30,39 @@ class ReceiptController {
       next(error);
     }
   };
+
+  deleteReceipt = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.query as { id: string };
+
+      const queryRes = await this._store.deleteReceipt(id);
+
+      if (queryRes instanceof BadRequestError) {
+        return next(queryRes);
+      } else {
+        if (!queryRes) {
+          const error = new BadRequestError({ code: 500, message: "Something went wrong", context: { error: "No rows are affected" } });
+          return next(error);
+        }
+
+        return res.status(200).json({ message: "success" });
+      }
+    } catch (err) {
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `${err}` } });
+      next(error);
+    }
+  };
+
+  getReceipts = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const queryRes = await this._store.getReceipt();
+
+      return res.status(200).json({ message: "success", receipts: queryRes });
+    } catch (err) {
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `${err}` } });
+      next(error);
+    }
+  };
 }
 
 export default ReceiptController;

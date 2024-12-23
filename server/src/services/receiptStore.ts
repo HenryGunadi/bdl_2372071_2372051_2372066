@@ -21,37 +21,26 @@ class ReceiptStore implements ReceiptStoreInterface {
     }
   }
 
-  // total_subtotal = null?
-  // total_discount = null?
-  // total_amount = null?
   async createReceipt(receipt: CreateReceiptPayload): Promise<boolean | BadRequestError> {
     try {
+      // passed a table as an argument to the query
       const itemTable = new sql.Table();
       itemTable.columns.add("item_id", sql.VarChar(48));
-      itemTable.columns.add("quantity", sql.Decimal(10, 2));
+      itemTable.columns.add("quantity", sql.Int);
 
       receipt.items.forEach((item) => {
         itemTable.rows.add(item.item_id, item.quantity);
       });
 
-      console.log("Request Params:", {
-        payment_method: "BCA",
-        total_subtotal: 100.5,
-        total_discount: 20.25,
-        total_amount: 40.125,
-        tax_id: "TAX-0001",
-        items: itemTable,
-      });
-
       const result = await this._dbConn
         .request()
-        .input("payment_method", sql.VarChar(30), "BCA")
-        .input("total_subtotal", sql.Decimal(10, 2), 100.5)
-        .input("total_discount", sql.Decimal(10, 2), 20.25)
-        .input("total_amount", sql.Decimal(10, 2), 40.125)
-        .input("tax_id", sql.VarChar(48), "TAX-0001")
+        .input("payment_method", sql.VarChar(30), receipt.payment_method)
+        .input("total_subtotal", sql.Decimal(10, 2), receipt.total_subtotal)
+        .input("total_discount", sql.Decimal(10, 2), receipt.total_discount)
+        .input("total_amount", sql.Decimal(10, 2), receipt.total_amount)
+        .input("tax_id", sql.VarChar(48), receipt.tax_id)
         .input("items", itemTable)
-        .execute("sp_insert_receipt_test");
+        .execute("sp_insert_receipt");
 
       return result.rowsAffected[0] > 0;
     } catch (err) {
@@ -63,6 +52,7 @@ class ReceiptStore implements ReceiptStoreInterface {
 
   async deleteReceipt(id: string): Promise<boolean | BadRequestError> {
     try {
+      console.log("DELETE RECEIPT ID : ", id);
       const res = await this._dbConn.request().input("id", id).execute("sp_delete_receipt");
 
       const success = res.rowsAffected[0] > 0;

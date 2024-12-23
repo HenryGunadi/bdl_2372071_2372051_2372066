@@ -6,11 +6,11 @@ class Item {
   private _supplier_id: string;
   private _expired_date: Date;
   private _desc: string;
-  private _discount: number;
+  private _discount: number | null = null;
   private _image_url: string;
   private _category_id: string;
 
-  constructor(nama: string, qrcode: string, price: number, supplier_id: string, expired_date: Date, desc: string, discount: number, image_url: string, category_id: string, id?: string) {
+  constructor(nama: string, qrcode: string, price: number, supplier_id: string, expired_date: Date, desc: string, image_url: string, category_id: string, discount: number | null, id?: string) {
     this._id = id;
     this._nama = nama;
     this._qrcode = qrcode;
@@ -52,7 +52,7 @@ class Item {
     return this._desc;
   }
 
-  get discount(): number {
+  get discount(): number | null {
     return this._discount;
   }
 
