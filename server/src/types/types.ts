@@ -9,6 +9,8 @@ import exp from "constants";
 import Inventory from "../model/inventory";
 import Receipt from "../model/receipt";
 import Tax from "../model/tax";
+import ReturnItems from "../model/returnItems";
+import Invoice from "../model/invoice";
 
 // interfaces
 export interface AdminStoreInterface {
@@ -19,7 +21,7 @@ export interface AdminStoreInterface {
 
 export interface ItemStoreInterface {
   insertItem(item: Item): Promise<boolean | BadRequestError>;
-  updateItem(updateValues: CreateItemPayload): Promise<boolean | BadRequestError>;
+  updateItem(updateValues: UpdateItemPayload): Promise<boolean | BadRequestError>;
   deleteItem(id: string): Promise<boolean | BadRequestError>;
   getItems(searchParameter: SearchParameterPayload): Promise<IRecordSet<Item> | BadRequestError>;
 }
@@ -51,6 +53,48 @@ export interface TaxStoreInterface {
   updateTax(updateValue: TaxPayload): Promise<boolean | BadRequestError>;
   getTaxes(): Promise<IRecordSet<Tax> | BadRequestError>;
 }
+
+export interface ReturnItemsInterface {
+  getReturnItems(): Promise<IRecordSet<ReturnItems> | BadRequestError>;
+  updateReturnItems(payload: UpdateReturnItemsPayload): Promise<boolean | BadRequestError>;
+  deleteReturnItems(id: string): Promise<boolean | BadRequestError>;
+}
+
+export interface InvoiceStoreInterface {
+  createInvoice(payload: CreateInvoicePayload): Promise<boolean | BadRequestError>;
+  // deleteInvoice(id: string): Promise<boolean | BadRequestError>;
+  // updateInvoice(payload: UpdateInvoicePayload): Promise<boolean | BadRequestError>;
+  getInvoice(): Promise<IRecordSet<Invoice> | BadRequestError>;
+}
+
+export type CreateInvoicePayload = {
+  due_date: Date;
+  payment_method: string;
+  currency: string;
+  total_subtotal: number;
+  total_discount: number;
+  total_tax: number;
+  total_amount_due: number;
+  items: [
+    {
+      item_id: string;
+      quantity: number;
+      unit_price: number;
+      discount: number;
+      total: number;
+    }
+  ];
+};
+
+export type UpdateInvoicePayload = {};
+
+export type UpdateReturnItemsPayload = {
+  id: string;
+  item_id?: string;
+  quantity?: number;
+  return_date?: Date;
+  created_at?: Date;
+};
 
 export type TaxPayload = {
   id?: string;
@@ -127,14 +171,23 @@ export type CreateItemPayload = {
   category_id: string;
 };
 
+export type UpdateItemPayload = {
+  id: string;
+  nama?: string;
+  qrcode?: string;
+  price?: number;
+  supplier_id?: string;
+  expired_date?: Date;
+  description?: string;
+  discount?: number | null;
+  image_url?: string;
+  category_id?: string;
+};
+
 export type SearchParameterPayload = {
   name: string;
   category_id: string;
   qrcode: string;
-};
-
-export type DeleteItemPayload = {
-  id: string;
 };
 
 export type FindItemByName = {

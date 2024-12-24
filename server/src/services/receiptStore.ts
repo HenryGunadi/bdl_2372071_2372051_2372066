@@ -52,7 +52,6 @@ class ReceiptStore implements ReceiptStoreInterface {
 
   async deleteReceipt(id: string): Promise<boolean | BadRequestError> {
     try {
-      console.log("DELETE RECEIPT ID : ", id);
       const res = await this._dbConn.request().input("id", id).execute("sp_delete_receipt");
 
       const success = res.rowsAffected[0] > 0;

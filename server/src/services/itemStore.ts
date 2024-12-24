@@ -1,5 +1,5 @@
 import sql from "mssql";
-import { CreateItemPayload, ItemStoreInterface, SearchParameterPayload } from "../types/types";
+import { CreateItemPayload, ItemStoreInterface, SearchParameterPayload, UpdateItemPayload } from "../types/types";
 import BadRequestError from "../classes/BadReqError";
 import Item from "../model/item";
 
@@ -77,25 +77,19 @@ export class ItemStore implements ItemStoreInterface {
     }
   }
 
-  // FIX Update
-  async updateItem(udpateValues: CreateItemPayload): Promise<boolean | BadRequestError> {
+  async updateItem(udpateValues: UpdateItemPayload): Promise<boolean | BadRequestError> {
     try {
-      const res = await this._dbConn
-        .request()
-        .input("nama", udpateValues.nama)
-        .input("qrcode", udpateValues.qrcode)
-        .input("price", udpateValues.price)
-        .input("supplier_id", udpateValues.supplier_id)
-        .input("expired_date", udpateValues.expired_date)
-        .input("description", udpateValues.description)
-        .input("discount", udpateValues.discount)
-        .input("image_url", udpateValues.image_url)
-        .input("category_id", udpateValues.category_id)
-        .execute("sp_insert_items");
+      const res = this._dbConn.request();
+      const parameters: { name: string; value: string }[] = [];
 
-      const success = res.rowsAffected[0] > 0;
+      for (const [name, value] of Object.entries(udpateValues)) {
+        const sqlType = typeof value === "string" ? sql.VarChar : typeof value === "number" ? sql.Decimal(10, 2) : sql.DateTime;
 
-      return success;
+        res.input(name, sqlType, value);
+      }
+
+      const result = await res.execute("sp_update_item");
+      return result.rowsAffected[0] > 0;
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error updating item : ${err}` } });
       return error;
@@ -107,8 +101,7 @@ export class ItemStore implements ItemStoreInterface {
       const res = await this._dbConn.request().input("id", id).execute("sp_delete_item");
 
       // check if insert successful
-      const success = res.rowsAffected[0] > 0;
-      return success;
+      return res.rowsAffected[0] > 0;
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error deleting item : ${err}` } });
       return error;
