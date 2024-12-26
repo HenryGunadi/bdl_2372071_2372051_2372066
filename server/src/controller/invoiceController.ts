@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import InvoiceStore from '../services/invoiceStore';
 import BadRequestError from '../classes/BadReqError';
-import {CreateInvoicePayload, DeleteInvoicePayload} from '../types/types';
+import {CreateInvoicePayload, DeleteInvoiceReceiptPayload} from '../types/types';
 
 class InvoiceController {
 	private _store: InvoiceStore;
@@ -48,7 +48,7 @@ class InvoiceController {
 
 	deleteInvoice = async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const payload = req.body as DeleteInvoicePayload
+			const payload = req.body as DeleteInvoiceReceiptPayload;
 			const queryRes = await this._store.deleteInvoice(payload);
 
 			if (queryRes instanceof BadRequestError) {
