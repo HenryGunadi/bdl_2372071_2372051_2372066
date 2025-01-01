@@ -1,96 +1,96 @@
-import {NextFunction, query, Request, Response} from 'express';
-import InventoryStore from '../services/inventoryStore';
-import BadRequestError from '../classes/BadReqError';
-import Inventory from '../model/inventory';
-import {InsertInventoryPayload, UpdateInventoryPayload} from '../types/types';
+import { NextFunction, query, Request, Response } from "express";
+import InventoryStore from "../services/inventoryStore";
+import BadRequestError from "../classes/BadReqError";
+import Inventory from "../model/inventory";
+import { InsertInventoryPayload, UpdateInventoryPayload } from "../types/types";
 
 class InventoryController {
-	private _store: InventoryStore;
+  private _store: InventoryStore;
 
-	constructor(store: InventoryStore) {
-		this._store = store;
-	}
+  constructor(store: InventoryStore) {
+    this._store = store;
+  }
 
-	getInventories = async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			const queryRes = await this._store.getInventories();
+  getInventories = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const queryRes = await this._store.getInventories();
 
-			if (queryRes instanceof BadRequestError) {
-				return next(queryRes);
-			}
+      if (queryRes instanceof BadRequestError) {
+        return next(queryRes);
+      }
 
-			return res.status(200).json({message: 'success', inventories: queryRes});
-		} catch (err) {
-			const error = new BadRequestError({code: 500, message: 'Internal server error', context: {error: `${err}`}});
-			next(error);
-		}
-	};
+      return res.status(200).json({ message: "success", inventories: queryRes });
+    } catch (err) {
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `${err}` } });
+      next(error);
+    }
+  };
 
-	insertInventory = async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			const payload = req.body as InsertInventoryPayload;
-			const newInventory = new Inventory(payload.item_id, payload.quantity);
+  insertInventory = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const payload = req.body as InsertInventoryPayload;
+      const newInventory = new Inventory(payload.item_id, payload.quantity, payload.expired_date);
 
-			const queryRes = await this._store.insertInventory(newInventory);
+      const queryRes = await this._store.insertInventory(newInventory);
 
-			if (queryRes instanceof BadRequestError) {
-				return next(queryRes);
-			} else {
-				if (!queryRes) {
-					const error = new BadRequestError({code: 500, message: 'Something went wrong', context: {error: 'No rows are affected'}});
-					return next(error);
-				}
+      if (queryRes instanceof BadRequestError) {
+        return next(queryRes);
+      } else {
+        if (!queryRes) {
+          const error = new BadRequestError({ code: 500, message: "Something went wrong", context: { error: "No rows are affected" } });
+          return next(error);
+        }
 
-				return res.status(200).json({message: 'success'});
-			}
-		} catch (err) {
-			const error = new BadRequestError({code: 500, message: 'Internal server error', context: {error: `${err}`}});
-			next(error);
-		}
-	};
+        return res.status(200).json({ message: "success" });
+      }
+    } catch (err) {
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `${err}` } });
+      next(error);
+    }
+  };
 
-	updateInventory = async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			const payload = req.body as UpdateInventoryPayload;
+  updateInventory = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const payload = req.body as UpdateInventoryPayload;
 
-			const queryRes = await this._store.updateInventory(payload);
+      const queryRes = await this._store.updateInventory(payload);
 
-			if (queryRes instanceof BadRequestError) {
-				return next(queryRes);
-			} else {
-				if (!queryRes) {
-					const error = new BadRequestError({code: 500, message: 'Something went wrong', context: {error: 'No rows are affected'}});
-					return next(error);
-				}
+      if (queryRes instanceof BadRequestError) {
+        return next(queryRes);
+      } else {
+        if (!queryRes) {
+          const error = new BadRequestError({ code: 500, message: "Something went wrong", context: { error: "No rows are affected" } });
+          return next(error);
+        }
 
-				return res.status(200).json({message: 'success'});
-			}
-		} catch (err) {
-			const error = new BadRequestError({code: 500, message: 'Internal server error', context: {error: `${err}`}});
-			next(error);
-		}
-	};
+        return res.status(200).json({ message: "success" });
+      }
+    } catch (err) {
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `${err}` } });
+      next(error);
+    }
+  };
 
-	deleteInventory = async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			const payload = req.query as {id: string};
-			const queryRes = await this._store.deleteInventory(parseInt(payload.id));
+  deleteInventory = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const payload = req.query as { id: string };
+      const queryRes = await this._store.deleteInventory(parseInt(payload.id));
 
-			if (queryRes instanceof BadRequestError) {
-				return next(queryRes);
-			} else {
-				if (!queryRes) {
-					const error = new BadRequestError({code: 500, message: 'Something went wrong', context: {error: 'No rows are affected'}});
-					return next(error);
-				}
+      if (queryRes instanceof BadRequestError) {
+        return next(queryRes);
+      } else {
+        if (!queryRes) {
+          const error = new BadRequestError({ code: 500, message: "Something went wrong", context: { error: "No rows are affected" } });
+          return next(error);
+        }
 
-				return res.status(200).json({message: 'success'});
-			}
-		} catch (err) {
-			const error = new BadRequestError({code: 500, message: 'Internal server error', context: {error: `${err}`}});
-			next(error);
-		}
-	};
+        return res.status(200).json({ message: "success" });
+      }
+    } catch (err) {
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `${err}` } });
+      next(error);
+    }
+  };
 }
 
 export default InventoryController;

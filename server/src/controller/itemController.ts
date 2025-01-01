@@ -3,6 +3,7 @@ import { ItemStore } from "../services/itemStore";
 import BadRequestError from "../classes/BadReqError";
 import { CreateItemPayload, FindItemByName, GetItemsByCategory, SearchParameterPayload, UpdateItemPayload } from "../types/types";
 import Item from "../model/item";
+import multer from "multer";
 
 // NOTE : Still confused on how to identify unique item when inserting
 
@@ -15,10 +16,17 @@ class ItemController {
 
   insertItem = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const payload = req.body as CreateItemPayload;
+      const payload: CreateItemPayload = req.body;
+
+      console.log("PAYLOAD FROM FORMDATA? : ", payload);
+
+      const imageURL = req.file ? req.file.path : "";
+      const formattedImageURL = imageURL.split("\\").pop() || "";
+
+      console.log("IMAGE URL : ", formattedImageURL);
 
       // create new item
-      const newItem = new Item(payload.nama, payload.qrcode, payload.price, payload.supplier_id, payload.expired_date, payload.description, payload.image_url, payload.category_id, payload.discount);
+      const newItem = new Item(payload.nama, payload.qrcode, payload.price, payload.supplier_id, payload.description, formattedImageURL, payload.category_id, payload.discount);
 
       const queryRes = await this._store.insertItem(newItem);
 

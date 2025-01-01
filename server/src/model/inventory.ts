@@ -3,12 +3,14 @@ export default class Inventory {
   private _item_id: string;
   private _quantity: number;
   private _last_updated: Date | undefined = undefined;
+  private _expired_date: Date;
 
-  constructor(item_id: string, quantity: number, last_updated?: Date, id?: number) {
+  constructor(item_id: string, quantity: number, expired_date: Date, last_updated?: Date, id?: number) {
     this._id = id;
     this._item_id = item_id;
     this._quantity = quantity;
     this._last_updated = last_updated;
+    this._expired_date = expired_date;
   }
 
   public get id(): number | undefined {

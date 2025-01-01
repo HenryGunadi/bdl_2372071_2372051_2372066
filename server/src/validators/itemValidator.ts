@@ -6,7 +6,6 @@ export const insertItemValidator = [
   body("qrcode", "Qrcode is empty").not().isEmpty(),
   body("price").not().isEmpty().withMessage("Price is required").isFloat({ gt: 0 }).withMessage("Price must be a valid number"),
   body("supplier_id").not().isEmpty().withMessage("Supplier id is required"),
-  body("expired_date").not().isEmpty().withMessage("Expired date is required").isISO8601().withMessage("Expired date must be a valid date"),
   body("description", "Description is empty").not().isEmpty(),
   body("discount")
     .optional()
@@ -18,7 +17,6 @@ export const insertItemValidator = [
 
       return true; // If discount is null, no validation is applied
     }),
-  body("image_url", "Image URL is empty").not().isEmpty(),
   body("category_id").not().isEmpty().withMessage("Category is required"),
 ];
 
@@ -36,8 +34,6 @@ export const updateItemValidator = [
   body("price").optional().isFloat({ min: 0 }).withMessage("Price must be a positive number"),
 
   body("supplier_id").optional().isString().withMessage("Supplier ID must be a string"),
-
-  body("expired_date").optional().isISO8601().withMessage("Expired date must be a valid ISO 8601 date"),
 
   body("description").optional().isString().withMessage("Description must be a string"),
 
