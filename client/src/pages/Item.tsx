@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { fetchItems, createItem } from "../utils/Item";
-import { CreateItemPayload, Items } from "../types/types";
+import React, { useState } from "react";
+import { createItem } from "../utils/Item";
+import { CreateItemPayload } from "../types/types";
 
 function Item() {
   // states
