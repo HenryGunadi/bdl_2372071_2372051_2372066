@@ -1,24 +1,35 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 
 interface MenuItemProps {
   icon: string;
   label: string;
   badge?: number;
   hasSubmenu?: boolean;
+  to: string; // Tambahkan properti untuk link
 }
 
-const MenuItem: React.FC<MenuItemProps> = ({ icon, label, badge, hasSubmenu }) => {
+const MenuItem: React.FC<MenuItemProps> = ({ icon, label, badge, hasSubmenu, to }) => {
   return (
-    <div className="flex items-center justify-between px-4 py-3 hover:bg-gray-700 rounded-lg cursor-pointer">
-      <div className="flex items-center gap-2 text-white">
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        `flex items-center justify-between px-4 py-3 rounded-lg cursor-pointer ${
+          isActive ? "bg-gray-700 text-white" : "text-gray-400 hover:bg-gray-700 hover:text-white"
+        }`
+      }
+    >
+      <div className="flex items-center gap-2">
         <i className={`fa-solid ${icon}`}></i>
         <span>{label}</span>
       </div>
       {badge && (
-        <div className="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">{badge}</div>
+        <div className="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+          {badge}
+        </div>
       )}
       {hasSubmenu && <i className="fa-solid fa-chevron-right text-sm text-gray-400"></i>}
-    </div>
+    </NavLink>
   );
 };
 
@@ -48,16 +59,16 @@ const Sidebar: React.FC = () => {
       {/* Menu */}
       <div className="p-4 space-y-4">
         <div className="text-gray-400 uppercase text-xs">Main Menu</div>
-        <MenuItem icon="fa-tachometer-alt" label="Dashboard" />
-        <MenuItem icon="fa-truck" label="Suppliers" badge={4} />
-        <MenuItem icon="fa-users" label="Customers" badge={3} />
-        <MenuItem icon="fa-box" label="Products" hasSubmenu />
-        <MenuItem icon="fa-shopping-cart" label="Transaction" hasSubmenu />
-        <MenuItem icon="fa-chart-pie" label="Reports" hasSubmenu />
+        <MenuItem icon="fa-tachometer-alt" label="Dashboard" to="/" />
+        <MenuItem icon="fa-truck" label="Suppliers" badge={4} to="/suppliers" />
+        <MenuItem icon="fa-users" label="Customers" badge={3} to="/customers" />
+        <MenuItem icon="fa-box" label="Products" hasSubmenu to="/products" />
+        <MenuItem icon="fa-shopping-cart" label="Transaction" hasSubmenu to="/transactions" />
+        <MenuItem icon="fa-chart-pie" label="Reports" hasSubmenu to="/reports" />
 
         <div className="text-gray-400 uppercase text-xs pt-4">Settings</div>
-        <MenuItem icon="fa-user-friends" label="Users / Employees" badge={3} />
-        <MenuItem icon="fa-cogs" label="Configuration" />
+        <MenuItem icon="fa-user-friends" label="Users / Employees" badge={3} to="/users" />
+        <MenuItem icon="fa-cogs" label="Configuration" to="/configuration" />
       </div>
     </div>
   );

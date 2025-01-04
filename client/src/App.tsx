@@ -1,5 +1,4 @@
 import AppRoutes from './routes/index.route';
-import Navbar from './components/Navbar';
 
 function App() {
 	return (
