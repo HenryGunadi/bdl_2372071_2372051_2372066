@@ -5,6 +5,7 @@ import React from "react";
 const backendBaseAPI: string = import.meta.env.VITE_BACKEND_API || "";
 
 async function fetchItems(setItem: React.Dispatch<React.SetStateAction<Items[]>>) {
+  console.log("backend base API : ", backendBaseAPI);
   try {
     const response = await axios.get(`${backendBaseAPI}/api/items/search`);
 
