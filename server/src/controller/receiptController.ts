@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import ReceiptStore from '../services/receiptStore';
 import BadRequestError from '../classes/BadReqError';
-import {CreateReceiptPayload, DeleteInvoiceReceiptPayload} from '../types/types';
+import {CreateReceiptPayload, DeletePOReceiptPayload} from '../types/types';
 
 class ReceiptController {
 	private _store: ReceiptStore;
@@ -33,7 +33,7 @@ class ReceiptController {
 
 	deleteReceipt = async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const payload = req.body as DeleteInvoiceReceiptPayload;
+			const payload = req.body as DeletePOReceiptPayload;
 			const queryRes = await this._store.deleteReceipt(payload);
 
 			if (queryRes instanceof BadRequestError) {
