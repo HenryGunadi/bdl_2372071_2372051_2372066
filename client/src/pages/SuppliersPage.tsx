@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AddForm from "../components/CRUD/AddForm";
 import EditForm from "../components/CRUD/EditForm";
 import DeleteModal from "../components/CRUD/DeleteModal";
+import { viewSupplier } from "../utils/supplierUtils";
+import { Supplier } from "../types/types";
 
 const SuppliersPage: React.FC = () => {
+  const [suppliers, setSuppliers] = React.useState<Supplier[]>([]);
   const [showAddForm, setShowAddForm] = React.useState(false);
   const [showEditForm, setShowEditForm] = React.useState(false);
   const [showDeleteModal, setShowDeleteModal] = React.useState(false);
@@ -23,28 +26,28 @@ const SuppliersPage: React.FC = () => {
     setShowDeleteModal(false);
   };
 
+  // use effects
+  useEffect(() => {
+    viewSupplier(setSuppliers);
+  }, []);
+
+  useEffect(() => {
+    console.log("suppliers from frontend : ", suppliers);
+  }, [suppliers]);
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Suppliers</h1>
 
       {/* Buttons */}
       <div className="mb-4 flex gap-4">
-        <button
-          onClick={() => setShowAddForm(true)}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-        >
+        <button onClick={() => setShowAddForm(true)} className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
           Add Supplier
         </button>
-        <button
-          onClick={() => setShowEditForm(true)}
-          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
-        >
+        <button onClick={() => setShowEditForm(true)} className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
           Edit Supplier
         </button>
-        <button
-          onClick={() => setShowDeleteModal(true)}
-          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-        >
+        <button onClick={() => setShowDeleteModal(true)} className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
           Delete Supplier
         </button>
       </div>
@@ -53,22 +56,10 @@ const SuppliersPage: React.FC = () => {
       {showAddForm && <AddForm onSubmit={handleAdd} onCancel={() => setShowAddForm(false)} />}
 
       {/* Edit Form */}
-      {showEditForm && (
-        <EditForm
-          data={{ id: 1, name: "Supplier A", email: "supplierA@example.com" }}
-          onSubmit={handleEdit}
-          onCancel={() => setShowEditForm(false)}
-        />
-      )}
+      {showEditForm && <EditForm data={{ id: 1, name: "Supplier A", email: "supplierA@example.com" }} onSubmit={handleEdit} onCancel={() => setShowEditForm(false)} />}
 
       {/* Delete Modal */}
-      {showDeleteModal && (
-        <DeleteModal
-          itemName="Supplier A"
-          onDelete={handleDelete}
-          onCancel={() => setShowDeleteModal(false)}
-        />
-      )}
+      {showDeleteModal && <DeleteModal valueId="" onDelete={handleDelete} onCancel={() => setShowDeleteModal(false)} />}
 
       {/* Table */}
       <div className="bg-white p-4 rounded-lg shadow">
@@ -83,25 +74,24 @@ const SuppliersPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td className="border px-4 py-2 text-center">1</td>
-              <td className="border px-4 py-2">Supplier A</td>
-              <td className="border px-4 py-2">supplierA@example.com</td>
-              <td className="border px-4 py-2 text-center space-x-2">
-                <button
-                  onClick={() => setShowEditForm(true)}
-                  className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => setShowDeleteModal(true)}
-                  className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
+            {suppliers.length > 0 &&
+              suppliers.map((supplier: Supplier, index: number) => {
+                return (
+                  <tr key={supplier.id || index}>
+                    <td className="border px-4 py-2 text-center">{index + 1}</td>
+                    <td className="border px-4 py-2">{supplier.name}</td>
+                    <td className="border px-4 py-2">{supplier.email}</td>
+                    <td className="border px-4 py-2 text-center space-x-2">
+                      <button onClick={() => setShowEditForm(true)} className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">
+                        Edit
+                      </button>
+                      <button onClick={() => setShowDeleteModal(true)} className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
       </div>

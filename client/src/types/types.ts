@@ -21,3 +21,26 @@ export type Items = {
   qrcode: string;
   supplier_id: string;
 };
+
+export type Supplier = {
+  id: string;
+  name: string;
+  phone_number: string;
+  email: string;
+  address: string;
+  country: string;
+  city: string;
+  postal_code: string | null;
+  created_at: Date;
+};
+
+export type SupplierPayload = {
+  name: string;
+  phone_number: string;
+  email: string;
+  address: string;
+  country: string;
+  city: string;
+  postal_code: string | null;
+  created_at: Date;
+};

@@ -1,3 +1,5 @@
+import { BarChartComponent } from "../components/ui/BarChart";
+
 const DashboardPage = () => {
   const stats = [
     { label: "ITEMS", value: 6, color: "bg-blue-500", icon: "🛍️" },
@@ -28,12 +30,12 @@ const DashboardPage = () => {
       </div>
 
       {/* Chart Section */}
-      <div className="px-6">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-4">Produk Terlaris Bulan Ini</h2>
+      <div className="px-6 w-full">
+        <div className="bg-white p-6 rounded-lg shadow w-full">
+          <h2 className="text-lg font-semibold mb-4">Overview</h2>
           {/* Chart Placeholder */}
-          <div className="h-64 bg-blue-100 rounded-lg flex items-center justify-center">
-            <p className="text-gray-500">[Chart Placeholder]</p>
+          <div className="w-full flex">
+            <BarChartComponent></BarChartComponent>
           </div>
         </div>
       </div>

@@ -1,8 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-	content: ['./src/**/*.{html,js,tsx,}'],
+    darkMode: ['class'],
+    content: ['./src/**/*.{html,js,tsx,}'],
 	theme: {
-		extend: {},
-	},
-	plugins: [],
+    	extend: {
+    		borderRadius: {
+    			lg: 'var(--radius)',
+    			md: 'calc(var(--radius) - 2px)',
+    			sm: 'calc(var(--radius) - 4px)'
+    		},
+    		colors: {}
+    	}
+    },
+	plugins: [require("tailwindcss-animate")],
 };
