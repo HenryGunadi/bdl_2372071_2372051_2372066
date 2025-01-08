@@ -1,15 +1,32 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Item from "../pages/Item";
+import SuppliersPage from "../pages/SuppliersPage";
+import DashboardLayout from "../Layout/DashboardLayout";
 import Home from "../pages/Home";
-import ItemDashboard from "../pages/ItemDashboard";
+
+// Tambahkan halaman lainnya di sini.
 
 const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/item" element={<Item />} />
-        <Route path="/item_dashboard" element={<ItemDashboard />} />
+        <Route
+          path="/"
+          element={
+            <DashboardLayout>
+              <Home />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/suppliers"
+          element={
+            <DashboardLayout>
+              <SuppliersPage />
+            </DashboardLayout>
+          }
+        />
+     
+        {/* Tambahkan routing lainnya di sini */}
       </Routes>
     </BrowserRouter>
   );
