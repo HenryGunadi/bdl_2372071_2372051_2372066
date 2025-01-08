@@ -1,5 +1,5 @@
 import sql, {MAX} from 'mssql';
-import {CreateReceiptPayload, DeleteInvoiceReceiptPayload, ReceiptStoreInterface} from '../types/types';
+import {CreateReceiptPayload, DeletePOReceiptPayload, ReceiptStoreInterface} from '../types/types';
 import BadRequestError from '../classes/BadReqError';
 import Receipt from '../model/receipt';
 
@@ -50,7 +50,7 @@ class ReceiptStore implements ReceiptStoreInterface {
 		}
 	}
 
-	async deleteReceipt(payload: DeleteInvoiceReceiptPayload): Promise<boolean | BadRequestError> {
+	async deleteReceipt(payload: DeletePOReceiptPayload): Promise<boolean | BadRequestError> {
 		try {
 			const res = await this._dbConn.request().input('id', payload.id).input('undo', payload.undo).execute('sp_delete_receipt');
 

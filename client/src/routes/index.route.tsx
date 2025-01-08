@@ -1,16 +1,14 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Item from "../pages/Item";
-import Home from "../pages/Home";
-import DashboardPage from "../pages/DashboardPage";
-import ItemDashboard from "../pages/ItemDashboard";
+import SuppliersPage from "../pages/SuppliersPage";
 import DashboardLayout from "../Layout/DashboardLayout";
-import UserPage from "../pages/UserPage";
+import Home from "../pages/Home";
+
+// Tambahkan halaman lainnya di sini.
 
 const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Bungkus semua routes dengan DashboardLayout */}
         <Route
           path="/"
           element={
@@ -20,37 +18,15 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="/item"
+          path="/suppliers"
           element={
             <DashboardLayout>
-              <Item />
+              <SuppliersPage />
             </DashboardLayout>
           }
         />
-        <Route
-          path="/item_dashboard"
-          element={
-            <DashboardLayout>
-              <ItemDashboard />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/dashboard_page"
-          element={
-            <DashboardLayout>
-              <DashboardPage />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/user"
-          element={
-            <DashboardLayout>
-              <UserPage />
-            </DashboardLayout>
-          }
-        />
+
+        {/* Tambahkan routing lainnya di sini */}
       </Routes>
     </BrowserRouter>
   );
