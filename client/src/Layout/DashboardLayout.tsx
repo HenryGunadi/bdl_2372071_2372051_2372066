@@ -1,6 +1,11 @@
+import { ReactNode } from "react";
 import Sidebar from "../components/Sidebar";
 
-const DashboardLayout = ({ children }) => {
+interface DashboardLayoutProps {
+  children: ReactNode;
+}
+
+const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <div className="flex w-full h-screen overflow-hidden">
       <Sidebar />
