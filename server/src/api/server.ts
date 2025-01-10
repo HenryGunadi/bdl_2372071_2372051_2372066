@@ -12,6 +12,7 @@ import receiptRouter from "../routes/receipt";
 import returnItemsRouter from "../routes/returnItems";
 import purchaseOrderRouter from "../routes/purchaseOrder";
 import supplierRouter from "../routes/supplier";
+import adminRouter from "../routes/admin";
 
 export class APIServer {
   private _APIServer: Express;
@@ -33,6 +34,7 @@ export class APIServer {
 
     // routes
     this._APIServer.use("/api/auth", authRouter(this._DB));
+    this._APIServer.use("/api/admin", adminRouter(this._DB));
     this._APIServer.use("/api/items", itemsRouter(this._DB));
     this._APIServer.use("/api/category", categoryRouter(this._DB));
     this._APIServer.use("/api/inventory", inventoryRouter(this._DB));

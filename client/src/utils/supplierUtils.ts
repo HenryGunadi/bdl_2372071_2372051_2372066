@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { SetStateAction } from "react";
-import { Supplier, SupplierPayload } from "../types/types";
+import { Supplier, SupplierPayload, UpdateSupplierPayload } from "../types/types";
 
 const baseAPI: string = import.meta.env.VITE_BACKEND_API || "";
 
@@ -29,9 +29,9 @@ export async function createSupplier(supplier: SupplierPayload) {
   }
 }
 
-export async function updateSupplier(supplier: SupplierPayload) {
+export async function updateSupplier(supplier: UpdateSupplierPayload): Promise<void> {
   try {
-    const res = await axios.post(`${baseAPI}/api/supplier/update`, supplier, {
+    const res = await axios.patch(`${baseAPI}/api/supplier/update`, supplier, {
       withCredentials: true,
     });
 
@@ -43,12 +43,17 @@ export async function updateSupplier(supplier: SupplierPayload) {
 
 export async function deleteSupplier(id: string) {
   try {
-    const res = await axios.post(`${baseAPI}/api/supplier/delete?id=${id}`, {
+    const res = await axios.delete(`${baseAPI}/api/supplier/delete?id=${id}`, {
       withCredentials: true,
     });
 
+    if (res.status == 400) {
+      alert("This supplier has already been displayed in another entry.");
+      return;
+    }
     console.log(res.data);
   } catch (err) {
-    console.error("Error creating supplier : ", err);
+    console.error("Error deleting supplier : ", err);
+    alert("This supplier has already been displayed in another entry.");
   }
 }

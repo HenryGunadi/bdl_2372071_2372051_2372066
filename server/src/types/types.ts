@@ -18,6 +18,8 @@ export interface AdminStoreInterface {
   getAllAdmin(): Promise<IRecordSet<Admin> | BadRequestError>;
   findAdmin(email: string): Promise<IRecordSet<Admin> | BadRequestError>;
   insertAdmin(admin: Admin): Promise<boolean | BadRequestError>;
+  updateAdmin(admin: Admin): Promise<boolean | BadRequestError>;
+  deleteAdmin(id: string): Promise<boolean | BadRequestError>;
 }
 
 export interface ItemStoreInterface {
@@ -71,13 +73,24 @@ export interface PurchaseOrderStoreInterface {
 export interface SupplierStoreInterface {
   createSupplier(payload: SupplierPayload): Promise<boolean | BadRequestError>;
   deleteSupplier(id: string): Promise<boolean | BadRequestError>;
-  updateSupplier(payload: SupplierPayload): Promise<boolean | BadRequestError>;
+  updateSupplier(payload: UpdateSupplierPayload): Promise<boolean | BadRequestError>;
   viewSupplier(): Promise<Supplier[] | BadRequestError>;
 }
 
 export type DeletePOReceiptPayload = {
   id: string;
   undo: 1 | 0;
+};
+
+export type UpdateSupplierPayload = {
+  id: string;
+  name: string;
+  phone_number: string;
+  email: string;
+  address: string;
+  country: string;
+  city: string;
+  postal_code: string | null;
 };
 
 export type SupplierPayload = {
@@ -88,7 +101,6 @@ export type SupplierPayload = {
   country: string;
   city: string;
   postal_code: string | null;
-  created_at: Date;
 };
 
 export type CreatePOPayload = {

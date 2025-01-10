@@ -1,5 +1,5 @@
 import sql from "mssql";
-import { SupplierPayload, SupplierStoreInterface } from "../types/types";
+import { SupplierPayload, SupplierStoreInterface, UpdateCategoryPayload, UpdateSupplierPayload } from "../types/types";
 import BadRequestError from "../classes/BadReqError";
 import Supplier from "../model/supplier";
 
@@ -29,14 +29,14 @@ class SupplierStore implements SupplierStoreInterface {
       }
 
       const result = await req.execute("sp_insert_supplier");
-      return result.recordset[0] > 0;
+      return result.rowsAffected[0] > 0;
     } catch (err) {
-      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error creating tax : ${err}` } });
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error creating supplier : ${err}` } });
       return error;
     }
   }
 
-  async updateSupplier(payload: SupplierPayload): Promise<boolean | BadRequestError> {
+  async updateSupplier(payload: UpdateSupplierPayload): Promise<boolean | BadRequestError> {
     try {
       const req = this._dbConn.request();
 
@@ -45,9 +45,9 @@ class SupplierStore implements SupplierStoreInterface {
       }
 
       const result = await req.execute("sp_update_supplier");
-      return result.recordset[0] > 0;
+      return result.rowsAffected[0] > 0;
     } catch (err) {
-      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error creating tax : ${err}` } });
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error updating supplier : ${err}` } });
       return error;
     }
   }
@@ -55,9 +55,9 @@ class SupplierStore implements SupplierStoreInterface {
   async deleteSupplier(id: string): Promise<boolean | BadRequestError> {
     try {
       const res = await this._dbConn.request().input("id", id).execute("sp_delete_supplier");
-      return res.recordset[0] > 0;
+      return res.rowsAffected[0] > 0;
     } catch (err) {
-      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error creating tax : ${err}` } });
+      const error = new BadRequestError({ code: 400, message: "Internal server error", context: { error: `Error deleting supplier : ${err}` } });
       return error;
     }
   }

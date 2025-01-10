@@ -15,6 +15,7 @@ class AdminController {
 
   register = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const roleReq = req.query as { role: string };
       const payload = req.body as RegisterPayload;
       const response = await this._store.findAdmin(payload.email);
 
@@ -33,8 +34,14 @@ class AdminController {
       // create hash password
       const hashedPass = await bcrypt.hash(payload.password, 10);
 
+      let newAdmin: Admin;
       // register new admin
-      const newAdmin = new Admin(payload.name, hashedPass, payload.email, payload.phone_number);
+      if (roleReq.role === "manager") {
+        newAdmin = new Admin(payload.name, hashedPass, payload.email, payload.phone_number, "manager");
+      } else {
+        newAdmin = new Admin(payload.name, hashedPass, payload.email, payload.phone_number, "admin");
+      }
+
       const insertRes = await this._store.insertAdmin(newAdmin);
 
       // Internal Server Error
@@ -86,6 +93,80 @@ class AdminController {
 
         return res.status(200).setHeader("Content-Type", "application/json").json({ message: "Login successful", token: token });
       }
+    } catch (err) {
+      const error = new BadRequestError({ code: 500, message: `Internal server error : ${err}` });
+      next(error);
+    }
+  };
+
+  createAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const payload = req.body as Admin;
+      const queryRes = await this._store.insertAdmin(payload);
+
+      if (queryRes instanceof BadRequestError) {
+        return next(queryRes);
+      }
+
+      if (!queryRes) {
+        const error = new BadRequestError({ code: 500, message: "Something went wrong.", context: { error: "No rows are created" } });
+        return next(error);
+      }
+
+      res.status(200).json({ message: "success" });
+    } catch (err) {
+      const error = new BadRequestError({ code: 500, message: `Internal server error : ${err}` });
+      next(error);
+    }
+  };
+
+  updateAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const payload = req.body as Admin;
+      const queryRes = await this._store.updateAdmin(payload);
+
+      if (queryRes instanceof BadRequestError) {
+        return next(queryRes);
+      }
+
+      if (!queryRes) {
+        const error = new BadRequestError({ code: 500, message: "Something went wrong.", context: { error: "No rows are created" } });
+        return next(error);
+      }
+
+      res.status(200).json({ message: "success" });
+    } catch (err) {
+      const error = new BadRequestError({ code: 500, message: `Internal server error : ${err}` });
+      next(error);
+    }
+  };
+
+  deleteAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const payload = req.query as { id: string };
+      const queryRes = await this._store.deleteAdmin(payload.id);
+
+      if (queryRes instanceof BadRequestError) {
+        return next(queryRes);
+      }
+
+      if (!queryRes) {
+        const error = new BadRequestError({ code: 500, message: "Something went wrong.", context: { error: "No rows are created" } });
+        return next(error);
+      }
+
+      res.status(200).json({ message: "success" });
+    } catch (err) {
+      const error = new BadRequestError({ code: 500, message: `Internal server error : ${err}` });
+      next(error);
+    }
+  };
+
+  viewAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const queryRes = await this._store.getAllAdmin();
+
+      return res.status(200).json({ admins: queryRes });
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: `Internal server error : ${err}` });
       next(error);

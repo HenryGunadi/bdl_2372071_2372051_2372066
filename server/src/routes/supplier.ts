@@ -13,15 +13,15 @@ const supplierRouter = (db: DB): Router => {
   });
 
   router.post("/create", (req: Request, res: Response, next: NextFunction) => {
-    supplierController.viewSupplier(req, res, next);
+    supplierController.createSupplier(req, res, next);
   });
 
   router.patch("/update", (req: Request, res: Response, next: NextFunction) => {
-    supplierController.viewSupplier(req, res, next);
+    supplierController.updateSupplier(req, res, next);
   });
 
   router.delete("/delete", (req: Request, res: Response, next: NextFunction) => {
-    supplierController.viewSupplier(req, res, next);
+    supplierController.deleteSupplier(req, res, next);
   });
 
   return router;

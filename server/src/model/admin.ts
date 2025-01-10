@@ -5,14 +5,16 @@ class Admin {
   private _email: string;
   private _phone_number: string;
   private _created_at: Date | undefined = undefined;
+  private _role: string;
 
-  constructor(name: string, password: string, email: string, phone_number: string, created_at?: Date, id?: string) {
+  constructor(name: string, password: string, email: string, phone_number: string, role: string, created_at?: Date, id?: string) {
     this._id = id;
     this._name = name;
     this._password = password;
     this._email = email;
     this._phone_number = phone_number;
     this._created_at = created_at;
+    this._role = role;
   }
 
   // Getters
@@ -40,9 +42,17 @@ class Admin {
     return this._created_at;
   }
 
+  get role(): string {
+    return this._role;
+  }
+
   // Setters
   set id(value: string) {
     this._id = value;
+  }
+
+  set role(value: string) {
+    this._role = value;
   }
 
   set name(value: string) {

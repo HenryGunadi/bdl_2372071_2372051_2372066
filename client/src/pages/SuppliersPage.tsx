@@ -1,29 +1,83 @@
 import React, { useEffect } from "react";
-import AddForm from "../components/CRUD/AddForm";
-import EditForm from "../components/CRUD/EditForm";
+import Form from "../components/CRUD/Form";
 import DeleteModal from "../components/CRUD/DeleteModal";
-import { viewSupplier } from "../utils/supplierUtils";
-import { Supplier } from "../types/types";
+import { createSupplier, deleteSupplier, updateSupplier, viewSupplier } from "../utils/supplierUtils";
+import { ModalType, Supplier, SupplierPayload, UpdateSupplierPayload } from "../types/types";
+import { UpdatePayload } from "vite/types/hmrPayload.js";
 
 const SuppliersPage: React.FC = () => {
   const [suppliers, setSuppliers] = React.useState<Supplier[]>([]);
+  const [makeSupplier, setMakeSupplier] = React.useState<SupplierPayload>({
+    name: "",
+    phone_number: "",
+    email: "",
+    address: "",
+    country: "",
+    city: "",
+    postal_code: "",
+  });
+  const [editSupplier, setEditSupplier] = React.useState<UpdateSupplierPayload>({
+    id: "",
+    name: null,
+    phone_number: null,
+    email: null,
+    address: null,
+    country: null,
+    city: null,
+    postal_code: null,
+  });
   const [showAddForm, setShowAddForm] = React.useState(false);
   const [showEditForm, setShowEditForm] = React.useState(false);
-  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+  const [showDeleteModal, setShowDeleteModal] = React.useState<ModalType>({
+    valueId: "",
+    show: false,
+  });
 
-  const handleAdd = (data: { name: string; email: string }) => {
-    console.log("Added:", data);
-    setShowAddForm(false);
+  const handleAdd = async (supplier: SupplierPayload) => {
+    try {
+      await createSupplier(supplier);
+
+      console.log("Added:", supplier);
+      await viewSupplier(setSuppliers);
+      alert("Supplier created.");
+      setShowAddForm(false);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleEdit = (data: { id: number; name: string; email: string }) => {
-    console.log("Edited:", data);
-    setShowEditForm(false);
+  const handleDelete = async () => {
+    try {
+      await deleteSupplier(showDeleteModal.valueId);
+
+      // refetch latest data update
+      await viewSupplier(setSuppliers);
+      alert("Supplier deleted.");
+      setShowDeleteModal({ valueId: "", show: false });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleDelete = () => {
-    console.log("Deleted");
-    setShowDeleteModal(false);
+  const handleEdit = async (supplier: UpdateSupplierPayload) => {
+    try {
+      await updateSupplier(supplier);
+      await viewSupplier(setSuppliers);
+      alert("Supplier updated.");
+      setShowEditForm(false);
+      setEditSupplier({
+        id: "",
+        name: null,
+        phone_number: null,
+        email: null,
+        address: null,
+        country: null,
+        city: null,
+        postal_code: null,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // use effects
@@ -44,22 +98,19 @@ const SuppliersPage: React.FC = () => {
         <button onClick={() => setShowAddForm(true)} className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
           Add Supplier
         </button>
-        <button onClick={() => setShowEditForm(true)} className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
-          Edit Supplier
-        </button>
-        <button onClick={() => setShowDeleteModal(true)} className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+        {/* <button onClick={() => setShowDeleteModal(true)} className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
           Delete Supplier
-        </button>
+        </button> */}
       </div>
 
       {/* Add Form */}
-      {showAddForm && <AddForm onSubmit={handleAdd} onCancel={() => setShowAddForm(false)} />}
+      {showAddForm && <Form<SupplierPayload, Supplier[]> datas={suppliers} task="add" item={"Supplier"} data={makeSupplier} setData={setMakeSupplier} onSubmit={handleAdd} onCancel={() => setShowAddForm(false)} />}
 
       {/* Edit Form */}
-      {showEditForm && <EditForm data={{ id: 1, name: "Supplier A", email: "supplierA@example.com" }} onSubmit={handleEdit} onCancel={() => setShowEditForm(false)} />}
+      {showEditForm && <Form<UpdateSupplierPayload, Supplier[]> datas={suppliers} task="update" item={"Supplier"} data={editSupplier} setData={setEditSupplier} onSubmit={handleEdit} onCancel={() => setShowEditForm(false)} />}
 
       {/* Delete Modal */}
-      {showDeleteModal && <DeleteModal valueId="" onDelete={handleDelete} onCancel={() => setShowDeleteModal(false)} />}
+      {showDeleteModal.show && <DeleteModal valueId="" onDelete={handleDelete} onCancel={() => setShowDeleteModal({ valueId: "", show: false })} />}
 
       {/* Table */}
       <div className="bg-white p-4 rounded-lg shadow">
@@ -82,10 +133,24 @@ const SuppliersPage: React.FC = () => {
                     <td className="border px-4 py-2">{supplier.name}</td>
                     <td className="border px-4 py-2">{supplier.email}</td>
                     <td className="border px-4 py-2 text-center space-x-2">
-                      <button onClick={() => setShowEditForm(true)} className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">
+                      <button
+                        onClick={() => {
+                          setEditSupplier((prev) => ({
+                            ...prev,
+                            id: supplier.id,
+                          }));
+                          setShowEditForm(true);
+                        }}
+                        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                      >
                         Edit
                       </button>
-                      <button onClick={() => setShowDeleteModal(true)} className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                      <button
+                        onClick={() => {
+                          setShowDeleteModal({ valueId: supplier.id, show: true });
+                        }}
+                        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                      >
                         Delete
                       </button>
                     </td>

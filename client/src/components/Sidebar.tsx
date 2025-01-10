@@ -44,11 +44,11 @@ const Sidebar: React.FC = () => {
         <MenuItem icon="fa-truck" label="Suppliers" badge={4} to="/suppliers" />
         <MenuItem icon="fa-users" label="Customers" badge={3} to="/customers" />
         <MenuItem icon="fa-box" label="Products" hasSubmenu to="/products" />
-        <MenuItem icon="fa-shopping-cart" label="Transaction" hasSubmenu to="/transactions" />
+        <MenuItem icon="fa-shopping-cart" label="Transaction" hasSubmenu to="/purchase_order" />
         <MenuItem icon="fa-chart-pie" label="Reports" hasSubmenu to="/reports" />
 
         <div className="text-gray-400 uppercase text-xs pt-4">Settings</div>
-        <MenuItem icon="fa-user-friends" label="Users / Employees" badge={3} to="/users" />
+        <MenuItem icon="fa-user-friends" label="Users / Employees" badge={3} to="/admins" />
         <MenuItem icon="fa-cogs" label="Configuration" to="/configuration" />
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import SupplierStore from "../services/supplierStore";
 import BadRequestError from "../classes/BadReqError";
-import { SupplierPayload } from "../types/types";
+import { SupplierPayload, UpdateSupplierPayload } from "../types/types";
 
 class SupplierController {
   private _store: SupplierStore;
@@ -44,7 +44,7 @@ class SupplierController {
 
   updateSupplier = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const payload = req.body as SupplierPayload;
+      const payload = req.body as UpdateSupplierPayload;
       const queryRes = await this._store.updateSupplier(payload);
 
       if (queryRes instanceof BadRequestError) {
