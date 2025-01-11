@@ -5,6 +5,7 @@ import Home from "../pages/Home";
 import ItemDashboard from "../pages/ItemDashboard";
 import AdminPage from "../pages/AdminPage";
 import POPage from "../pages/POPage";
+import InventoryPage from "../pages/InventoryPage";
 
 // Tambahkan halaman lainnya di sini.
 
@@ -50,6 +51,14 @@ const AppRoutes = () => {
           element={
             <DashboardLayout>
               <POPage />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/inventory"
+          element={
+            <DashboardLayout>
+              <InventoryPage />
             </DashboardLayout>
           }
         />

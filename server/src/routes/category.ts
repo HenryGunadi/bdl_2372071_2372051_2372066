@@ -10,7 +10,7 @@ const categoryRouter = (db: DB): Router => {
   const categoryController: CategoryController = new CategoryController(categoryStore);
 
   // get categories
-  router.get("/search", (req: Request, res: Response, next: NextFunction) => {
+  router.get("/view", (req: Request, res: Response, next: NextFunction) => {
     categoryController.getCategories(req, res, next);
   });
 

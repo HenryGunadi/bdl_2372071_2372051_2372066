@@ -43,9 +43,9 @@ const Sidebar: React.FC = () => {
         <MenuItem icon="fa-tachometer-alt" label="Dashboard" to="/" />
         <MenuItem icon="fa-truck" label="Suppliers" badge={4} to="/suppliers" />
         <MenuItem icon="fa-users" label="Customers" badge={3} to="/customers" />
-        <MenuItem icon="fa-box" label="Products" hasSubmenu to="/products" />
-        <MenuItem icon="fa-shopping-cart" label="Transaction" hasSubmenu to="/purchase_order" />
-        <MenuItem icon="fa-chart-pie" label="Reports" hasSubmenu to="/reports" />
+        <MenuItem icon="fa-box" label="Inventory" hasSubmenu to="/inventory" />
+        <MenuItem icon="fa-shopping-cart" label="Purchase Order" hasSubmenu to="/purchase_order" />
+        <MenuItem icon="fa-chart-pie" label="Items" hasSubmenu to="/items" />
 
         <div className="text-gray-400 uppercase text-xs pt-4">Settings</div>
         <MenuItem icon="fa-user-friends" label="Users / Employees" badge={3} to="/admins" />

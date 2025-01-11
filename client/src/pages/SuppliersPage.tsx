@@ -4,6 +4,7 @@ import DeleteModal from "../components/CRUD/DeleteModal";
 import { createSupplier, deleteSupplier, updateSupplier, viewSupplier } from "../utils/supplierUtils";
 import { ModalType, Supplier, SupplierPayload, UpdateSupplierPayload } from "../types/types";
 import { UpdatePayload } from "vite/types/hmrPayload.js";
+import { resetState } from "../utils/commonUtils";
 
 const SuppliersPage: React.FC = () => {
   const [suppliers, setSuppliers] = React.useState<Supplier[]>([]);
@@ -65,20 +66,29 @@ const SuppliersPage: React.FC = () => {
       await viewSupplier(setSuppliers);
       alert("Supplier updated.");
       setShowEditForm(false);
-      setEditSupplier({
-        id: "",
-        name: null,
-        phone_number: null,
-        email: null,
-        address: null,
-        country: null,
-        city: null,
-        postal_code: null,
-      });
+      resetState(setEditSupplier, editSupplier);
     } catch (err) {
       console.error(err);
     }
   };
+
+  function handleUpdate(id: string) {
+    const filteredSupplier = suppliers.filter((supplier) => supplier.id === id);
+    console.log("Filtered supplier : ", filteredSupplier);
+
+    if (suppliers.length > 0) {
+      setEditSupplier({
+        id: id,
+        name: filteredSupplier[0].name,
+        phone_number: filteredSupplier[0].phone_number,
+        email: filteredSupplier[0].email,
+        address: filteredSupplier[0].address,
+        country: filteredSupplier[0].country,
+        city: filteredSupplier[0].city,
+        postal_code: filteredSupplier[0].postal_code,
+      });
+    }
+  }
 
   // use effects
   useEffect(() => {
@@ -104,10 +114,12 @@ const SuppliersPage: React.FC = () => {
       </div>
 
       {/* Add Form */}
-      {showAddForm && <Form<SupplierPayload, Supplier[]> datas={suppliers} task="add" item={"Supplier"} data={makeSupplier} setData={setMakeSupplier} onSubmit={handleAdd} onCancel={() => setShowAddForm(false)} />}
+      {showAddForm && <Form<SupplierPayload, Supplier[], {}, {}> page="supplier" datas={suppliers} task="add" item={"Supplier"} data={makeSupplier} setData={setMakeSupplier} onSubmit={handleAdd} onCancel={() => setShowAddForm(false)} />}
 
       {/* Edit Form */}
-      {showEditForm && <Form<UpdateSupplierPayload, Supplier[]> datas={suppliers} task="update" item={"Supplier"} data={editSupplier} setData={setEditSupplier} onSubmit={handleEdit} onCancel={() => setShowEditForm(false)} />}
+      {showEditForm && (
+        <Form<UpdateSupplierPayload, Supplier[], {}, {}> page="supplier" datas={suppliers} task="update" item={"Supplier"} data={editSupplier} setData={setEditSupplier} onSubmit={handleEdit} onCancel={() => setShowEditForm(false)} />
+      )}
 
       {/* Delete Modal */}
       {showDeleteModal.show && <DeleteModal valueId="" onDelete={handleDelete} onCancel={() => setShowDeleteModal({ valueId: "", show: false })} />}
@@ -135,11 +147,9 @@ const SuppliersPage: React.FC = () => {
                     <td className="border px-4 py-2 text-center space-x-2">
                       <button
                         onClick={() => {
-                          setEditSupplier((prev) => ({
-                            ...prev,
-                            id: supplier.id,
-                          }));
+                          console.log("SUPPLIER ID : ", supplier.id);
                           setShowEditForm(true);
+                          handleUpdate(supplier.id);
                         }}
                         className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
                       >

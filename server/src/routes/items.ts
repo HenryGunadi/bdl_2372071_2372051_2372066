@@ -14,12 +14,12 @@ const itemsRouter = (db: DB): Router => {
   const itemController = new ItemController(itemStore);
 
   // get items
-  router.get("/search", (req: Request, res: Response, next: NextFunction) => {
-    itemController.getItem(req, res, next);
+  router.get("/view", (req: Request, res: Response, next: NextFunction) => {
+    itemController.viewItems(req, res, next);
   });
 
   // add items
-  router.post("/create", imageUpload.single("image"), insertItemValidator, (req: Request, res: Response, next: NextFunction) => {
+  router.post("/create", imageUpload.single("image"), (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const err = new BadRequestError({ code: 400, message: "Invalid item payload validation", context: { error: errors.array() } });
@@ -30,7 +30,7 @@ const itemsRouter = (db: DB): Router => {
   });
 
   // delete item
-  router.delete("/delete", deleteItemValidator, (req: Request, res: Response, next: NextFunction) => {
+  router.delete("/delete", (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const err = new BadRequestError({ code: 400, message: "Invalid item payload validation", context: { error: errors.array() } });
@@ -41,7 +41,7 @@ const itemsRouter = (db: DB): Router => {
   });
 
   // update item
-  router.patch("/update", updateItemValidator, (req: Request, res: Response, next: NextFunction) => {
+  router.post("/update", imageUpload.single("image"), (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const err = new BadRequestError({ code: 400, message: "Invalid register payload validation", context: { error: errors.array() } });

@@ -3,7 +3,7 @@ import Navbar from "./components/Navbar";
 
 function App() {
   return (
-    <div className="box-border">
+    <div className="box-border antialiased">
       <AppRoutes />
     </div>
   );

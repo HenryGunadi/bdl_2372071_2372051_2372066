@@ -35,7 +35,7 @@ class InventoryStore implements InventoryStoreInterface {
 
   async updateInventory(value: UpdateInventoryPayload): Promise<boolean | BadRequestError> {
     try {
-      const res = await this._dbConn.request().input("id", sql.Int, value.id).input("quantity", value.quantity).execute("sp_update_inventory");
+      const res = await this._dbConn.request().input("item_id", sql.VarChar, value.item_id).input("quantity", value.quantity).input("add_stock", sql.Bit, 0).input("exp_date", sql.DateTime, value.exp_date).execute("sp_update_inventory");
 
       const success = res.rowsAffected[0] > 0;
       return success;
@@ -45,9 +45,9 @@ class InventoryStore implements InventoryStoreInterface {
     }
   }
 
-  async deleteInventory(id: number): Promise<boolean | BadRequestError> {
+  async deleteInventory(itemID: string): Promise<boolean | BadRequestError> {
     try {
-      const res = await this._dbConn.request().input("id", id).execute("sp_delete_inventory");
+      const res = await this._dbConn.request().input("item_id", itemID).execute("sp_delete_inventory");
 
       const success = res.rowsAffected[0] > 0;
       return success;

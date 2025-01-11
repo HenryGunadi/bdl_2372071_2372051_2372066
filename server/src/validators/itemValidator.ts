@@ -43,6 +43,4 @@ export const updateItemValidator = [
     .withMessage("Discount must be a number between 0 and 100, or null"),
 
   body("image_url").optional().isURL().withMessage("Image URL must be a valid URL"),
-
-  body("category_id").optional().isString().withMessage("Category ID must be a string"),
 ];

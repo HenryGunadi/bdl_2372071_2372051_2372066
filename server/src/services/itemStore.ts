@@ -1,5 +1,5 @@
 import sql from "mssql";
-import { ItemStoreInterface, SearchParameterPayload, UpdateItemPayload } from "../types/types";
+import { ItemStoreInterface, UpdateItemPayload } from "../types/types";
 import BadRequestError from "../classes/BadReqError";
 import Item from "../model/item";
 
@@ -10,41 +10,11 @@ export class ItemStore implements ItemStoreInterface {
     this._dbConn = dbConn;
   }
 
-  async getItems(searchParameter: SearchParameterPayload): Promise<sql.IRecordSet<Item> | BadRequestError> {
+  async viewItems(): Promise<sql.IRecordSet<Item> | BadRequestError> {
     try {
-      let query = "SELECT * FROM items";
-      const parameters: any[] = [];
-      let whereClause: string[] = [];
+      const result = await this._dbConn.request().query("SELECT * FROM view_category_item");
 
-      if (searchParameter.name) {
-        whereClause.push("nama = @nama");
-        parameters.push({ name: "nama", value: searchParameter.name });
-      }
-
-      if (searchParameter.qrcode) {
-        whereClause.push("qrcode = @qrcode");
-        parameters.push({ name: "qrcode", value: searchParameter.qrcode });
-      }
-
-      if (searchParameter.category_id) {
-        whereClause.push("category_id = @category_id");
-        parameters.push({ name: "category_id", value: searchParameter.category_id });
-      }
-
-      if (whereClause.length > 0) {
-        query += " WHERE " + whereClause.join(" AND ");
-      }
-
-      const res = this._dbConn.request();
-
-      parameters.forEach((param) => {
-        const sqlType = param.name === "category_id" ? sql.Int : sql.VarChar;
-        res.input(param.name, sqlType, param.value);
-      });
-
-      const response = await res.query(query);
-
-      return response.recordset;
+      return result.recordset;
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error finding item : ${err}` } });
       return error;
@@ -76,17 +46,20 @@ export class ItemStore implements ItemStoreInterface {
 
   async updateItem(udpateValues: UpdateItemPayload): Promise<boolean | BadRequestError> {
     try {
-      const res = this._dbConn.request();
-      const parameters: { name: string; value: string }[] = [];
+      const res = await this._dbConn
+        .request()
+        .input("id", udpateValues.id)
+        .input("nama", udpateValues.nama)
+        .input("qrcode", udpateValues.qrcode)
+        .input("price", udpateValues.price)
+        .input("supplier_id", udpateValues.supplier_id)
+        .input("description", udpateValues.description)
+        .input("discount", udpateValues.discount)
+        .input("image", udpateValues.image_url)
+        .input("category_id", udpateValues.category_id)
+        .execute("sp_update_item");
 
-      for (const [name, value] of Object.entries(udpateValues)) {
-        const sqlType = typeof value === "string" ? sql.VarChar : typeof value === "number" ? sql.Decimal(10, 2) : sql.DateTime;
-
-        res.input(name, sqlType, value);
-      }
-
-      const result = await res.execute("sp_update_item");
-      return result.rowsAffected[0] > 0;
+      return res.rowsAffected[0] > 0;
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error updating item : ${err}` } });
       return error;

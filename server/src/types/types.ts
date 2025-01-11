@@ -26,7 +26,7 @@ export interface ItemStoreInterface {
   insertItem(item: Item): Promise<boolean | BadRequestError>;
   updateItem(updateValues: UpdateItemPayload): Promise<boolean | BadRequestError>;
   deleteItem(id: string): Promise<boolean | BadRequestError>;
-  getItems(searchParameter: SearchParameterPayload): Promise<IRecordSet<Item> | BadRequestError>;
+  viewItems(): Promise<IRecordSet<Item> | BadRequestError>;
 }
 
 export interface CategoryStoreInterface {
@@ -41,7 +41,7 @@ export interface InventoryStoreInterface {
   getInventories(): Promise<IRecordSet<ViewInventory> | BadRequestError>;
   updateInventory(value: UpdateInventoryPayload): Promise<boolean | BadRequestError>;
   insertInventory(inventory: Inventory): Promise<boolean | BadRequestError>;
-  deleteInventory(id: number): Promise<boolean | BadRequestError>;
+  deleteInventory(id: string): Promise<boolean | BadRequestError>;
 }
 
 export interface ReceiptStoreInterface {
@@ -165,8 +165,9 @@ export type CreateReceiptPayload = {
 };
 
 export type UpdateInventoryPayload = {
-  id: number;
+  item_id: string;
   quantity: number;
+  exp_date: Date | null;
 };
 
 export type InsertInventoryPayload = {
@@ -176,7 +177,7 @@ export type InsertInventoryPayload = {
 };
 
 export type ViewInventory = {
-  inventory_id: number;
+  id: number;
   item_id: string;
   quantity: number;
   last_updated: Date;
@@ -228,12 +229,6 @@ export type UpdateItemPayload = {
   discount?: number | null;
   image_url?: string;
   category_id?: string;
-};
-
-export type SearchParameterPayload = {
-  name: string;
-  category_id: string;
-  qrcode: string;
 };
 
 export type FindItemByName = {

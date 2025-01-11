@@ -4,9 +4,27 @@ export type CreateItemPayload = {
   price: number;
   supplier_id: string;
   description: string;
-  discount: number | null;
+  discount: number;
   image: File | null;
-  category_id: string;
+  category_id: number;
+};
+
+export type UpdateItemPayload = {
+  id: string;
+  nama: string;
+  qrcode: string;
+  price: number;
+  supplier_id: string;
+  description: string;
+  discount: number;
+  image: File | null;
+  category_id: number;
+};
+
+export type Category = {
+  id: number;
+  category_name: string;
+  created_at: Date;
 };
 
 export type Items = {
@@ -20,6 +38,20 @@ export type Items = {
   category_id: number;
   qrcode: string;
   supplier_id: string;
+};
+
+export type AllItems = {
+  id: string;
+  nama: string;
+  description: string;
+  created_at: string;
+  image_url: string;
+  discount: number;
+  price: number;
+  category_id: number;
+  qrcode: string;
+  supplier_id: string;
+  category_name: string;
 };
 
 export type Supplier = {
@@ -88,18 +120,6 @@ export type AdminPayload = {
   role: string | null;
 };
 
-export type PO = {
-  id: string;
-  payment_method: string;
-  currency: string;
-  total_subtotal: number;
-  total_discount: number;
-  total_tax: number;
-  total_amount_due: number;
-  supplier_id: string;
-  status: "Ongoing" | "Accepted" | "Terminated";
-};
-
 export type CreatePO = {
   payment_method: string;
   currency: string;
@@ -113,11 +133,23 @@ export type CreatePO = {
         quantity: number;
         unit_price: number;
         discount: number;
-        exp_date: Date;
+        exp_date: Date | null;
       }>
     | []; // Allow items to be either an array of objects or an empty array
   supplier_id: string;
   status: string;
+};
+
+export type PO = {
+  id: string;
+  payment_method: string;
+  currency: string;
+  total_subtotal: number;
+  total_discount: number;
+  total_tax: number;
+  total_amount_due: number;
+  supplier_id: string;
+  status: "Ongoing" | "Accepted" | "Terminated";
 };
 
 export type UpdatePO = {
@@ -130,6 +162,14 @@ export type UpdatePO = {
   total_amount_due: number | null;
   supplier_id: string | null;
   status: string | null;
+};
+
+export type PODetailPayload = {
+  item_id: string;
+  quantity: number;
+  unit_price: number;
+  discount: number;
+  exp_date: Date | null;
 };
 
 export type PODetails = {
@@ -151,5 +191,23 @@ export type UpdatePODetails = {
   unit_price: number | null;
   discount: number | null;
   total: number | null;
+  exp_date: Date | null;
+};
+
+export type Inventory = {
+  id: number;
+  item_id: string;
+  quantity: number;
+  last_updated: Date;
+  exp_date: Date;
+  nama: string;
+  image_urlL: string;
+  category_id: string;
+  category_name: string;
+};
+
+export type InventoryPayload = {
+  item_id: string;
+  quantity: number;
   exp_date: Date | null;
 };

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ItemStore } from "../services/itemStore";
 import BadRequestError from "../classes/BadReqError";
-import { CreateItemPayload, FindItemByName, GetItemsByCategory, SearchParameterPayload, UpdateItemPayload } from "../types/types";
+import { CreateItemPayload, FindItemByName, GetItemsByCategory, UpdateItemPayload } from "../types/types";
 import Item from "../model/item";
 import multer from "multer";
 
@@ -18,7 +18,7 @@ class ItemController {
     try {
       const payload: CreateItemPayload = req.body;
 
-      console.log("PAYLOAD FROM FORMDATA? : ", payload);
+      console.log("PAYLOAD FROM FORMDATA? : ");
 
       const imageURL = req.file ? req.file.path : "";
       const formattedImageURL = imageURL.split("\\").pop() || "";
@@ -71,17 +71,9 @@ class ItemController {
     }
   };
 
-  getItem = async (req: Request, res: Response, next: NextFunction) => {
+  viewItems = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { name, category_id, qrcode } = req.query as SearchParameterPayload;
-
-      const searchParams: SearchParameterPayload = {
-        name: name || "",
-        category_id: category_id || "",
-        qrcode: qrcode || "",
-      };
-
-      const queryRes = await this._store.getItems(searchParams);
+      const queryRes = await this._store.viewItems();
 
       if (queryRes instanceof BadRequestError) {
         return next(queryRes);
@@ -96,18 +88,29 @@ class ItemController {
 
   updateItem = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const payload = req.body as UpdateItemPayload;
+      const payload: UpdateItemPayload = req.body;
+
+      console.log("UPDATE PAYLOAD FROM FORMDATA? : ");
+
+      const imageURL = req.file ? req.file.path : "";
+      const formattedImageURL = imageURL.split("\\").pop() || "";
+
+      console.log("IMAGE URL : ", formattedImageURL);
+
+      payload.image_url = formattedImageURL;
       const queryRes = await this._store.updateItem(payload);
 
+      // check if there is internal server error
       if (queryRes instanceof BadRequestError) {
         return next(queryRes);
       } else {
+        // check if no rows are affected
         if (!queryRes) {
           const error = new BadRequestError({ code: 500, message: "Something went wrong", context: { error: "No rows are affected" } });
-          return next(error);
+          next(error);
         }
 
-        return res.status(200).json({ message: "success" });
+        return res.status(200).json({ message: "The item has been created successfully" });
       }
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `${err}` } });

@@ -52,6 +52,7 @@ class InventoryController {
   updateInventory = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payload = req.body as UpdateInventoryPayload;
+      console.log("INVENT PAYLOAD BACKEND : ", payload);
 
       const queryRes = await this._store.updateInventory(payload);
 
@@ -74,7 +75,7 @@ class InventoryController {
   deleteInventory = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payload = req.query as { id: string };
-      const queryRes = await this._store.deleteInventory(parseInt(payload.id));
+      const queryRes = await this._store.deleteInventory(payload.id);
 
       if (queryRes instanceof BadRequestError) {
         return next(queryRes);
