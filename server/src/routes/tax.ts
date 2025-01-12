@@ -12,7 +12,7 @@ const taxRouter = (db: DB): Router => {
   const taxStore = new TaxStore(db.getConn());
   const taxController = new TaxController(taxStore);
 
-  router.post("/create", createTaxValidator, (req: Request, res: Response, next: NextFunction) => {
+  router.post("/create", (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const err = new BadRequestError({ code: 400, message: "Invalid tax payload validation", context: { error: errors.array() } });
@@ -22,7 +22,7 @@ const taxRouter = (db: DB): Router => {
     taxController.createTax(req, res, next);
   });
 
-  router.get("/search", (req: Request, res: Response, next: NextFunction) => {
+  router.get("/view", (req: Request, res: Response, next: NextFunction) => {
     taxController.getTax(req, res, next);
   });
 

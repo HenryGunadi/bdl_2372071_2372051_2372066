@@ -22,15 +22,15 @@ export class CategoryStore implements CategoryStoreInterface {
   }
 
   // FIX if sp ready
-  async deleteCategory(category_id: string): Promise<boolean | BadRequestError> {
+  async deleteCategory(category_id: number): Promise<boolean | BadRequestError> {
     try {
-      const res = await this._dbConn.request().input("id", category_id).execute("DELETE FROM category WHERE id = @id");
+      const res = await this._dbConn.request().input("id", sql.Int, category_id).query("DELETE FROM category WHERE id = @id");
 
       // check if any rows are affected
       const success = res.rowsAffected[0] > 0;
       return success;
     } catch (err) {
-      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: "Something went wrong deleting category" } });
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Something went wrong deleting category : ${err}` } });
       return error;
     }
   }

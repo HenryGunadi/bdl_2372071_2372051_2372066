@@ -6,6 +6,7 @@ import Form from "../components/CRUD/Form";
 import { viewSupplier } from "../utils/supplierUtils";
 import { resetState } from "../utils/commonUtils";
 import { viewCategories } from "../utils/categoryUtils";
+import ItemDetailModal from "../components/ItemDetailModal";
 
 function ItemDashboard() {
   const [items, setItems] = useState<AllItems[]>([]);
@@ -37,9 +38,20 @@ function ItemDashboard() {
     id: "",
     show: false,
   });
+  const [showItemDetailModal, setShowItemDetailModal] = useState<{ valueId: string; show: boolean }>({
+    valueId: "",
+    show: false,
+  });
 
   // handlers
   const handleSelectSupplier = (id: string) => {
+    setEditItem((prev) => ({
+      ...prev,
+      supplier_id: id,
+    }));
+  };
+
+  const handleSelectMakeSupplier = (id: string) => {
     setMakeItem((prev) => ({
       ...prev,
       supplier_id: id,
@@ -70,6 +82,13 @@ function ItemDashboard() {
 
     console.log("Im here");
   };
+
+  function toggleItemDetailModal(id: string) {
+    setShowItemDetailModal({
+      valueId: id,
+      show: true,
+    });
+  }
 
   useEffect(() => {
     fetchItems(setItems);
@@ -115,7 +134,7 @@ function ItemDashboard() {
               setShowAddForm(false);
               resetState(setMakeItem, makeItem);
             }}
-            callback={handleSelectSupplier}
+            callback={handleSelectMakeSupplier}
           />
         )}
 
@@ -142,7 +161,19 @@ function ItemDashboard() {
           />
         )}
 
-        <DataTable columns={itemColumns(toggleEditModal)} data={items} filter="category_name" placeholder="Search by category"></DataTable>
+        {showItemDetailModal.show && showItemDetailModal.valueId && (
+          <ItemDetailModal
+            item={items.filter((value, key) => value.id === showItemDetailModal.valueId)[0]}
+            onClose={() => {
+              setShowItemDetailModal({
+                valueId: "",
+                show: false,
+              });
+            }}
+          ></ItemDetailModal>
+        )}
+
+        <DataTable columns={itemColumns(toggleEditModal, toggleItemDetailModal)} data={items} filter="category_name" placeholder="Search by category"></DataTable>
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ import Supplier from "../model/supplier";
 // interfaces
 export interface AdminStoreInterface {
   getAllAdmin(): Promise<IRecordSet<Admin> | BadRequestError>;
-  findAdmin(email: string): Promise<IRecordSet<Admin> | BadRequestError>;
+  findAdmin(email: string): Promise<Admin | null | BadRequestError>;
   insertAdmin(admin: Admin): Promise<boolean | BadRequestError>;
   updateAdmin(admin: Admin): Promise<boolean | BadRequestError>;
   deleteAdmin(id: string): Promise<boolean | BadRequestError>;
@@ -31,7 +31,7 @@ export interface ItemStoreInterface {
 
 export interface CategoryStoreInterface {
   getAllCategories(): Promise<IRecordSet<Category> | BadRequestError>;
-  deleteCategory(category_id: string): Promise<boolean | BadRequestError>;
+  deleteCategory(category_id: number): Promise<boolean | BadRequestError>;
   insertCategory(category: Category): Promise<boolean | BadRequestError>;
   getCategoryByName(category_name: string): Promise<IRecordSet<Category> | BadRequestError>;
   updateCategory(updated_category: UpdateCategoryPayload): Promise<boolean | BadRequestError>;
@@ -46,6 +46,7 @@ export interface InventoryStoreInterface {
 
 export interface ReceiptStoreInterface {
   getReceipt(): Promise<IRecordSet<Receipt> | BadRequestError>;
+  getReceiptDetails(): Promise<IRecordSet<ReceiptDetail> | BadRequestError>;
   createReceipt(receipt: CreateReceiptPayload): Promise<boolean | BadRequestError>;
   deleteReceipt(payload: DeletePOReceiptPayload): Promise<boolean | BadRequestError>;
 }
@@ -61,6 +62,7 @@ export interface ReturnItemsInterface {
   getReturnItems(): Promise<IRecordSet<ReturnItems> | BadRequestError>;
   updateReturnItems(payload: UpdateReturnItemsPayload): Promise<boolean | BadRequestError>;
   deleteReturnItems(id: string): Promise<boolean | BadRequestError>;
+  fetchLatestReturnItems(): Promise<boolean | BadRequestError>;
 }
 
 export interface PurchaseOrderStoreInterface {
@@ -68,6 +70,7 @@ export interface PurchaseOrderStoreInterface {
   deletePO(payload: DeletePOReceiptPayload): Promise<boolean | BadRequestError>;
   updatePO(payload: UpdatePOPayload): Promise<boolean | BadRequestError>;
   getPO(): Promise<IRecordSet<PurchaseOrder> | BadRequestError>;
+  viewPODetails(): Promise<IRecordSet<PODetails> | BadRequestError>;
 }
 
 export interface SupplierStoreInterface {
@@ -76,6 +79,18 @@ export interface SupplierStoreInterface {
   updateSupplier(payload: UpdateSupplierPayload): Promise<boolean | BadRequestError>;
   viewSupplier(): Promise<Supplier[] | BadRequestError>;
 }
+
+export type PODetails = {
+  id: string;
+  purchase_order_id: string;
+  item_id: string;
+  quantity: number;
+  unit_price: number;
+  discount: number;
+  total: number;
+  created_at: Date;
+  exp_date: Date | null;
+};
 
 export type DeletePOReceiptPayload = {
   id: string;
@@ -91,6 +106,17 @@ export type UpdateSupplierPayload = {
   country: string;
   city: string;
   postal_code: string | null;
+};
+
+export type ReceiptDetail = {
+  id: string;
+  items_id: string;
+  receipt_id: string;
+  unit_price: number;
+  quantity: number;
+  unit_discount: number;
+  total: number;
+  created_at?: Date;
 };
 
 export type SupplierPayload = {
@@ -158,8 +184,10 @@ export type CreateReceiptPayload = {
   tax_id: string;
   items: [
     {
-      item_id: string;
+      items_id: string;
       quantity: number;
+      unit_price: number;
+      unit_discount: number;
     }
   ];
 };

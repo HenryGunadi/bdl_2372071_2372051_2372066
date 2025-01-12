@@ -9,7 +9,6 @@ import categoryRouter from "../routes/category";
 import inventoryRouter from "../routes/inventory";
 import taxRouter from "../routes/tax";
 import receiptRouter from "../routes/receipt";
-import returnItemsRouter from "../routes/returnItems";
 import purchaseOrderRouter from "../routes/purchaseOrder";
 import supplierRouter from "../routes/supplier";
 import adminRouter from "../routes/admin";
@@ -40,7 +39,6 @@ export class APIServer {
     this._APIServer.use("/api/inventory", inventoryRouter(this._DB));
     this._APIServer.use("/api/tax", taxRouter(this._DB));
     this._APIServer.use("/api/receipt", receiptRouter(this._DB));
-    this._APIServer.use("/api/return_items", returnItemsRouter(this._DB));
     this._APIServer.use("/api/purchase_order", purchaseOrderRouter(this._DB));
     this._APIServer.use("/api/supplier", supplierRouter(this._DB));
 

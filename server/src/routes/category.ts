@@ -14,9 +14,16 @@ const categoryRouter = (db: DB): Router => {
     categoryController.getCategories(req, res, next);
   });
 
-  // insert new category
-  router.post("/insert", (req: Request, res: Response, next: NextFunction) => {
+  router.post("/create", (req: Request, res: Response, next: NextFunction) => {
     categoryController.insertCategory(req, res, next);
+  });
+
+  router.patch("/update", (req: Request, res: Response, next: NextFunction) => {
+    categoryController.updateCategory(req, res, next);
+  });
+
+  router.delete("/delete", (req: Request, res: Response, next: NextFunction) => {
+    categoryController.deleteCategory(req, res, next);
   });
 
   return router;

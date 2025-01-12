@@ -110,7 +110,7 @@ class ItemController {
           next(error);
         }
 
-        return res.status(200).json({ message: "The item has been created successfully" });
+        return res.status(200).json({ message: "The item has been updated successfully" });
       }
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `${err}` } });

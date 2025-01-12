@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 interface ComboboxProps<TData> {
   data: TData[];
   value?: string;
-  onSelect: (id: string) => void;
+  onSelect: (id: any) => void;
   searchKey: keyof TData;
   task: string;
 }
@@ -52,7 +52,7 @@ const Combobox = <TData extends { [key: string]: any }>({ data, onSelect, search
                 onSelect(item.id);
                 setSearch(item[searchKey]);
                 setOpen(false);
-                alert(`Supplier id : ${item.id}`);
+                alert(`ID : ${item.id}`);
               }}
               className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
             >

@@ -1,7 +1,5 @@
 import React, { SetStateAction, useEffect } from "react";
-import { Button } from "../ui/button";
 import Combobox from "../ui/Combobox";
-import { callbackify } from "util";
 
 interface AddFormProps<T extends { [key: string]: any }, P extends { [key: string]: any }, A extends { [key: string]: any }, B extends { [key: string]: any }> {
   datas?: P;
@@ -88,6 +86,30 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
   const filteredCategory = datas3?.filter((category) => category.id === data.category_id);
   const filteredSupplier = datas2?.filter((supplier) => supplier.id === data.supplier_id);
 
+  const handleCategorySelect = (id: number) => {
+    setData((prev) => ({
+      ...prev,
+      category_id: id,
+    }));
+  };
+
+  const handleDeleteItem = (index: number) => {
+    if (!datas3) return;
+
+    const updatedItems = [...datas3];
+    updatedItems.splice(index, 1);
+
+    setData((prev) => ({
+      ...prev,
+      items: updatedItems,
+    }));
+  };
+
+  useEffect(() => {
+    console.log("FILTERED CATEGORY : ", filteredCategory);
+    console.log("FILTERED supplier : ", filteredSupplier);
+  }, []);
+
   return (
     <div className="bg-white p-6 rounded-lg shadow">
       <h2 className="text-lg font-bold mb-4">
@@ -124,7 +146,8 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
               key !== "items" &&
               key !== "status" &&
               key !== "supplier_id" &&
-              key !== "category_id" && (
+              key !== "category_id" &&
+              key !== "created_at" && (
                 <div key={key}>
                   <label htmlFor={key} className="block text-sm font-medium text-gray-700">
                     {key.charAt(0).toUpperCase() + key.slice(1)}
@@ -133,7 +156,7 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
                   <input
                     required={(task === "add" || task === "update") && page === "item" && key !== "image"}
                     key={key}
-                    type={key === "image" ? "file" : typeof value === "number" ? "number" : key === "exp_date" ? "date" : "text"}
+                    type={key === "image" ? "file" : typeof value === "number" ? "number" : key.includes("date") ? "date" : "text"}
                     name={key}
                     placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
                     value={
@@ -145,6 +168,7 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
                     }
                     onChange={key === "image" ? handleUploadImg : handleChange}
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none"
+                    readOnly={key === "tax_id" && !!value}
                   />
                 </div>
               )
@@ -152,26 +176,32 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
           )}
 
         {/* Conditional Rendering for Combobox */}
-        {page === "po" && datas && (
+        {(page === "po" || page === "receipt") && datas && (
           <div>
-            <Combobox task="Supplier" data={datas2 === undefined ? [] : datas2} onSelect={handleComboboxSelect} searchKey={"name"} />
+            {page !== "receipt" && <Combobox task="Supplier" data={datas2 === undefined ? [] : datas2} onSelect={handleComboboxSelect} searchKey={"name"} />}
 
             <div>
-              {datas3 && datas3?.length > 0 ? (
+              {datas3 && datas3.length > 0 ? (
                 <table className="min-w-full table-auto">
                   <thead>
                     <tr>
                       <th className="px-4 py-2 border">#</th>
                       <th className="px-4 py-2 border">Item ID</th>
                       <th className="px-4 py-2 border">Quantity</th>
+                      <th className="px-4 py-2 border">Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {datas3.map((value, index) => (
                       <tr key={index} className="text-center">
                         <td className="px-4 py-2 border">{index + 1}</td>
-                        <td className="px-4 py-2 border">{value.item_id}</td>
+                        <td className="px-4 py-2 border">{value.item_id ? value.item_id : value.items_id}</td>
                         <td className="px-4 py-2 border">{value.quantity}</td>
+                        <td className="px-4 py-2 border">
+                          <button type="button" onClick={() => handleDeleteItem(index)} className="text-red-600 hover:underline">
+                            Delete
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -181,26 +211,47 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
               )}
             </div>
 
-            <Button className="w-full py-5 shadow-md my-6" variant={"outline"} toggleModal={modal}>
+            <div className="mt-8 p-6 bg-zinc-100 rounded-md shadow-sm">
+              <h3 className="text-lg font-semibold mb-4">Purchase Order Summary</h3>
+              <ul>
+                <li className="flex justify-between py-2 border-b">
+                  <span className="font-medium">Subtotal:</span>
+                  <span>${data.total_subtotal.toFixed(2)}</span>
+                </li>
+                <li className="flex justify-between py-2 border-b">
+                  <span className="font-medium">Discount:</span>
+                  <span>-${data.total_discount.toFixed(2)}</span>
+                </li>
+                <li className="flex justify-between py-2 border-b">
+                  <span className="font-medium">Tax:</span>
+                  <span>${page === "po" ? data.total_tax.toFixed(2) : datas2?.filter((value) => value.id === data.tax_id)[0].tax_rate}</span>
+                </li>
+                <li className="flex justify-between py-2 border-b">
+                  <span className="font-medium">Total Amount Due:</span>
+                  <span className="text-lg font-semibold">${data.total_amount_due ? data.total_amount_due.toFixed(2) : data.total_amount}</span>
+                </li>
+              </ul>
+            </div>
+
+            <button className="w-full py-2 shadow-sm my-6 border rounded-md hover:cursor-pointer hover:bg-zinc-50 duration-150 transition" onClick={modal} type="button">
               + Add Item
-            </Button>
+            </button>
           </div>
         )}
 
         {page === "item" && task === "add" && datas && callback && (
           <div>
-            <Combobox task="Category" data={datas3 === undefined ? [] : datas3} onSelect={callback} searchKey={"category_name"} />
+            <Combobox task="Category" data={datas3 === undefined ? [] : datas3} onSelect={handleCategorySelect} searchKey={"category_name"} />
             <Combobox task="Supplier" data={datas2 === undefined ? [] : datas2} onSelect={callback} searchKey={"name"} />
           </div>
         )}
 
-        {page === "item" ||
-          (task === "update" && datas && callback && filteredCategory && filteredSupplier && (
-            <div>
-              {filteredCategory.length > 0 && <Combobox value={filteredCategory[0].category_name} task="Category" data={datas3 === undefined ? [] : datas3} onSelect={callback} searchKey={"category_name"} />}
-              {filteredSupplier.length > 0 && <Combobox value={filteredSupplier[0].name} task="Supplier" data={datas2 === undefined ? [] : datas2} onSelect={callback} searchKey={"name"} />}
-            </div>
-          ))}
+        {page === "item" && task === "update" && datas && callback && filteredCategory && filteredSupplier && (
+          <div>
+            {filteredCategory.length > 0 && <Combobox value={filteredCategory[0].category_name} task="Category" data={datas3 === undefined ? [] : datas3} onSelect={handleCategorySelect} searchKey={"category_name"} />}
+            {filteredSupplier.length > 0 && <Combobox value={filteredSupplier[0].name} task="Supplier" data={datas2 === undefined ? [] : datas2} onSelect={callback} searchKey={"name"} />}
+          </div>
+        )}
 
         <div className="flex justify-end space-x-2">
           <button type="button" onClick={onCancel} className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500">

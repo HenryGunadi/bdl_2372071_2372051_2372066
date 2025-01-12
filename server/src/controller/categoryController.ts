@@ -85,4 +85,26 @@ export class CategoryController {
       next(error);
     }
   };
+
+  deleteCategory = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const query = req.query as { id: string };
+
+      const queryRes = await this._store.deleteCategory(parseInt(query.id));
+
+      if (queryRes instanceof BadRequestError) {
+        return next(queryRes);
+      } else {
+        if (!queryRes) {
+          const error = new BadRequestError({ code: 500, message: "Something went wrong", context: { error: "No rows are affected" } });
+          return next(error);
+        }
+
+        return res.status(200).setHeader("Content-Type", "application/json").json({ message: "success" });
+      }
+    } catch (err) {
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `${err}` } });
+      next(error);
+    }
+  };
 }

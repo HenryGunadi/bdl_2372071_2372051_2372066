@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import { ModalType, PO, CreatePO, UpdatePO, Supplier, Items, AllItems, PODetailPayload } from "../types/types";
+import { ModalType, PO, CreatePO, UpdatePO, Supplier, AllItems, PODetailPayload, PODetails } from "../types/types";
 import Form from "../components/CRUD/Form";
-import { createPO, deletePO, updatePO, viewPO } from "../utils/poUtils";
+import { createPO, deletePO, updatePO, viewPO, viewPODetails } from "../utils/poUtils";
 import { columns, DataTable } from "../components/table/Table";
 import { viewSupplier } from "../utils/supplierUtils";
-import Combobox from "../components/ui/Combobox";
 import POModal from "../components/CRUD/POModal";
 import { fetchItems } from "../utils/Item";
+import DeleteModal from "../components/CRUD/DeleteModal";
+import { resetState } from "../utils/commonUtils";
+import UpdatePOModal from "../components/CRUD/UpdatePOModal";
+import PODetailModal from "../components/PODetailModal";
 
 const POPage = () => {
-  const [showAddItem, setShowAddItem] = useState<boolean>(false);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [pos, setPOS] = useState<PO[]>([]);
   const [makePO, setMakePO] = useState<CreatePO>({
@@ -34,15 +36,22 @@ const POPage = () => {
     supplier_id: null,
     status: null,
   });
-  const [currentPage, setPage] = useState<number>(1);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showEditForm, setShowEditForm] = useState(false);
+  const [showEditPO, setShowEditPO] = useState<{ valueId: string; show: boolean }>({
+    valueId: "",
+    show: false,
+  });
   const [showDeleteModal, setShowDeleteModal] = useState<ModalType>({
     valueId: "",
     show: false,
   });
   const [items, setItems] = useState<AllItems[]>([]);
   const [openPOItemModal, setOpenPOItemModal] = useState<boolean>(false);
+  const [poDetails, setPODetails] = useState<PODetails[]>([]);
+  const [showPODetail, setShowPODetail] = useState<{ valueId: string; show: boolean }>({
+    valueId: "",
+    show: true,
+  });
 
   // helpers
   const handleAdd = async () => {
@@ -70,14 +79,51 @@ const POPage = () => {
     }
   };
 
+  const handleToggleDelete = (id: string) => {
+    setShowDeleteModal({
+      valueId: id,
+      show: true,
+    });
+  };
+
+  const handleToggleUpdate = (id: string) => {
+    setShowEditPO({
+      valueId: id,
+      show: true,
+    });
+
+    setEditPO((prev) => ({
+      ...prev,
+      id: id,
+      status: "accepted",
+    }));
+  };
+
+  const handleToggleDetail = (id: string) => {
+    setShowPODetail({
+      valueId: id,
+      show: true,
+    });
+  };
+
   const handleUpdate = async () => {
     try {
+      console.log("UPDATE PO VALUE : ", editPO);
+
       await updatePO(editPO);
       await viewPO(setPOS);
       alert("Purchase order updated.");
-      setShowEditForm(false);
+
+      setShowEditPO({
+        valueId: "",
+        show: false,
+      });
     } catch (err) {
       alert(`Error: ${err}`);
+      setShowEditPO({
+        valueId: "",
+        show: false,
+      });
     }
   };
 
@@ -89,10 +135,18 @@ const POPage = () => {
     setOpenPOItemModal(true);
   };
 
+  const handleAddPOItem = (POItem: PODetailPayload) => {
+    setMakePO((prev) => ({
+      ...prev,
+      items: [...prev.items, POItem], // Create a new array with the previous items and the new POItem
+    }));
+  };
+
   // View admins on page load
   useEffect(() => {
     viewPO(setPOS);
     viewSupplier(setSuppliers);
+    viewPODetails(setPODetails);
     fetchItems(setItems);
   }, []);
 
@@ -100,12 +154,9 @@ const POPage = () => {
     console.log("ITEMS IN PO ", items);
   }, [items]);
 
-  const handleAddPOItem = (POItem: PODetailPayload) => {
-    setMakePO((prev) => ({
-      ...prev,
-      items: [...prev.items, POItem], // Create a new array with the previous items and the new POItem
-    }));
-  };
+  // useEffect(() => {
+  //   console.log("POS : ", pos);
+  // }, [pos]);
 
   useEffect(() => {
     if (makePO.items.length > 0) {
@@ -116,7 +167,7 @@ const POPage = () => {
       makePO.items.forEach((item) => {
         subtotal += item.quantity * item.unit_price;
 
-        discount += item.quantity * item.discount;
+        discount += item.unit_price * item.quantity * item.discount;
 
         tax += (item.quantity * item.unit_price - item.discount) * 0.1;
       });
@@ -175,7 +226,42 @@ const POPage = () => {
           />
         )}
 
-        <DataTable columns={columns} data={pos} filter="id"></DataTable>
+        {showDeleteModal.show && (
+          <DeleteModal
+            valueId={showDeleteModal.valueId}
+            onDelete={handleDelete}
+            onCancel={() => {
+              resetState(setShowDeleteModal, showDeleteModal);
+            }}
+          ></DeleteModal>
+        )}
+
+        {showEditPO.show && (
+          <UpdatePOModal
+            onUpdate={handleUpdate}
+            onCancel={() => {
+              setShowEditPO({
+                valueId: "",
+                show: false,
+              });
+            }}
+          ></UpdatePOModal>
+        )}
+
+        {showPODetail.show && showPODetail.valueId && (
+          <PODetailModal
+            po={pos.filter((value, key) => value.id === showPODetail.valueId)[0]}
+            poDetail={poDetails.filter((value, key) => value.purchase_order_id === showPODetail.valueId)}
+            onClose={() => {
+              setShowPODetail({
+                valueId: "",
+                show: false,
+              });
+            }}
+          ></PODetailModal>
+        )}
+
+        <DataTable columns={columns(handleToggleDelete, handleToggleUpdate, handleToggleDetail)} data={pos} filter="status" placeholder="Filter by status"></DataTable>
       </div>
     </div>
   );

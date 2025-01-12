@@ -19,6 +19,7 @@ async function fetchItems(setItem: React.Dispatch<React.SetStateAction<AllItems[
 
 async function createItem(item: CreateItemPayload) {
   try {
+    console.log("ITEM PAYLOAD FRONTEND: ", item);
     const formData = new FormData();
     formData.append("nama", item.nama);
     formData.append("qrcode", item.qrcode);
@@ -63,6 +64,8 @@ export async function deleteItem(id: string) {
 
 export async function updateItem(payload: UpdateItemPayload) {
   try {
+    console.log("UPDATE PAYLOAD FROM FRONTEND : ", payload);
+
     const formData = new FormData();
     formData.append("id", payload.id);
     formData.append("nama", payload.nama);
@@ -83,7 +86,7 @@ export async function updateItem(payload: UpdateItemPayload) {
     });
 
     console.log(response.data);
-    alert("Item Created");
+    alert("Item updated");
     window.location.reload(); // Refresh the page
   } catch (err) {
     console.error(err);

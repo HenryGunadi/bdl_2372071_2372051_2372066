@@ -25,6 +25,21 @@ class PurchaseOrderController {
     }
   };
 
+  viewPODetails = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const queryRes = await this._store.viewPODetails();
+
+      if (queryRes instanceof BadRequestError) {
+        return next(queryRes);
+      }
+
+      return res.status(200).json({ message: "success", purchase_order_details: queryRes });
+    } catch (err) {
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `${err}` } });
+      return error;
+    }
+  };
+
   createPO = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payload = req.body as CreatePOPayload;
@@ -49,6 +64,7 @@ class PurchaseOrderController {
   deletePO = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payload = req.body as DeletePOReceiptPayload;
+      console.log("DELETE PAYLOAD : ", payload);
       const queryRes = await this._store.deletePO(payload);
 
       if (queryRes instanceof BadRequestError) {
@@ -74,15 +90,6 @@ class PurchaseOrderController {
 
       if (queryRes instanceof BadRequestError) {
         return next(queryRes);
-      }
-
-      if (!queryRes) {
-        const error = new BadRequestError({
-          code: 500,
-          message: "Something went wrong updating PO",
-          context: { error: "No rows are updated" },
-        });
-        return next(error);
       }
 
       return res.status(200).json({ message: "success" });

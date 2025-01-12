@@ -106,9 +106,10 @@ const AdminPage = () => {
 
         {/* Add Form */}
         {showAddForm && (
-          <Form<CreateAdmin, Admin[]>
+          <Form<CreateAdmin, Admin[], {}, {}>
             datas={admins}
             task="add"
+            page="admin"
             item={"Admin"}
             data={makeAdmin}
             setData={setMakeAdmin}
@@ -122,7 +123,8 @@ const AdminPage = () => {
 
         {/* Edit Form */}
         {showEditForm && (
-          <Form<AdminPayload, Admin[]>
+          <Form<AdminPayload, Admin[], {}, {}>
+            page="admin"
             datas={admins}
             task="update"
             item={"Admin"}

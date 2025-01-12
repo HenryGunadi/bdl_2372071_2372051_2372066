@@ -3,6 +3,7 @@ import BadRequestError from "../classes/BadReqError";
 import Admin from "../model/admin";
 import { AdminStoreInterface } from "../types/types";
 import sql, { IRecordSet } from "mssql";
+import bcrypt from "bcrypt";
 
 class AdminStore implements AdminStoreInterface {
   private _dbConn: sql.ConnectionPool;
@@ -21,17 +22,19 @@ class AdminStore implements AdminStoreInterface {
     }
   }
 
-  async findAdmin(email: string): Promise<IRecordSet<Admin> | BadRequestError> {
+  async findAdmin(email: string): Promise<Admin | null | BadRequestError> {
     try {
-      // check if admin exists
-      const res = await this._dbConn.request().input("email", sql.NVarChar, email).query("SELECT * FROM admin WHERE email = @email");
+      const res = await this._dbConn.request().input("email", sql.VarChar, email).query("SELECT * FROM admin WHERE email = @email");
 
       if (res.recordset.length === 0) {
-        // check if return result is empty
-        console.log("Admin doesnt exists.");
+        console.log("Admin doesn't exist.");
+        return null; // return null if admin doesnt exist
       }
 
-      return res.recordset;
+      const adminData = res.recordset[0];
+      const admin = new Admin(adminData.name, adminData.password, adminData.email, adminData.phone_number, adminData.role, adminData.created_at, adminData.id);
+
+      return admin;
     } catch (err) {
       console.error("Error finding admin: ", err);
       const error = new BadRequestError({ code: 500, message: `Internal server error`, context: { error: err } });
@@ -41,7 +44,12 @@ class AdminStore implements AdminStoreInterface {
 
   async insertAdmin(admin: Admin): Promise<boolean | BadRequestError> {
     try {
-      const res = await this._dbConn.request().input("name", admin.name).input("password", admin.password).input("email", admin.email).input("phone_number", admin.phone_number).input("role", admin.role).execute("sp_insert_admin");
+      // create hash passwordc
+      console.log("PASS FROM INSERT ADMIN : ", admin.password);
+      const hashedPass = await bcrypt.hash(admin.password, 10);
+      console.log("HASHED PASS FROM INSERT ADMIN : ", hashedPass);
+
+      const res = await this._dbConn.request().input("name", admin.name).input("password", hashedPass).input("email", admin.email).input("phone_number", admin.phone_number).input("role", admin.role).execute("sp_insert_admin");
 
       // check if insert success
       const success = res.rowsAffected[0] > 0;

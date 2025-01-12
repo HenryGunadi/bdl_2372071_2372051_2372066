@@ -1,12 +1,12 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 interface MenuItemProps {
   icon: string;
   label: string;
   badge?: number;
   hasSubmenu?: boolean;
-  to: string; // Tambahkan properti untuk link
+  to: string;
 }
 
 const MenuItem: React.FC<MenuItemProps> = ({ icon, label, badge, hasSubmenu, to }) => {
@@ -23,6 +23,16 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon, label, badge, hasSubmenu, to 
 };
 
 const Sidebar: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Remove the token from localStorage
+    localStorage.removeItem("token");
+
+    // Redirect to the login page
+    navigate("/login");
+  };
+
   return (
     <div className="bg-gray-800 w-64 min-h-screen text-white flex flex-col">
       {/* Header */}
@@ -32,24 +42,28 @@ const Sidebar: React.FC = () => {
         <p className="text-green-400 text-sm">Online</p>
       </div>
 
-      {/* Search */}
-      <div className="p-4">
-        <input type="text" placeholder="Search..." className="w-full px-4 py-2 text-sm text-gray-200 bg-gray-700 rounded-lg placeholder-gray-400 focus:outline-none" />
-      </div>
-
       {/* Menu */}
       <div className="p-4 space-y-4">
         <div className="text-gray-400 uppercase text-xs">Main Menu</div>
         <MenuItem icon="fa-tachometer-alt" label="Dashboard" to="/" />
-        <MenuItem icon="fa-truck" label="Suppliers" badge={4} to="/suppliers" />
-        <MenuItem icon="fa-users" label="Customers" badge={3} to="/customers" />
+        <MenuItem icon="fa-truck" label="Suppliers" to="/suppliers" />
+        <MenuItem icon="fa-users" label="Tax" to="/tax" />
         <MenuItem icon="fa-box" label="Inventory" hasSubmenu to="/inventory" />
         <MenuItem icon="fa-shopping-cart" label="Purchase Order" hasSubmenu to="/purchase_order" />
         <MenuItem icon="fa-chart-pie" label="Items" hasSubmenu to="/items" />
+        <MenuItem icon="fa-chart-pie" label="Transaction" hasSubmenu to="/transaction" />
+        <MenuItem icon="fa-chart-pie" label="Category" hasSubmenu to="/category" />
 
         <div className="text-gray-400 uppercase text-xs pt-4">Settings</div>
-        <MenuItem icon="fa-user-friends" label="Users / Employees" badge={3} to="/admins" />
-        <MenuItem icon="fa-cogs" label="Configuration" to="/configuration" />
+        <MenuItem icon="fa-user-friends" label="Users / Employees" to="/admins" />
+      </div>
+
+      {/* Logout Button */}
+      <div className="p-4 mt-auto border-t border-gray-700">
+        <button onClick={handleLogout} className="w-full px-4 py-2 text-left text-gray-400 hover:bg-gray-700 hover:text-white rounded-lg flex items-center gap-2">
+          <i className="fa-solid fa-sign-out-alt"></i>
+          Logout
+        </button>
       </div>
     </div>
   );

@@ -13,11 +13,15 @@ const purchaseOrderRouter = (db: DB): Router => {
     purchaseOrderController.getPO(req, res, next);
   });
 
+  router.get("/view_details", (req: Request, res: Response, next: NextFunction) => {
+    purchaseOrderController.viewPODetails(req, res, next);
+  });
+
   router.post("/create", (req: Request, res: Response, next: NextFunction) => {
     purchaseOrderController.createPO(req, res, next);
   });
 
-  router.delete("/delete", (req: Request, res: Response, next: NextFunction) => {
+  router.post("/delete", (req: Request, res: Response, next: NextFunction) => {
     purchaseOrderController.deletePO(req, res, next);
   });
 

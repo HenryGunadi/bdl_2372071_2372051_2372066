@@ -9,11 +9,11 @@ import { Checkbox } from "../ui/checkbox";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Input } from "../ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import { Inventory, Items, PO } from "../../types/types";
+import { Category, Inventory, Items, PO, Receipt, ReturnItems } from "../../types/types";
 import { deleteItem, fetchItems } from "../../utils/Item";
 import { deleteInventory } from "../../utils/inventoryUtils";
 
-export const columns: ColumnDef<PO>[] = [
+export const columns = (toggleDelete: (id: string) => void, toggleUpdate: (id: string) => void, toggleDetail: (id: string) => void): ColumnDef<PO>[] => [
   {
     id: "select",
     header: ({ table }) => <Checkbox checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")} onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)} aria-label="Select all" />,
@@ -81,9 +81,27 @@ export const columns: ColumnDef<PO>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem onClick={() => navigator.clipboard.writeText(po.id)}>Copy PO ID</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View purchase order details</DropdownMenuItem>
-            <DropdownMenuItem>Update Order</DropdownMenuItem>
-            <DropdownMenuItem>Delete Order</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                toggleDetail(row.getValue("id"));
+              }}
+            >
+              View purchase order details
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                toggleUpdate(row.getValue("id"));
+              }}
+            >
+              Accept Order
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                toggleDelete(row.getValue("id"));
+              }}
+            >
+              Delete Order
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -91,7 +109,7 @@ export const columns: ColumnDef<PO>[] = [
   },
 ];
 
-export const itemColumns = (toggleModal: (id: string) => void): ColumnDef<Items>[] => [
+export const itemColumns = (toggleModal: (id: string) => void, toggleDetail: (id: string) => void): ColumnDef<Items>[] => [
   {
     id: "select",
     header: ({ table }) => <Checkbox checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")} onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)} aria-label="Select all" />,
@@ -164,7 +182,13 @@ export const itemColumns = (toggleModal: (id: string) => void): ColumnDef<Items>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem onClick={() => navigator.clipboard.writeText(po.id)}>Copy Item ID</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View item details</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                toggleDetail(row.getValue("id"));
+              }}
+            >
+              View item details
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
                 toggleModal(row.getValue("id"));
@@ -186,6 +210,136 @@ export const itemColumns = (toggleModal: (id: string) => void): ColumnDef<Items>
   },
 ];
 
+export const receiptColumns = (toggleDetail: (itemID: string) => void, toggleDelete: (id: string) => void): ColumnDef<Receipt>[] => [
+  {
+    id: "select",
+    header: ({ table }) => <Checkbox checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")} onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)} aria-label="Select all" />,
+    cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "receipt_id",
+    header: "Receipt ID",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("receipt_id")}</div>,
+  },
+  {
+    accessorKey: "payment_method",
+    header: "Payment Method",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("payment_method")}</div>,
+  },
+  {
+    accessorKey: "tax_id",
+    header: "tax_id",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("tax_id")}</div>,
+  },
+  {
+    accessorKey: "total_amount",
+    header: "Total Amount",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("total_amount")}</div>,
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const receipt = row.original;
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(String(receipt.receipt_id))}>Copy Inventory ID</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => {
+                toggleDetail(row.getValue("receipt_id"));
+              }}
+            >
+              View receipt details
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                toggleDelete(row.getValue("receipt_id"));
+              }}
+            >
+              Delete receipt
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
+];
+
+export const categoryColumn = (toggleEditModal: (itemID: number) => void, toggleDeleteModal: (id: number) => void): ColumnDef<Category>[] => [
+  {
+    id: "select",
+    header: ({ table }) => <Checkbox checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")} onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)} aria-label="Select all" />,
+    cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "id",
+    header: "Item ID",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("id")}</div>,
+  },
+  {
+    accessorKey: "category_name",
+    header: "Item ID",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("category_name")}</div>,
+  },
+  {
+    accessorKey: "created_at",
+    header: "Item ID",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("created_at")}</div>,
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const category = row.original;
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(String(category.id))}>Copy Category ID</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => {
+                console.log("CATEGORY FROM TABLE : ", category.id);
+
+                toggleEditModal(category.id);
+              }}
+            >
+              Update category
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                toggleDeleteModal(category.id);
+              }}
+            >
+              Delete category
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
+];
 export const inventoryColumns = (toggleModal: (itemID: string) => void): ColumnDef<Inventory>[] => [
   {
     id: "select",
@@ -377,12 +531,24 @@ export function DataTable<TData, TValue>({ columns, data, filter, placeholder }:
           {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
         <div className="space-x-2">
-          <Button variant="outline" size="lg" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-            Previous
-          </Button>
-          <Button variant="outline" size="lg" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-            Next
-          </Button>
+          <div className="space-x-2">
+            <div className="flex items-center justify-end space-x-2 py-4">
+              <Button variant="outline" size="lg" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => {
+                  console.log("HELLO");
+                  table.nextPage();
+                }}
+                disabled={!table.getCanNextPage()}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

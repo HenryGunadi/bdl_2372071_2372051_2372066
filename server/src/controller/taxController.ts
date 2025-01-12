@@ -29,6 +29,7 @@ class TaxController {
   createTax = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payload = req.body as TaxPayload;
+      console.log("TAX PAYLOAD BACKEND : ", payload);
       const newTax = new Tax(payload.tax_rate, payload.start_date, payload.end_date);
 
       const queryRes = await this._store.createTax(newTax);
