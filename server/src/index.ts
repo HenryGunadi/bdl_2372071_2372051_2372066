@@ -1,7 +1,7 @@
 import { APIServer } from "../src/api/server";
 import { DB } from "../src/db/db";
 import { config } from "./env/config";
-import AdminStore from "./services/adminStore";
+import AdminStore from "./services/adminDao";
 
 const startServer = async () => {
   const db = new DB(config);

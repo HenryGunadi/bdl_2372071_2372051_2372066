@@ -5,7 +5,7 @@ import { AdminStoreInterface } from "../types/types";
 import sql, { IRecordSet } from "mssql";
 import bcrypt from "bcrypt";
 
-class AdminStore implements AdminStoreInterface {
+class AdminDao implements AdminStoreInterface {
   private _dbConn: sql.ConnectionPool;
 
   constructor(dbConn: sql.ConnectionPool) {
@@ -95,4 +95,4 @@ class AdminStore implements AdminStoreInterface {
   }
 }
 
-export default AdminStore;
+export default AdminDao;

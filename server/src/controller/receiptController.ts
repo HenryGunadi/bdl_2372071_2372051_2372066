@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import ReceiptStore from "../services/receiptStore";
+import ReceiptStore from "../services/receiptDao";
 import BadRequestError from "../classes/BadReqError";
 import { CreateReceiptPayload, DeletePOReceiptPayload } from "../types/types";
 

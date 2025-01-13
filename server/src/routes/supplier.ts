@@ -1,12 +1,12 @@
 import { DB } from "../db/db";
 import express, { NextFunction, Request, Response, Router } from "express";
-import SupplierStore from "../services/supplierStore";
+import SupplierDao from "../services/supplierDao";
 import SupplierController from "../controller/supplierController";
 
 const supplierRouter = (db: DB): Router => {
   const router = express.Router();
-  const supplierStore = new SupplierStore(db.getConn());
-  const supplierController = new SupplierController(supplierStore);
+  const supplierDao = new SupplierDao(db.getConn());
+  const supplierController = new SupplierController(supplierDao);
 
   router.get("/view", (req: Request, res: Response, next: NextFunction) => {
     supplierController.viewSupplier(req, res, next);

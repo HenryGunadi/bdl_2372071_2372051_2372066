@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import SupplierStore from "../services/supplierStore";
+import SupplierStore from "../services/supplierDao";
 import BadRequestError from "../classes/BadReqError";
 import { SupplierPayload, UpdateSupplierPayload } from "../types/types";
 

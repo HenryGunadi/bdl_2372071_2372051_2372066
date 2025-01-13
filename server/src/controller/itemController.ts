@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ItemStore } from "../services/itemStore";
+import { ItemDao } from "../services/itemDao";
 import BadRequestError from "../classes/BadReqError";
 import { CreateItemPayload, FindItemByName, GetItemsByCategory, UpdateItemPayload } from "../types/types";
 import Item from "../model/item";
@@ -8,9 +8,9 @@ import multer from "multer";
 // NOTE : Still confused on how to identify unique item when inserting
 
 class ItemController {
-  private _store: ItemStore;
+  private _store: ItemDao;
 
-  constructor(store: ItemStore) {
+  constructor(store: ItemDao) {
     this._store = store;
   }
 

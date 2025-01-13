@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import TaxStore from "../services/taxStore";
+import TaxStore from "../services/taxDao";
 import BadRequestError from "../classes/BadReqError";
 import { TaxPayload } from "../types/types";
 import Tax from "../model/tax";

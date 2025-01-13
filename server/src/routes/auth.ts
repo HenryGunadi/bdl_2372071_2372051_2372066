@@ -1,6 +1,6 @@
 import "express-async-errors"; // handle catching async errors
 import express, { NextFunction, Request, Response, Router } from "express";
-import AdminStore from "../services/adminStore";
+import AdminDao from "../services/adminDao";
 import AdminController from "../controller/adminController";
 import { loginValidator, registerValidator } from "../validators/authValidator";
 import { validationResult } from "express-validator";
@@ -9,8 +9,8 @@ import { DB } from "../db/db";
 
 const authRouter = (db: DB): Router => {
   const router = express.Router();
-  const adminStore = new AdminStore(db.getConn());
-  const adminController = new AdminController(adminStore);
+  const adminDao = new AdminDao(db.getConn());
+  const adminController = new AdminController(adminDao);
 
   // register router
   // router.post("/register", registerValidator, (req: Request, res: Response, next: NextFunction) => {

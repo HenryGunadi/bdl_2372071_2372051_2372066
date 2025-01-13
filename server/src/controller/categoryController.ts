@@ -1,13 +1,13 @@
 import { NextFunction, query, Request, Response } from "express";
-import { CategoryStore } from "../services/categoryStore";
+import { CategoryDao } from "../services/categoryDao";
 import BadRequestError from "../classes/BadReqError";
 import Category from "../model/category";
 import { CategoryPayload, UpdateCategoryPayload } from "../types/types";
 
 export class CategoryController {
-  private _store: CategoryStore;
+  private _store: CategoryDao;
 
-  constructor(store: CategoryStore) {
+  constructor(store: CategoryDao) {
     this._store = store;
   }
 

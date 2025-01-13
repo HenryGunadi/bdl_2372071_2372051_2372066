@@ -3,7 +3,7 @@ import { CreateReceiptPayload, DeletePOReceiptPayload, ReceiptDetail, ReceiptSto
 import BadRequestError from "../classes/BadReqError";
 import Receipt from "../model/receipt";
 
-class ReceiptStore implements ReceiptStoreInterface {
+class ReceiptDao implements ReceiptStoreInterface {
   private _dbConn: sql.ConnectionPool;
 
   constructor(dbConn: sql.ConnectionPool) {
@@ -78,4 +78,4 @@ class ReceiptStore implements ReceiptStoreInterface {
   }
 }
 
-export default ReceiptStore;
+export default ReceiptDao;

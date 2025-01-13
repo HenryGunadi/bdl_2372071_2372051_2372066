@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { DB } from "../db/db";
 import express from "express";
-import { CategoryStore } from "../services/categoryStore";
+import { CategoryDao } from "../services/categoryDao";
 import { CategoryController } from "../controller/categoryController";
 
 const categoryRouter = (db: DB): Router => {
   const router: Router = express.Router();
-  const categoryStore: CategoryStore = new CategoryStore(db.getConn());
-  const categoryController: CategoryController = new CategoryController(categoryStore);
+  const categoryDao: CategoryDao = new CategoryDao(db.getConn());
+  const categoryController: CategoryController = new CategoryController(categoryDao);
 
   // get categories
   router.get("/view", (req: Request, res: Response, next: NextFunction) => {

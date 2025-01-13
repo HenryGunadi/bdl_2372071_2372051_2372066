@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { DB } from "../db/db";
 import express from "express";
-import InvoiceStore from "../services/purchaseOrderStore";
-import InvoiceController from "../controller/purchaseOrderController";
+import PurchaseOrderDao from "../services/purchaseOrderDao";
+import PurchaseOrderController from "../controller/purchaseOrderController";
 
 const purchaseOrderRouter = (db: DB): Router => {
   const router = express.Router();
-  const purchaseOrderStore = new InvoiceStore(db.getConn());
-  const purchaseOrderController = new InvoiceController(purchaseOrderStore);
+  const purchaseOrderDao = new PurchaseOrderDao(db.getConn());
+  const purchaseOrderController = new PurchaseOrderController(purchaseOrderDao);
 
   router.get("/view", (req: Request, res: Response, next: NextFunction) => {
     purchaseOrderController.getPO(req, res, next);

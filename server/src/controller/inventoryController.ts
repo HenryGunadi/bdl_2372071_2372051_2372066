@@ -1,5 +1,5 @@
 import { NextFunction, query, Request, Response } from "express";
-import InventoryStore from "../services/inventoryStore";
+import InventoryStore from "../services/inventoryDao";
 import BadRequestError from "../classes/BadReqError";
 import Inventory from "../model/inventory";
 import { InsertInventoryPayload, UpdateInventoryPayload } from "../types/types";

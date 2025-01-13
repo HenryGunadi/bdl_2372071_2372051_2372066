@@ -4,7 +4,7 @@ import Category from "../model/category";
 import { CategoryStoreInterface, UpdateCategoryPayload } from "../types/types";
 import sql from "mssql";
 
-export class CategoryStore implements CategoryStoreInterface {
+export class CategoryDao implements CategoryStoreInterface {
   private _dbConn: sql.ConnectionPool;
 
   constructor(dbConn: sql.ConnectionPool) {

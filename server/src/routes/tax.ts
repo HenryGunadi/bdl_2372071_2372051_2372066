@@ -4,13 +4,13 @@ import express from "express";
 import { createTaxValidator, deleteTaxValidator, updateTaxValidator } from "../validators/taxValidator";
 import { validationResult } from "express-validator";
 import BadRequestError from "../classes/BadReqError";
-import TaxStore from "../services/taxStore";
+import TaxDao from "../services/taxDao";
 import TaxController from "../controller/taxController";
 
 const taxRouter = (db: DB): Router => {
   const router = express.Router();
-  const taxStore = new TaxStore(db.getConn());
-  const taxController = new TaxController(taxStore);
+  const taxDao = new TaxDao(db.getConn());
+  const taxController = new TaxController(taxDao);
 
   router.post("/create", (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);

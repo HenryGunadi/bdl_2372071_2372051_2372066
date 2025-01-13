@@ -3,14 +3,14 @@ import { DB } from "../db/db";
 import express from "express";
 import { validationResult } from "express-validator";
 import BadRequestError from "../classes/BadReqError";
-import ReceiptStore from "../services/receiptStore";
+import ReceiptDao from "../services/receiptDao";
 import ReceiptController from "../controller/receiptController";
 import { createReceiptValidator, deleteReceiptValidator } from "../validators/receiptValidator";
 
 const receiptRouter = (db: DB): Router => {
   const router = express.Router();
-  const receiptStore = new ReceiptStore(db.getConn());
-  const receiptController = new ReceiptController(receiptStore);
+  const receiptDao = new ReceiptDao(db.getConn());
+  const receiptController = new ReceiptController(receiptDao);
 
   router.post("/create", (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);

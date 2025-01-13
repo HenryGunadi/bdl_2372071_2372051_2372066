@@ -3,7 +3,7 @@ import { CreatePOPayload, DeletePOReceiptPayload, PODetails, PurchaseOrderStoreI
 import BadRequestError from "../classes/BadReqError";
 import PurchaseOrder from "../model/purchaseOrder";
 
-class PurchaseOrderController implements PurchaseOrderStoreInterface {
+class PurchaseOrderDao implements PurchaseOrderStoreInterface {
   private _dbConn: sql.ConnectionPool;
 
   constructor(dbConn: sql.ConnectionPool) {
@@ -107,4 +107,4 @@ class PurchaseOrderController implements PurchaseOrderStoreInterface {
   }
 }
 
-export default PurchaseOrderController;
+export default PurchaseOrderDao;

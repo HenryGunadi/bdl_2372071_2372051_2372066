@@ -2,7 +2,7 @@ import { NextFunction, Request, response, Response, Router } from "express";
 import express from "express";
 import { DB } from "../db/db";
 import ItemController from "../controller/itemController";
-import { ItemStore } from "../services/itemStore";
+import { ItemDao } from "../services/itemDao";
 import { deleteItemValidator, insertItemValidator, updateItemValidator } from "../validators/itemValidator";
 import { validationResult } from "express-validator";
 import BadRequestError from "../classes/BadReqError";
@@ -10,8 +10,8 @@ import imageUpload from "../middlewares/imageUpload";
 
 const itemsRouter = (db: DB): Router => {
   const router = express.Router();
-  const itemStore = new ItemStore(db.getConn());
-  const itemController = new ItemController(itemStore);
+  const itemDao = new ItemDao(db.getConn());
+  const itemController = new ItemController(itemDao);
 
   // get items
   router.get("/view", (req: Request, res: Response, next: NextFunction) => {

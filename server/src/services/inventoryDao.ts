@@ -3,7 +3,7 @@ import { InventoryStoreInterface, UpdateInventoryPayload, ViewInventory } from "
 import BadRequestError from "../classes/BadReqError";
 import Inventory from "../model/inventory";
 
-class InventoryStore implements InventoryStoreInterface {
+class InventoryDao implements InventoryStoreInterface {
   private _dbConn: sql.ConnectionPool;
 
   constructor(dbConn: sql.ConnectionPool) {
@@ -58,4 +58,4 @@ class InventoryStore implements InventoryStoreInterface {
   }
 }
 
-export default InventoryStore;
+export default InventoryDao;

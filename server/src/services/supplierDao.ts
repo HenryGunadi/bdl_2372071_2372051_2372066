@@ -3,7 +3,7 @@ import { SupplierPayload, SupplierStoreInterface, UpdateCategoryPayload, UpdateS
 import BadRequestError from "../classes/BadReqError";
 import Supplier from "../model/supplier";
 
-class SupplierStore implements SupplierStoreInterface {
+class SupplierDao implements SupplierStoreInterface {
   private _dbConn: sql.ConnectionPool;
 
   constructor(dbConn: sql.ConnectionPool) {
@@ -63,4 +63,4 @@ class SupplierStore implements SupplierStoreInterface {
   }
 }
 
-export default SupplierStore;
+export default SupplierDao;

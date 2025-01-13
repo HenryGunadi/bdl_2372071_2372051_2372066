@@ -3,7 +3,7 @@ import { ItemStoreInterface, UpdateItemPayload } from "../types/types";
 import BadRequestError from "../classes/BadReqError";
 import Item from "../model/item";
 
-export class ItemStore implements ItemStoreInterface {
+export class ItemDao implements ItemStoreInterface {
   private _dbConn: sql.ConnectionPool;
 
   constructor(dbConn: sql.ConnectionPool) {

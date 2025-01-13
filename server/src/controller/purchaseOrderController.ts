@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import InvoiceStore from "../services/purchaseOrderStore";
 import BadRequestError from "../classes/BadReqError";
 import { CreatePOPayload, DeletePOReceiptPayload, UpdatePOPayload } from "../types/types";
+import PurchaseOrderDao from "../services/purchaseOrderDao";
 
 class PurchaseOrderController {
-  private _store: InvoiceStore;
+  private _store: PurchaseOrderDao;
 
-  constructor(store: InvoiceStore) {
+  constructor(store: PurchaseOrderDao) {
     this._store = store;
   }
 

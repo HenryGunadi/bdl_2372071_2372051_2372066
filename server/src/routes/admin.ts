@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { DB } from "../db/db";
 import express from "express";
-import AdminStore from "../services/adminStore";
+import AdminDao from "../services/adminDao";
 import AdminController from "../controller/adminController";
 
 const AdminRouter = (db: DB): Router => {
   const router = express.Router();
-  const adminStore = new AdminStore(db.getConn());
-  const adminController = new AdminController(adminStore);
+  const adminDao = new AdminDao(db.getConn());
+  const adminController = new AdminController(adminDao);
 
   router.get("/view", (req: Request, res: Response, next: NextFunction) => {
     adminController.viewAdmin(req, res, next);

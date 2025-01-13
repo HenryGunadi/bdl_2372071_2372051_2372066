@@ -1,5 +1,5 @@
 import e, { NextFunction, query, Request, Response } from "express";
-import AdminStore from "../services/adminStore";
+import AdminStore from "../services/adminDao";
 import { LoginPayload, RegisterPayload } from "../types/types";
 import BadRequestError from "../classes/BadReqError";
 import Admin from "../model/admin";

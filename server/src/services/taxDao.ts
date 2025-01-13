@@ -3,7 +3,7 @@ import { TaxPayload, TaxStoreInterface } from "../types/types";
 import BadRequestError from "../classes/BadReqError";
 import Tax from "../model/tax";
 
-class TaxStore implements TaxStoreInterface {
+class TaxDao implements TaxStoreInterface {
   private _dbConn: sql.ConnectionPool;
 
   constructor(dbConn: sql.ConnectionPool) {
@@ -64,4 +64,4 @@ class TaxStore implements TaxStoreInterface {
   }
 }
 
-export default TaxStore;
+export default TaxDao;
