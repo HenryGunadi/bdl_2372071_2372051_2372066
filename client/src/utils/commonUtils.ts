@@ -11,14 +11,12 @@ export function resetState<T extends { [key: string]: any }>(setState: React.Dis
 }
 
 // handle pagination
-export function handlePagination<T>(direction: string, data: T[], currentPage: number, setCurrentPage: React.Dispatch<SetStateAction<number>>) {
-  if (direction === "next") {
-    if (currentPage < Math.ceil(data.length / 5)) {
-      setCurrentPage((prevPage) => prevPage + 1);
-    }
-  } else if (direction === "prev") {
-    if (currentPage > 1) {
-      setCurrentPage((prevPage) => prevPage - 1);
-    }
+export const handlePagination = (direction: "next" | "prev", data: any[], currentPage: number, setPage: (page: number) => void) => {
+  const totalPages = Math.ceil(data.length / 5); // Adjust based on adminsPerPage
+
+  if (direction === "next" && currentPage < totalPages) {
+    setPage(currentPage + 1);
+  } else if (direction === "prev" && currentPage > 1) {
+    setPage(currentPage - 1);
   }
-}
+};

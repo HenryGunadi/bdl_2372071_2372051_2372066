@@ -72,7 +72,7 @@ export default function InventoryPage() {
         </button> */}
         </div>
 
-        <DataTable columns={inventoryColumns(toggleModal)} data={inventories} filter="nama" placeholder="Search item name"></DataTable>
+        <DataTable columns={inventoryColumns(toggleModal)} data={inventories} filter="exp_date" placeholder="Search by exp_date"></DataTable>
       </div>
     </div>
   );

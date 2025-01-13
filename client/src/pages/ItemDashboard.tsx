@@ -13,7 +13,6 @@ function ItemDashboard() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [makeItem, setMakeItem] = useState<CreateItemPayload>({
     nama: "",
-    qrcode: "",
     price: 0,
     supplier_id: "",
     description: "",
@@ -24,7 +23,6 @@ function ItemDashboard() {
   const [editItem, setEditItem] = useState<UpdateItemPayload>({
     id: "",
     nama: "",
-    qrcode: "",
     price: 0,
     supplier_id: "",
     description: "",
@@ -70,7 +68,6 @@ function ItemDashboard() {
       setEditItem({
         id: id,
         nama: filteredItem[0].nama,
-        qrcode: filteredItem[0].qrcode,
         price: filteredItem[0].price,
         supplier_id: filteredItem[0].supplier_id,
         description: filteredItem[0].description,

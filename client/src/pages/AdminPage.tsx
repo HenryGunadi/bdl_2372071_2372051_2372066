@@ -82,7 +82,7 @@ const AdminPage = () => {
 
   // View admins on page load
   useEffect(() => {
-    viewAdmin(setAdmins);
+    viewAdmin(setAdmins).then(() => setPage(1));
   }, []);
 
   return (
@@ -148,7 +148,7 @@ const AdminPage = () => {
               <tr>
                 <th className="border border-gray-300 px-4 py-2">#</th>
                 <th className="border border-gray-300 px-4 py-2">Username</th>
-                <th className="border border-gray-300 px-4 py-2">Name</th>
+                <th className="border border-gray-300 px-4 py-2">Email</th>
                 <th className="border border-gray-300 px-4 py-2">Phone Number</th>
                 <th className="border border-gray-300 px-4 py-2">Role</th>
                 <th className="border border-gray-300 px-4 py-2">Actions</th>
@@ -167,11 +167,18 @@ const AdminPage = () => {
                       <button
                         className="bg-blue-500 text-white px-3 py-1 rounded-lg shadow hover:bg-blue-600 mr-2"
                         onClick={() => {
-                          setEditAdmin((prev) => ({
-                            ...prev,
-                            id: admin.id,
-                          }));
-                          setShowEditForm(true);
+                          const selectedAdmin = admins.find((a) => a.id === admin.id);
+                          if (selectedAdmin) {
+                            setEditAdmin({
+                              id: selectedAdmin.id,
+                              name: selectedAdmin.name,
+                              password: null, // Keep password null for security reasons
+                              email: selectedAdmin.email,
+                              phone_number: selectedAdmin.phone_number,
+                              role: selectedAdmin.role,
+                            });
+                            setShowEditForm(true);
+                          }
                         }}
                       >
                         Update
@@ -198,11 +205,16 @@ const AdminPage = () => {
             Showing {currentIndex + 1} to {Math.min(currentIndex + adminsPerPage, admins.length)} of {admins.length} entries
           </span>
           <div className="flex items-center space-x-2">
-            <button className="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300" onClick={() => handlePagination("prev", admins, currentPage, setPage)}>
+            {/* Previous Button */}
+            <button className="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300" onClick={() => handlePagination("prev", admins, currentPage, setPage)} disabled={currentPage === 1}>
               Previous
             </button>
-            <button className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600">{currentPage}</button>
-            <button className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600" onClick={() => handlePagination("prev", admins, currentPage, setPage)}>
+
+            {/* Current Page Number */}
+            <span className="px-3 py-1 bg-blue-500 text-white rounded-lg">{currentPage}</span>
+
+            {/* Next Button */}
+            <button className="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300" onClick={() => handlePagination("next", admins, currentPage, setPage)} disabled={currentIndex + adminsPerPage >= admins.length}>
               Next
             </button>
           </div>

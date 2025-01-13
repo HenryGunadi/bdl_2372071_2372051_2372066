@@ -26,7 +26,6 @@ export class ItemStore implements ItemStoreInterface {
       const res = await this._dbConn
         .request()
         .input("nama", item.nama)
-        .input("qrcode", item.qrcode)
         .input("price", item.price)
         .input("supplier_id", item.supplierId)
         .input("description", item.desc)
@@ -50,7 +49,6 @@ export class ItemStore implements ItemStoreInterface {
         .request()
         .input("id", udpateValues.id)
         .input("nama", udpateValues.nama)
-        .input("qrcode", udpateValues.qrcode)
         .input("price", udpateValues.price)
         .input("supplier_id", udpateValues.supplier_id)
         .input("description", udpateValues.description)

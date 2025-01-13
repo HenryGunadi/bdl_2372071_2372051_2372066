@@ -64,10 +64,15 @@ class AdminStore implements AdminStoreInterface {
 
   async updateAdmin(admin: Admin): Promise<boolean | BadRequestError> {
     try {
+      const hashedPass = await bcrypt.hash(admin.password, 10);
       const request = this._dbConn.request();
 
       for (const [key, value] of Object.entries(admin)) {
-        request.input(key, value);
+        if (key === "password") {
+          request.input(key, hashedPass);
+        } else {
+          request.input(key, value);
+        }
       }
 
       const res = await request.execute("sp_update_admin");

@@ -353,28 +353,6 @@ export const inventoryColumns = (toggleModal: (itemID: string) => void): ColumnD
     header: "Item ID",
     cell: ({ row }) => <div className="capitalize">{row.getValue("item_id")}</div>,
   },
-  // {
-  //   accessorKey: "nama",
-  //   header: ({ column }) => {
-  //     return (
-  //       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-  //         I
-  //         <ArrowUpDown />
-  //       </Button>
-  //     );
-  //   },
-  //   cell: ({ row }) => {
-  //     const amount = parseFloat(row.getValue("price"));
-
-  //     // Format the amount as a dollar amount
-  //     const formatted = new Intl.NumberFormat("en-US", {
-  //       style: "currency",
-  //       currency: "USD",
-  //     }).format(amount);
-
-  //     return <div className="text-left font-medium">{formatted}</div>;
-  //   },
-  // },
   {
     accessorKey: "nama",
     header: "Item Name",
@@ -418,7 +396,6 @@ export const inventoryColumns = (toggleModal: (itemID: string) => void): ColumnD
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem onClick={() => navigator.clipboard.writeText(String(inventory.id))}>Copy Inventory ID</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View item details</DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
                 toggleModal(inventory.item_id);

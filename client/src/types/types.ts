@@ -1,6 +1,5 @@
 export type CreateItemPayload = {
   nama: string;
-  qrcode: string;
   price: number;
   supplier_id: string;
   description: string;
@@ -12,7 +11,6 @@ export type CreateItemPayload = {
 export type UpdateItemPayload = {
   id: string;
   nama: string;
-  qrcode: string;
   price: number;
   supplier_id: string;
   description: string;
@@ -36,7 +34,6 @@ export type Items = {
   discount: number;
   price: number;
   category_id: number;
-  qrcode: string;
   supplier_id: string;
 };
 
@@ -49,7 +46,6 @@ export type AllItems = {
   discount: number;
   price: number;
   category_id: number;
-  qrcode: string;
   supplier_id: string;
   category_name: string;
 };

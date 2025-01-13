@@ -83,7 +83,6 @@ export default function TaxPage() {
           >
             + Add Tax
           </button>
-          <input type="text" placeholder="Search Tax" className="border border-gray-300 rounded-lg px-4 py-2 w-64" />
         </div>
 
         {toggleCreateForm && (
