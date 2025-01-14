@@ -28,15 +28,6 @@ export default function PODetailModal({ po, poDetail, onClose }: PODetailModalPr
               Currency: <span className="font-normal">{po.currency}</span>
             </p>
             <p className="font-medium">
-              Subtotal: <span className="font-normal">${po.total_subtotal.toFixed(2)}</span>
-            </p>
-            <p className="font-medium">
-              Discount: <span className="font-normal">-${po.total_discount.toFixed(2)}</span>
-            </p>
-            <p className="font-medium">
-              Tax: <span className="font-normal">${po.total_tax.toFixed(2)}</span>
-            </p>
-            <p className="font-medium">
               Total Amount Due: <span className="font-normal">${po.total_amount_due.toFixed(2)}</span>
             </p>
             <p className="font-medium">
@@ -49,9 +40,6 @@ export default function PODetailModal({ po, poDetail, onClose }: PODetailModalPr
         <div className="max-h-96 overflow-y-auto">
           {poDetail.length > 0 ? (
             poDetail.map((detail, index) => {
-              // Format expiration date for each item
-              const expDateFormatted = detail.exp_date ? new Date(detail.exp_date).toLocaleDateString() : "No expiration date";
-
               return (
                 <div key={index} className="mb-6 border-b pb-4">
                   <div className="space-y-2">
@@ -65,13 +53,7 @@ export default function PODetailModal({ po, poDetail, onClose }: PODetailModalPr
                       Unit Price: <span className="font-normal">${detail.unit_price.toFixed(2)}</span>
                     </p>
                     <p className="font-medium">
-                      Discount: <span className="font-normal">{detail.discount}%</span>
-                    </p>
-                    <p className="font-medium">
                       Total: <span className="font-normal">${detail.total.toFixed(2)}</span>
-                    </p>
-                    <p className="font-medium">
-                      Expiration Date: <span className="font-normal">{expDateFormatted}</span>
                     </p>
                   </div>
                 </div>

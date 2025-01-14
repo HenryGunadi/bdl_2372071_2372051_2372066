@@ -17,24 +17,25 @@ const POModal = <TData extends { [key: string]: any }, TData2 extends { [key: st
     item_id: "",
     quantity: 0,
     unit_price: 0,
-    discount: 0,
-    exp_date: null,
   });
 
   // Toggle modal visibility
   const toggleModal = () => setOpen(!open);
 
   const handleSelect = (itemID: string) => {
-    setPODetail((prev) => ({
-      ...prev,
-      item_id: itemID,
-    }));
+    const selectedItem = data?.find((item) => item.id === itemID); // Find the selected item
+    if (selectedItem) {
+      setPODetail((prev) => ({
+        ...prev,
+        item_id: itemID,
+        unit_price: selectedItem.buy_price, // Set unit_price to buy_price of the selected item
+      }));
+    }
   };
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
     setPODetail((prev) => ({
       ...prev,
       [name]: value === "" ? null : value, // if value is empty string, set it to null
@@ -83,9 +84,9 @@ const POModal = <TData extends { [key: string]: any }, TData2 extends { [key: st
                 handleSubmit(e);
               }}
             >
-              <Combobox task={"Item"} data={filteredItems} onSelect={handleSelect} searchKey={"id"} />
+              <Combobox task={"Item"} data={filteredItems} onSelect={handleSelect} searchKey={"nama"} />
               {Object.entries(PODetail)
-                .filter(([key]) => key !== "item_id")
+                .filter(([key]) => key !== "item_id") // Don't show item_id in the form fields
                 .map(([key, value]) => (
                   <div key={key} className="mb-4">
                     <label className="block text-gray-700 mb-2 capitalize">{key.replace("_", " ")}</label>
@@ -95,15 +96,10 @@ const POModal = <TData extends { [key: string]: any }, TData2 extends { [key: st
                       type={key === "image" ? "file" : typeof value === "number" ? "number" : key === "exp_date" ? "date" : "text"}
                       name={key}
                       placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
-                      value={
-                        key === "image"
-                          ? undefined
-                          : key === "exp_date" && value
-                          ? new Date(value).toISOString().slice(0, 10) // Convert to YYYY-MM-DD
-                          : String(value ?? "")
-                      }
+                      value={key === "unit_price" ? PODetail.unit_price : String(value ?? "")} // Check if key is unit_price, set its value accordingly
                       onChange={handleChange}
                       className="w-full px-4 py-2 border rounded-lg focus:outline-none"
+                      readOnly={key === "unit_price"} // Set unit_price to readOnly
                     />
                   </div>
                 ))}

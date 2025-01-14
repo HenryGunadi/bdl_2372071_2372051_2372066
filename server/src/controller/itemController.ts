@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ItemDao } from "../services/itemDao";
+import { ItemDao } from "../dao/itemDao";
 import BadRequestError from "../classes/BadReqError";
 import { CreateItemPayload, FindItemByName, GetItemsByCategory, UpdateItemPayload } from "../types/types";
 import Item from "../model/item";
@@ -18,15 +18,17 @@ class ItemController {
     try {
       const payload: CreateItemPayload = req.body;
 
-      console.log("PAYLOAD FROM FORMDATA? : ");
+      console.log("PAYLOAD FROM FORMDATA? : ", payload);
 
       const imageURL = req.file ? req.file.path : "";
       const formattedImageURL = imageURL.split("\\").pop() || "";
 
       console.log("IMAGE URL : ", formattedImageURL);
 
+      console.log("TESTING TEST TYPE BUY_PRICE : ", payload.buy_price);
+
       // create new item
-      const newItem = new Item(payload.nama, payload.qrcode, payload.price, payload.supplier_id, payload.description, formattedImageURL, payload.category_id, payload.discount);
+      const newItem = new Item(payload.nama, parseFloat(payload.price), payload.supplier_id, payload.description, formattedImageURL, parseFloat(payload.category_id), parseFloat(payload.discount), parseFloat(payload.buy_price));
 
       const queryRes = await this._store.insertItem(newItem);
 

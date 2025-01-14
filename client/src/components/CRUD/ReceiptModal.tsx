@@ -43,23 +43,49 @@ const ReceiptModal = <TData extends { [key: string]: any }, TData2 extends { [ke
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
+    // For quantity, ensure it's a valid integer and prevent decimals
+    let parsedValue: number | string = value;
+
+    if (name === "quantity") {
+      parsedValue = parseInt(value, 10); // Use parseInt to ensure it is an integer
+
+      // Ensure parsed value is not NaN and is a valid positive integer
+      if (isNaN(parsedValue) || parsedValue < 0) {
+        parsedValue = 0; // Set to 0 if invalid
+      }
+    }
+
     setReceiptDetail((prev) => ({
       ...prev,
-      [name]: value === "" ? null : value, // if value is empty string, set it to null
+      [name]: parsedValue === "" ? null : parsedValue, // if value is empty string, set it to null
     }));
   };
 
   // Submit form data
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check if there are no items available in the data
+    if (!data || data.length === 0) {
+      alert("No items available. Please add items before submitting.");
+      return;
+    }
+
+    if (!receiptDetail.items_id) {
+      alert("Please select an item.");
+      return;
+    }
+
+    // Check if the quantity is 0
+    if (receiptDetail.quantity === 0) {
+      alert("Quantity cannot be 0.");
+      return;
+    }
+
     onSubmit(receiptDetail);
     resetState(setReceiptDetail, receiptDetail);
     toggleModal(); // Close modal after submission
   };
-
-  useEffect(() => {
-    console.log("ITEMS DATA IN POMODAL : ", data);
-  }, []);
 
   return (
     <div>
@@ -69,7 +95,7 @@ const ReceiptModal = <TData extends { [key: string]: any }, TData2 extends { [ke
             className="bg-white rounded-lg shadow-lg w-1/2 max-w-full relative p-8"
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
           >
-            <h2 className="text-xl font-bold mb-4">Add PO Item</h2>
+            <h2 className="text-xl font-bold mb-4">Add Purchase Item</h2>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -82,9 +108,9 @@ const ReceiptModal = <TData extends { [key: string]: any }, TData2 extends { [ke
                 handleSubmit(e);
               }}
             >
-              {data && <Combobox task={"Item"} data={data} onSelect={handleSelect} searchKey={"id"} />}
+              {data && <Combobox task={"Item"} data={data} onSelect={handleSelect} searchKey={"nama"} />}
               {Object.entries(receiptDetail)
-                .filter(([key]) => key !== "items_id")
+                .filter(([key]) => key !== "items_id") // Filter out items_id
                 .map(([key, value]) => (
                   <div key={key} className="mb-4">
                     <label className="block text-gray-700 mb-2 capitalize">{key.replace("_", " ")}</label>
@@ -102,7 +128,8 @@ const ReceiptModal = <TData extends { [key: string]: any }, TData2 extends { [ke
                           : String(value ?? "")
                       }
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none"
+                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none ${key === "unit_price" || key === "unit_discount" ? "bg-gray-200 cursor-not-allowed" : ""}`}
+                      readOnly={key === "unit_price" || key === "unit_discount"} // Make readonly for these fields
                     />
                   </div>
                 ))}

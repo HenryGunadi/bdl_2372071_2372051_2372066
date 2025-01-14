@@ -3,7 +3,7 @@ import { DB } from "../db/db";
 import express from "express";
 import { validationResult } from "express-validator";
 import BadRequestError from "../classes/BadReqError";
-import ReceiptDao from "../services/receiptDao";
+import ReceiptDao from "../dao/receiptDao";
 import ReceiptController from "../controller/receiptController";
 import { createReceiptValidator, deleteReceiptValidator } from "../validators/receiptValidator";
 

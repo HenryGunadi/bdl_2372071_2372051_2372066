@@ -39,35 +39,53 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function BarChartComponent() {
+export function BarChartComponent({ data }: { data: any[] }) {
+  const currentDate = new Date();
+  const currentMonth = currentDate.toLocaleString("default", { month: "long" });
+  const currentYear = currentDate.getFullYear();
+
+  console.log(data); // Add this to check the structure of your data
+
   return (
     <Card className="w-2/3">
       <CardHeader>
-        <CardTitle>Bar Chart - Mixed</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Sales</CardTitle>
+        <CardDescription>
+          {currentMonth} - {currentYear}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart
             accessibilityLayer
-            data={chartData}
+            data={data}
             layout="vertical"
             margin={{
-              left: 0,
+              left: 30, // Increase left margin to make space for labels
+              top: 10, // You can also adjust top margin if necessary
+              right: 10, // Right margin (optional)
+              bottom: 10, // Bottom margin (optional)
             }}
           >
-            <YAxis dataKey="browser" type="category" tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => chartConfig[value as keyof typeof chartConfig]?.label} />
-            <XAxis dataKey="visitors" type="number" hide />
+            <YAxis
+              dataKey="name"
+              type="category"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tickFormatter={(value) => value} // Ensure proper formatting
+            />
+            <XAxis dataKey="total" type="number" hide />
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-            <Bar dataKey="visitors" layout="vertical" radius={5} />
+            <Bar dataKey="total" layout="vertical" radius={5} />
           </BarChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Top 6 <TrendingUp className="h-4 w-4" />
         </div>
-        <div className="leading-none text-muted-foreground">Showing total visitors for the last 6 months</div>
+        <div className="leading-none text-muted-foreground">Showing total of sales</div>
       </CardFooter>
     </Card>
   );

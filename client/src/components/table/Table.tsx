@@ -9,7 +9,7 @@ import { Checkbox } from "../ui/checkbox";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Input } from "../ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import { Category, Inventory, Items, PO, Receipt, ReturnItems } from "../../types/types";
+import { Category, Inventory, Items, PO, Receipt } from "../../types/types";
 import { deleteItem, fetchItems } from "../../utils/Item";
 import { deleteInventory } from "../../utils/inventoryUtils";
 
@@ -128,6 +128,28 @@ export const itemColumns = (toggleModal: (id: string) => void, toggleDetail: (id
     cell: ({ row }) => <div className="capitalize">{row.getValue("nama")}</div>,
   },
   {
+    accessorKey: "buy_price",
+    header: ({ column }) => {
+      return (
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Buy Price
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("buy_price"));
+
+      // Format the amount as a dollar amount
+      const formatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(amount);
+
+      return <div className="text-left font-medium">{formatted}</div>;
+    },
+  },
+  {
     accessorKey: "price",
     header: ({ column }) => {
       return (
@@ -155,9 +177,9 @@ export const itemColumns = (toggleModal: (id: string) => void, toggleDetail: (id
     cell: ({ row }) => <div className="capitalize">{row.getValue("category_name")}</div>,
   },
   {
-    accessorKey: "supplier_id",
-    header: "Supplier ID",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("supplier_id")}</div>,
+    accessorKey: "supplier_name",
+    header: "Supplier",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("supplier_name")}</div>,
   },
   {
     accessorKey: "image_url",
@@ -340,6 +362,7 @@ export const categoryColumn = (toggleEditModal: (itemID: number) => void, toggle
     },
   },
 ];
+
 export const inventoryColumns = (toggleModal: (itemID: string) => void): ColumnDef<Inventory>[] => [
   {
     id: "select",
@@ -362,16 +385,6 @@ export const inventoryColumns = (toggleModal: (itemID: string) => void): ColumnD
     accessorKey: "quantity",
     header: "Quantity",
     cell: ({ row }) => <div className="capitalize">{row.getValue("quantity")}</div>,
-  },
-  {
-    accessorKey: "exp_date",
-    header: "Expired Date",
-    cell: ({ row }) => {
-      const dateString = row.getValue("exp_date") as string;
-      const dateOnly = dateString.split("T")[0]; // Extract date only
-
-      return <div className="capitalize">{dateOnly}</div>;
-    },
   },
   {
     accessorKey: "image_url",

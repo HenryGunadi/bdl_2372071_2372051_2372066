@@ -1,5 +1,5 @@
 import { NextFunction, query, Request, Response } from "express";
-import { CategoryDao } from "../services/categoryDao";
+import { CategoryDao } from "../dao/categoryDao";
 import BadRequestError from "../classes/BadReqError";
 import Category from "../model/category";
 import { CategoryPayload, UpdateCategoryPayload } from "../types/types";

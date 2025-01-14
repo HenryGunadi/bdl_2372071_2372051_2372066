@@ -20,14 +20,15 @@ async function fetchItems(setItem: React.Dispatch<React.SetStateAction<AllItems[
 async function createItem(item: CreateItemPayload) {
   try {
     console.log("ITEM PAYLOAD FRONTEND: ", item);
+
     const formData = new FormData();
     formData.append("nama", item.nama);
-    formData.append("qrcode", item.qrcode);
     formData.append("price", String(item.price));
     formData.append("supplier_id", item.supplier_id);
     formData.append("description", item.description);
     formData.append("discount", item.discount?.toString() || "");
     formData.append("category_id", String(item.category_id));
+    formData.append("buy_price", String(item.buy_price));
     if (item.image) {
       formData.append("image", item.image);
     }
@@ -40,7 +41,7 @@ async function createItem(item: CreateItemPayload) {
 
     console.log(response.data);
     alert("Item Created");
-    window.location.reload(); // Refresh the page
+    // window.location.reload(); // Refresh the page
   } catch (err) {
     console.error("Error creating an item : ", err);
     alert(`Error creating an item : ${err}`);
@@ -69,7 +70,6 @@ export async function updateItem(payload: UpdateItemPayload) {
     const formData = new FormData();
     formData.append("id", payload.id);
     formData.append("nama", payload.nama);
-    formData.append("qrcode", payload.qrcode);
     formData.append("price", String(payload.price));
     formData.append("supplier_id", payload.supplier_id);
     formData.append("description", payload.description);

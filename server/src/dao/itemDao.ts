@@ -32,6 +32,7 @@ export class ItemDao implements ItemStoreInterface {
         .input("discount", item.discount)
         .input("image_url", item.imageUrl)
         .input("category_id", item.categoryId)
+        .input("buy_price", item.buyPrice)
         .execute("sp_insert_items");
 
       // check if insert successful
@@ -55,6 +56,7 @@ export class ItemDao implements ItemStoreInterface {
         .input("discount", udpateValues.discount)
         .input("image", udpateValues.image_url)
         .input("category_id", udpateValues.category_id)
+        .input("buy_price", udpateValues.buy_price)
         .execute("sp_update_item");
 
       return res.rowsAffected[0] > 0;

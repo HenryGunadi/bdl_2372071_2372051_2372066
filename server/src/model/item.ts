@@ -1,18 +1,18 @@
 class Item {
   private _id: string | undefined = undefined;
   private _nama: string;
-  private _qrcode: string;
   private _price: number;
   private _supplier_id: string;
   private _desc: string;
   private _discount: number | null = null;
   private _image_url: string;
-  private _category_id: string;
+  private _category_id: number;
+  private _buy_price: number;
 
-  constructor(nama: string, qrcode: string, price: number, supplier_id: string, desc: string, image_url: string, category_id: string, discount: number | null, id?: string) {
+  constructor(nama: string, price: number, supplier_id: string, desc: string, image_url: string, category_id: number, discount: number | null, buy_price: number, id?: string) {
     this._id = id;
     this._nama = nama;
-    this._qrcode = qrcode;
+    this._buy_price = buy_price;
     this._price = price;
     this._supplier_id = supplier_id;
     this._desc = desc;
@@ -28,10 +28,6 @@ class Item {
 
   get nama(): string {
     return this._nama;
-  }
-
-  get qrcode(): string {
-    return this._qrcode;
   }
 
   get price(): number {
@@ -54,8 +50,12 @@ class Item {
     return this._image_url;
   }
 
-  get categoryId(): string {
+  get categoryId(): number {
     return this._category_id;
+  }
+
+  get buyPrice(): number {
+    return this._buy_price;
   }
 
   // Setters
@@ -63,8 +63,8 @@ class Item {
     this._nama = nama;
   }
 
-  set qrcode(qrcode: string) {
-    this._qrcode = qrcode;
+  set buyPrice(buyPrice: number) {
+    this._buy_price = buyPrice;
   }
 
   set price(price: number) {
@@ -87,7 +87,7 @@ class Item {
     this._image_url = imageUrl;
   }
 
-  set categoryId(categoryId: string) {
+  set categoryId(categoryId: number) {
     this._category_id = categoryId;
   }
 }

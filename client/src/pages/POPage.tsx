@@ -18,8 +18,6 @@ const POPage = () => {
     payment_method: "",
     currency: "",
     total_subtotal: 0,
-    total_discount: 0,
-    total_tax: 0,
     total_amount_due: 0,
     items: [],
     supplier_id: "",
@@ -30,8 +28,6 @@ const POPage = () => {
     payment_method: null,
     currency: null,
     total_subtotal: null,
-    total_discount: null,
-    total_tax: null,
     total_amount_due: null,
     supplier_id: null,
     status: null,
@@ -166,10 +162,6 @@ const POPage = () => {
 
       makePO.items.forEach((item) => {
         subtotal += item.quantity * item.unit_price;
-
-        discount += item.unit_price * item.quantity * item.discount;
-
-        tax += (item.quantity * item.unit_price - item.discount) * 0.1;
       });
 
       const amountDue = subtotal - discount + tax;

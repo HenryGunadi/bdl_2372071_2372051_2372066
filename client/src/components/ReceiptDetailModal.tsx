@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Receipt, ReceiptDetail } from "../types/types";
 
 interface ReceiptDetailProps {
@@ -7,11 +8,15 @@ interface ReceiptDetailProps {
 }
 
 export default function ReceiptDetailModal({ receipt, receiptDetail, onClose }: ReceiptDetailProps) {
+  useEffect(() => {
+    console.log("HELOOOOO : ", receiptDetail);
+  }, [receiptDetail]);
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-lg w-3/4 max-w-4xl sm:w-full h-auto sm:h-auto overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-800">Receipt Detail - {receipt.id}</h2>
+          <h2 className="text-xl font-semibold text-gray-800">Receipt Detail - {receipt.receipt_id}</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             X
           </button>
@@ -46,7 +51,6 @@ export default function ReceiptDetailModal({ receipt, receiptDetail, onClose }: 
         <div className="max-h-96 overflow-y-auto">
           {receiptDetail.length > 0 ? (
             receiptDetail.map((detail, index) => {
-              // Format item details
               return (
                 <div key={index} className="mb-6 border-b pb-4">
                   <div className="space-y-2">
@@ -63,7 +67,7 @@ export default function ReceiptDetailModal({ receipt, receiptDetail, onClose }: 
                       Unit Discount: <span className="font-normal">{detail.unit_discount}%</span>
                     </p>
                     <p className="font-medium">
-                      Total: <span className="font-normal">${detail.total.toFixed(2)}</span>
+                      Total: <span className="font-normal">${detail.total && !isNaN(detail.total) ? detail.total.toFixed(2) : "0.00"}</span>
                     </p>
                     <p className="font-medium">
                       Created At: <span className="font-normal">{detail.created_at ? new Date(detail.created_at).toLocaleDateString() : "No date"}</span>

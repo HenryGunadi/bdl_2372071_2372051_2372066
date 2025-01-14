@@ -19,6 +19,7 @@ function ItemDashboard() {
     discount: 0,
     image: null,
     category_id: 0,
+    buy_price: 0,
   });
   const [editItem, setEditItem] = useState<UpdateItemPayload>({
     id: "",
@@ -29,6 +30,7 @@ function ItemDashboard() {
     discount: 0,
     image: null,
     category_id: 0,
+    buy_price: 0,
   });
   const [categories, setCategories] = useState<Category[]>([]);
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
@@ -74,6 +76,7 @@ function ItemDashboard() {
         discount: filteredItem[0].discount,
         image: null,
         category_id: filteredItem[0].category_id,
+        buy_price: filteredItem[0].buy_price,
       });
     }
 

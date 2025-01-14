@@ -101,7 +101,6 @@ const AdminPage = () => {
           >
             + Add User
           </button>
-          <input type="text" placeholder="Search" className="border border-gray-300 rounded-lg px-4 py-2 w-64" />
         </div>
 
         {/* Add Form */}

@@ -1,5 +1,5 @@
 import { NextFunction, query, Request, Response } from "express";
-import InventoryStore from "../services/inventoryDao";
+import InventoryStore from "../dao/inventoryDao";
 import BadRequestError from "../classes/BadReqError";
 import Inventory from "../model/inventory";
 import { InsertInventoryPayload, UpdateInventoryPayload } from "../types/types";
@@ -29,7 +29,7 @@ class InventoryController {
   insertInventory = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payload = req.body as InsertInventoryPayload;
-      const newInventory = new Inventory(payload.item_id, payload.quantity, payload.expired_date);
+      const newInventory = new Inventory(payload.item_id, payload.quantity);
 
       const queryRes = await this._store.insertInventory(newInventory);
 

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import ReceiptStore from "../services/receiptDao";
+import ReceiptStore from "../dao/receiptDao";
 import BadRequestError from "../classes/BadReqError";
 import { CreateReceiptPayload, DeletePOReceiptPayload } from "../types/types";
 
@@ -35,22 +35,20 @@ class ReceiptController {
   deleteReceipt = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payload = req.body as DeletePOReceiptPayload;
-      console.log("DELETE RECEIPT PAYLOAD BACKEDN : ", payload);
+      console.log("DELETE RECEIPT PAYLOAD BACKEND : ", payload);
+
       const queryRes = await this._store.deleteReceipt(payload);
 
       if (queryRes instanceof BadRequestError) {
+        // If the response is an error, pass it to the next middleware
         return next(queryRes);
-      } else {
-        if (!queryRes) {
-          const error = new BadRequestError({ code: 500, message: "Something went wrong", context: { error: "No rows are affected" } });
-          return next(error);
-        }
-
-        return res.status(200).json({ message: "success" });
       }
+
+      return res.status(200).json({ message: "Receipt deleted successfully" });
     } catch (err) {
+      // Catch and forward any unexpected errors
       const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `${err}` } });
-      next(error);
+      return next(error);
     }
   };
 

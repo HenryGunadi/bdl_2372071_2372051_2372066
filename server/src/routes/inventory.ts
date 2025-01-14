@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { DB } from "../db/db";
 import express from "express";
-import InventoryDao from "../services/inventoryDao";
+import InventoryDao from "../dao/inventoryDao";
 import InventoryController from "../controller/inventoryController";
 
 const inventoryRouter = (db: DB): Router => {

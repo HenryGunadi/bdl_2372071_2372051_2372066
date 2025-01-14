@@ -1,11 +1,69 @@
+import { useEffect, useState } from "react";
 import { BarChartComponent } from "../components/ui/BarChart";
+import { Admin, AllItems, PO, PODetails, ReceiptDetail, Supplier } from "../types/types";
+import { fetchItems } from "../utils/Item";
+import { viewSupplier } from "../utils/supplierUtils";
+import { viewAdmin } from "../utils/adminUtils";
+import { viewPO, viewPODetails } from "../utils/poUtils";
+import { viewReceiptDetails } from "../utils/receiptUtils";
+import { Package } from "lucide-react";
 
 const DashboardPage = () => {
+  const [items, setItems] = useState<AllItems[]>([]);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [users, setUsers] = useState<Admin[]>([]);
+  const [pos, setPOs] = useState<PO[]>([]);
+  const [receipts, setReceipts] = useState<ReceiptDetail[]>([]);
+  const [top6Receipts, setTop6Receipts] = useState<any[]>([]);
+
+  // Function to get the top 6 receipts by total this month
+  const getTop6ReceiptsByTotal = (receiptData: ReceiptDetail[]) => {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+
+    // Group receipts by items_id and sum their total
+    const groupedReceipts = receiptData
+      .filter((receipt) => {
+        if (!receipt.created_at) return false;
+        const date = new Date(receipt.created_at);
+        return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+      })
+      .reduce((acc, receipt) => {
+        const existing = acc[receipt.items_id];
+        if (existing) {
+          existing.total += receipt.total; // Sum the total for each items_id
+        } else {
+          acc[receipt.items_id] = { name: receipt.items_id, total: receipt.total };
+        }
+        return acc;
+      }, {} as { [key: string]: { name: string; total: number } });
+
+    // Convert the grouped object to an array, sort by total, and return the top 6
+    return Object.values(groupedReceipts)
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 6);
+  };
+
+  useEffect(() => {
+    fetchItems(setItems);
+    viewSupplier(setSuppliers);
+    viewAdmin(setUsers);
+    viewPO(setPOs);
+    viewReceiptDetails(setReceipts);
+  }, []);
+
+  useEffect(() => {
+    if (receipts.length > 0) {
+      setTop6Receipts(getTop6ReceiptsByTotal(receipts));
+    }
+  }, [receipts]);
+
   const stats = [
-    { label: "ITEMS", value: 6, color: "bg-blue-500", icon: "🛍️" },
-    { label: "SUPPLIERS", value: 4, color: "bg-red-500", icon: "🚚" },
-    { label: "CUSTOMERS", value: 3, color: "bg-green-500", icon: "👥" },
-    { label: "USERS", value: 3, color: "bg-orange-500", icon: "➕" },
+    { label: "ITEMS", value: items.length, color: "bg-blue-500", icon: "🛍️" },
+    { label: "SUPPLIERS", value: suppliers.length, color: "bg-red-500", icon: <Package className="h-8 w-8" /> },
+    { label: "Ongoing POS", value: pos.length, color: "bg-green-500", icon: "🚚" },
+    { label: "USERS", value: users.length, color: "bg-orange-500", icon: "👥" },
   ];
 
   return (
@@ -33,9 +91,8 @@ const DashboardPage = () => {
       <div className="px-6 w-full">
         <div className="bg-white p-6 rounded-lg shadow w-full">
           <h2 className="text-lg font-semibold mb-4">Overview</h2>
-          {/* Chart Placeholder */}
           <div className="w-full flex">
-            <BarChartComponent></BarChartComponent>
+            <BarChartComponent data={top6Receipts} />
           </div>
         </div>
       </div>

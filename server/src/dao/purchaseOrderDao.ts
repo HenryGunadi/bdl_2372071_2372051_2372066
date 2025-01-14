@@ -46,24 +46,18 @@ class PurchaseOrderDao implements PurchaseOrderStoreInterface {
       itemTable.columns.add("item_id", sql.VarChar(48));
       itemTable.columns.add("quantity", sql.Int);
       itemTable.columns.add("unit_price", sql.Decimal(10, 2));
-      itemTable.columns.add("discount", sql.Decimal(10, 2));
-      itemTable.columns.add("exp_date", sql.Date);
 
       payload.items.forEach((item) => {
-        itemTable.rows.add(item.item_id, item.quantity, item.unit_price, item.discount, item.exp_date);
+        itemTable.rows.add(item.item_id, item.quantity, item.unit_price);
       });
 
       const res = this._dbConn.request();
-
-      for (const [name, value] of Object.entries(payload)) {
-        if (name === "items") {
-          continue;
-        }
-
-        const sqlType = typeof value === "string" ? sql.VarChar : typeof value === "number" ? sql.Decimal(10, 2) : sql.DateTime;
-
-        res.input(name, sqlType, value);
-      }
+      res.input("payment_method", sql.VarChar, payload.payment_method);
+      res.input("currency", sql.VarChar, payload.currency);
+      res.input("total_subtotal", sql.Decimal(10, 2), payload.total_subtotal);
+      res.input("total_amount_due", sql.Decimal(10, 2), payload.total_amount_due);
+      res.input("supplier_id", sql.VarChar(10), payload.supplier_id);
+      res.input("status", sql.VarChar(20), payload.status);
       res.input("items", itemTable);
 
       const result = await res.execute("sp_insert_po");
@@ -78,7 +72,7 @@ class PurchaseOrderDao implements PurchaseOrderStoreInterface {
     try {
       const res = await this._dbConn.request().input("id", payload.id).input("undo", payload.undo).execute("sp_delete_po");
 
-      return res.rowsAffected[0] > 0;
+      return true;
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error deleting po : ${err}` } });
       return error;

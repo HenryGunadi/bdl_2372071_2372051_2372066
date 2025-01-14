@@ -19,16 +19,14 @@ const LoginPage: React.FC = () => {
     };
 
     try {
-      const response = await axios.post(
-        `http://localhost:8000/api/auth/login?role=${userType}`, // Include userType in the query string
-        payload,
-        { withCredentials: true }
-      );
+      const response = await axios.post("http://localhost:8000/api/auth/login", payload, { withCredentials: true });
 
-      const { token } = response.data;
-      localStorage.setItem("token", token); // Save JWT in localStorage or sessionStorage
-      alert("Login successful");
-      window.location.href = "/"; // Redirect to home
+      const { token, role } = response.data;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
+
+      window.location.href = "/";
     } catch (err) {
       console.error(err);
       setErrorMessage("Invalid email or password");
@@ -59,25 +57,6 @@ const LoginPage: React.FC = () => {
         <button onClick={handleLogin} className="w-full px-4 py-2 mt-6 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
           Login
         </button>
-
-        <div className="mt-4 text-center">
-          <p className="text-sm text-gray-600">Switch user type:</p>
-          <div className="flex justify-center mt-2">
-            <button className={`px-4 py-2 font-medium rounded-lg ${userType === "admin" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"}`} onClick={() => setUserType("admin")}>
-              Admin
-            </button>
-            <button className={`px-4 py-2 ml-2 font-medium rounded-lg ${userType === "manager" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"}`} onClick={() => setUserType("manager")}>
-              Manager
-            </button>
-          </div>
-        </div>
-
-        <p className="mt-6 text-sm text-center text-gray-600">
-          Don't have an account?{" "}
-          <a href="#" className="text-blue-600 hover:underline">
-            Sign up
-          </a>
-        </p>
       </div>
     </div>
   );

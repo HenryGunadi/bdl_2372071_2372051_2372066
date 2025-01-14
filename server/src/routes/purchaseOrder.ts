@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { DB } from "../db/db";
 import express from "express";
-import PurchaseOrderDao from "../services/purchaseOrderDao";
+import PurchaseOrderDao from "../dao/purchaseOrderDao";
 import PurchaseOrderController from "../controller/purchaseOrderController";
 
 const purchaseOrderRouter = (db: DB): Router => {

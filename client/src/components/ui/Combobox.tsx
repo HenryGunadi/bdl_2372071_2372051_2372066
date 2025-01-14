@@ -23,7 +23,12 @@ const Combobox = <TData extends { [key: string]: any }>({ data, onSelect, search
     if (value) {
       setSearch(value);
     }
-  }, []);
+  }, [value]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setSearch(inputValue); // Allow all input values
+  };
 
   return (
     <div className="relative w-full max-w-md mb-4">
@@ -35,7 +40,7 @@ const Combobox = <TData extends { [key: string]: any }>({ data, onSelect, search
         id={task}
         type="text"
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={handleSearchChange}
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 200)}
         className="w-full px-4 py-2 border rounded-lg focus:outline-none"

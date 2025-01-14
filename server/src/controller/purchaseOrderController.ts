@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import BadRequestError from "../classes/BadReqError";
 import { CreatePOPayload, DeletePOReceiptPayload, UpdatePOPayload } from "../types/types";
-import PurchaseOrderDao from "../services/purchaseOrderDao";
+import PurchaseOrderDao from "../dao/purchaseOrderDao";
 
 class PurchaseOrderController {
   private _store: PurchaseOrderDao;
@@ -43,6 +43,8 @@ class PurchaseOrderController {
   createPO = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payload = req.body as CreatePOPayload;
+      console.log("Payload being sent to database:", payload);
+
       const queryRes = await this._store.createPO(payload);
 
       if (queryRes instanceof BadRequestError) {

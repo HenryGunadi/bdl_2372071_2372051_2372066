@@ -32,6 +32,7 @@ export async function viewPODetails(setPO: React.Dispatch<SetStateAction<PODetai
 
 export async function createPO(PO: CreatePO) {
   try {
+    console.log("PO CREATE FRONTEND : ", PO);
     const res = await axios.post(`${baseAPI}/api/purchase_order/create`, PO, {
       withCredentials: true,
     });
@@ -69,6 +70,7 @@ export async function deletePO(id: string) {
 
     console.log(res.data);
   } catch (err) {
-    throw err;
+    console.error(err);
+    alert(`Error deleting PO : ${err}`);
   }
 }

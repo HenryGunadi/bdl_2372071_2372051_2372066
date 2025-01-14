@@ -70,7 +70,9 @@ class ReceiptDao implements ReceiptStoreInterface {
       const res = await this._dbConn.request().input("id", payload.id).input("undo", payload.undo).execute("sp_delete_receipt");
 
       const success = res.rowsAffected[0] > 0;
-      return success;
+
+      // If no rows are affected, return false (indicating nothing was deleted)
+      return success ? true : false;
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error deleting receipt : ${err}` } });
       return error;

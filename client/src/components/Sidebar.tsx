@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 interface MenuItemProps {
@@ -24,12 +24,17 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon, label, badge, hasSubmenu, to 
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
+  const [role, setRole] = useState<"admin" | "manager" | null>(null);
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem("role") as "admin" | "manager";
+    setRole(storedRole);
+  }, []);
 
   const handleLogout = () => {
-    // Remove the token from localStorage
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
 
-    // Redirect to the login page
     navigate("/login");
   };
 
@@ -38,7 +43,7 @@ const Sidebar: React.FC = () => {
       {/* Header */}
       <div className="p-4 flex flex-col items-center border-b border-gray-700">
         <img src="https://via.placeholder.com/40" alt="Admin" className="rounded-full w-12 h-12 mb-2" />
-        <h3 className="text-white font-semibold">Admin</h3>
+        <h3 className="text-white font-semibold">{role === "manager" ? "Manager" : "Admin"}</h3>
         <p className="text-green-400 text-sm">Online</p>
       </div>
 
@@ -49,13 +54,15 @@ const Sidebar: React.FC = () => {
         <MenuItem icon="fa-truck" label="Suppliers" to="/suppliers" />
         <MenuItem icon="fa-users" label="Tax" to="/tax" />
         <MenuItem icon="fa-box" label="Inventory" hasSubmenu to="/inventory" />
-        <MenuItem icon="fa-shopping-cart" label="Purchase Order" hasSubmenu to="/purchase_order" />
         <MenuItem icon="fa-chart-pie" label="Items" hasSubmenu to="/items" />
         <MenuItem icon="fa-chart-pie" label="Transaction" hasSubmenu to="/transaction" />
         <MenuItem icon="fa-chart-pie" label="Category" hasSubmenu to="/category" />
 
-        <div className="text-gray-400 uppercase text-xs pt-4">Settings</div>
-        <MenuItem icon="fa-user-friends" label="Users / Employees" to="/admins" />
+        {/* Purchase Order (only for managers) */}
+        {role === "manager" && <MenuItem icon="fa-shopping-cart" label="Purchase Order" hasSubmenu to="/purchase_order" />}
+
+        {/* Users / Employees (only for managers) */}
+        {role === "manager" && <MenuItem icon="fa-user-friends" label="Users / Employees" to="/admins" />}
       </div>
 
       {/* Logout Button */}

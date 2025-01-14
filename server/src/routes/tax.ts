@@ -4,7 +4,7 @@ import express from "express";
 import { createTaxValidator, deleteTaxValidator, updateTaxValidator } from "../validators/taxValidator";
 import { validationResult } from "express-validator";
 import BadRequestError from "../classes/BadReqError";
-import TaxDao from "../services/taxDao";
+import TaxDao from "../dao/taxDao";
 import TaxController from "../controller/taxController";
 
 const taxRouter = (db: DB): Router => {

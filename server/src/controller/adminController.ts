@@ -1,5 +1,5 @@
 import e, { NextFunction, query, Request, Response } from "express";
-import AdminStore from "../services/adminDao";
+import AdminStore from "../dao/adminDao";
 import { LoginPayload, RegisterPayload } from "../types/types";
 import BadRequestError from "../classes/BadReqError";
 import Admin from "../model/admin";
@@ -12,8 +12,6 @@ class AdminController {
   constructor(store: AdminStore) {
     this._store = store;
   }
-
-  // register = async (req: Request, res: Response, next: NextFunction) => {
   //   try {
   //     const roleReq = req.query as { role: string };
   //     const payload = req.body as RegisterPayload;
@@ -66,21 +64,18 @@ class AdminController {
   login = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payload = req.body as LoginPayload;
-      console.log("Login Payload : ", payload.password);
       const queryRes = await this._store.findAdmin(payload.email);
 
-      // Extract role from the query parameter
-      const requestedRole = req.query.role as string;
-
-      // Check if there is an internal server error in querying
       if (queryRes instanceof BadRequestError) {
-        return next(queryRes);
-      } else if (!queryRes) {
-        // Admin doesn't exist
+        const error = new BadRequestError({ code: 500, message: `Something went wrong in login` });
+        return next(error);
+      }
+
+      // Check if admin exists
+      if (!queryRes) {
         const error = new BadRequestError({ code: 400, message: "Admin doesn't exist." });
         return next(error);
       }
-      console.log("HASHED PASS BEFORE : ", queryRes.password);
 
       // Check password
       const passMatch = await bcrypt.compare(payload.password, queryRes.password);
@@ -89,21 +84,19 @@ class AdminController {
         return next(error);
       }
 
-      // Check if the requested role matches the admin's role
-      if (requestedRole && queryRes.role !== requestedRole) {
-        const error = new BadRequestError({ code: 400, message: `Role mismatch: Expected ${requestedRole}, but got ${queryRes.role}.` });
-        return next(error);
-      }
-
-      // Create JWT token and sign the admin with secret key
+      // Create JWT token with user's role
       const adminTokenPayload = {
         adminID: queryRes.id,
-        role: queryRes.role, // Add the role to the JWT payload
+        role: queryRes.role,
       };
 
       const token = jwt.sign(adminTokenPayload, "testing-secret-key", { expiresIn: "1h" });
 
-      return res.status(200).setHeader("Content-Type", "application/json").json({ message: "Login successful", token: token });
+      return res.status(200).setHeader("Content-Type", "application/json").json({
+        message: "Login successful",
+        token: token,
+        role: queryRes.role, // Return role in response
+      });
     } catch (err) {
       const error = new BadRequestError({ code: 500, message: `Internal server error: ${err}` });
       next(error);

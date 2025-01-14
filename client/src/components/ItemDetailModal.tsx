@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { AllItems } from "../types/types";
 
 interface ItemDetailModalProps {
@@ -6,6 +7,10 @@ interface ItemDetailModalProps {
 }
 
 export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps) {
+  useEffect(() => {
+    console.log("ITEM DETAIL : ", item);
+  }, [item]);
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-lg w-1/2 max-w-screen-sm sm:w-full h-auto sm:h-auto">
@@ -24,11 +29,12 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
         <div className="mb-4">
           <p className="font-medium">Category: {item.category_name}</p>
           <p className="font-medium">Price: ${item.price}</p>
+          <p className="font-medium">Buy Price: ${item.buy_price}</p>
+          <p className="font-medium">Supplier: {item.supplier_name}</p>
           {item.discount > 0 && <p className="text-green-500">Discount: {item.discount}%</p>}
         </div>
         <div className="flex justify-between">
           <p className="text-sm text-gray-500">Created at: {new Date(item.created_at).toLocaleDateString()}</p>
-          <p className="text-sm text-gray-500">QR Code: {item.qrcode}</p>
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { DB } from "../db/db";
 import express from "express";
-import AdminDao from "../services/adminDao";
+import AdminDao from "../dao/adminDao";
 import AdminController from "../controller/adminController";
 
 const AdminRouter = (db: DB): Router => {

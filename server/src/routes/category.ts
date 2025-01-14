@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { DB } from "../db/db";
 import express from "express";
-import { CategoryDao } from "../services/categoryDao";
+import { CategoryDao } from "../dao/categoryDao";
 import { CategoryController } from "../controller/categoryController";
 
 const categoryRouter = (db: DB): Router => {

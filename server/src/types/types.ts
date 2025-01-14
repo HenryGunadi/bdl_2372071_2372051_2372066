@@ -86,10 +86,8 @@ export type PODetails = {
   item_id: string;
   quantity: number;
   unit_price: number;
-  discount: number;
   total: number;
   created_at: Date;
-  exp_date: Date | null;
 };
 
 export type DeletePOReceiptPayload = {
@@ -133,16 +131,12 @@ export type CreatePOPayload = {
   payment_method: string;
   currency: string;
   total_subtotal: number;
-  total_discount: number;
-  total_tax: number;
   total_amount_due: number;
   items: [
     {
       item_id: string;
       quantity: number;
       unit_price: number;
-      discount: number;
-      exp_date: Date;
     }
   ];
   supplier_id: string;
@@ -154,8 +148,6 @@ export type UpdatePOPayload = {
   payment_method: string;
   currency: string;
   total_subtotal: number;
-  total_discount: number;
-  total_tax: number;
   total_amount_due: number;
   supplier_id: string;
   status: string;
@@ -195,13 +187,11 @@ export type CreateReceiptPayload = {
 export type UpdateInventoryPayload = {
   item_id: string;
   quantity: number;
-  exp_date: Date | null;
 };
 
 export type InsertInventoryPayload = {
   item_id: string;
   quantity: number;
-  expired_date: Date;
 };
 
 export type ViewInventory = {
@@ -235,16 +225,15 @@ export type LoginPayload = {
   password: string;
 };
 
-// item route
 export type CreateItemPayload = {
   nama: string;
-  qrcode: string;
-  price: number;
+  price: string; // If price is coming in as a string, ensure it's typed as string
   supplier_id: string;
   description: string;
-  discount: number | null;
-  image_url: string;
-  category_id: string;
+  discount: string; // This can be null or string
+  category_id: string; // If category_id comes as string, parse it
+  buy_price: string; // If buy_price is a string, parse it with parseFloat
+  image?: Express.Multer.File; // Assuming image is optional
 };
 
 export type UpdateItemPayload = {
@@ -257,6 +246,7 @@ export type UpdateItemPayload = {
   discount?: number | null;
   image_url?: string;
   category_id?: string;
+  buy_price?: number;
 };
 
 export type FindItemByName = {

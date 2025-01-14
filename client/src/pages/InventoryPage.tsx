@@ -10,7 +10,6 @@ export default function InventoryPage() {
   const [editInventory, setEditInventory] = useState<InventoryPayload>({
     item_id: "",
     quantity: 0,
-    exp_date: null,
   });
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
 
@@ -24,14 +23,12 @@ export default function InventoryPage() {
 
   function toggleModal(itemID: string) {
     const filteredInventory = inventories.filter((inventory) => inventory.item_id === itemID);
-    console.log("EXP DATE: ", filteredInventory[0].exp_date);
     console.log("ID INVENT FRONTEND : ", itemID);
 
     setShowEditModal(true);
     setEditInventory({
       item_id: filteredInventory[0].item_id,
       quantity: filteredInventory[0].quantity,
-      exp_date: filteredInventory[0].exp_date,
     });
   }
 
@@ -72,7 +69,7 @@ export default function InventoryPage() {
         </button> */}
         </div>
 
-        <DataTable columns={inventoryColumns(toggleModal)} data={inventories} filter="exp_date" placeholder="Search by exp_date"></DataTable>
+        <DataTable columns={inventoryColumns(toggleModal)} data={inventories} filter="item_id" placeholder="Search by ID"></DataTable>
       </div>
     </div>
   );
