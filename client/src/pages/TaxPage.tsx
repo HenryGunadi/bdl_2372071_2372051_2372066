@@ -13,8 +13,8 @@ export default function TaxPage() {
     start_date: null,
     end_date: null,
   });
-
   const [toggleCreateForm, setToggleCreateForm] = useState<boolean>(false);
+  const [active, setActive] = useState<boolean>(false)
 
   const [toggleDelete, setToggleDelete] = useState<{ valueId: string; show: boolean }>({
     valueId: "",
@@ -64,6 +64,16 @@ export default function TaxPage() {
   }
 
   useEffect(() => {
+    taxes.filter((tax, index) => {
+      const isActive = isTaxActive(tax.start_date, tax.end_date); // Check if tax is active
+
+      if (isActive) {
+        setActive(true)
+      }
+    })
+  }, [taxes])
+
+  useEffect(() => {
     viewTax(setTaxes);
   }, []);
 
@@ -78,6 +88,10 @@ export default function TaxPage() {
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600"
             onClick={() => {
+              if (active) {
+                alert("There is an active tax, remove or update the tax.")
+                return
+              }
               setToggleCreateForm(true);
             }}
           >
@@ -138,13 +152,13 @@ export default function TaxPage() {
 
         {/* Tax List Section */}
         <div className="space-y-4">
-          {taxes.map((tax) => {
+          {taxes.map((tax, index) => {
             const isActive = isTaxActive(tax.start_date, tax.end_date); // Check if tax is active
 
             return (
               <div key={tax.id} className={`bg-white rounded-lg shadow-md p-4 flex justify-between items-center ${!isActive ? "bg-zinc-200" : "bg-white"}`}>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800">Tax Rate: {tax.tax_rate}%</h3>
+                  <h3 className="text-lg font-semibold text-gray-800">Tax Rate: {tax.tax_rate}</h3>
                   <p className="text-sm text-gray-500">Active: {isActive ? "Yes" : "No"}</p>
                   <p className="text-sm text-gray-500">Start Date: {new Date(tax.start_date).toLocaleDateString()}</p>
                   <p className="text-sm text-gray-500">End Date: {new Date(tax.end_date).toLocaleDateString()}</p>

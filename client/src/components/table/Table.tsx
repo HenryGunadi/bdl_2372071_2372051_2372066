@@ -14,13 +14,7 @@ import { deleteItem, fetchItems } from "../../utils/Item";
 import { deleteInventory } from "../../utils/inventoryUtils";
 
 export const columns = (toggleDelete: (id: string) => void, toggleUpdate: (id: string) => void, toggleDetail: (id: string) => void): ColumnDef<PO>[] => [
-  {
-    id: "select",
-    header: ({ table }) => <Checkbox checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")} onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)} aria-label="Select all" />,
-    cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
-    enableSorting: false,
-    enableHiding: false,
-  },
+
   {
     accessorKey: "id",
     header: "PO ID",
@@ -85,13 +79,20 @@ export const columns = (toggleDelete: (id: string) => void, toggleUpdate: (id: s
               onClick={() => {
                 toggleDetail(row.getValue("id"));
               }}
+              className="hover:cursor-pointer"
             >
               View purchase order details
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
+                const status = row.getValue("status")
+                if (status === "accepted") {
+                  alert("Status has been accepted")
+                  return
+                }
                 toggleUpdate(row.getValue("id"));
               }}
+              className="hover:cursor-pointer"
             >
               Accept Order
             </DropdownMenuItem>
@@ -99,6 +100,7 @@ export const columns = (toggleDelete: (id: string) => void, toggleUpdate: (id: s
               onClick={() => {
                 toggleDelete(row.getValue("id"));
               }}
+              className="hover:cursor-pointer"
             >
               Delete Order
             </DropdownMenuItem>
@@ -110,13 +112,6 @@ export const columns = (toggleDelete: (id: string) => void, toggleUpdate: (id: s
 ];
 
 export const itemColumns = (toggleModal: (id: string) => void, toggleDetail: (id: string) => void): ColumnDef<Items>[] => [
-  {
-    id: "select",
-    header: ({ table }) => <Checkbox checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")} onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)} aria-label="Select all" />,
-    cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: "id",
     header: "Item ID",
@@ -208,6 +203,7 @@ export const itemColumns = (toggleModal: (id: string) => void, toggleDetail: (id
               onClick={() => {
                 toggleDetail(row.getValue("id"));
               }}
+              className="hover:cursor-pointer"
             >
               View item details
             </DropdownMenuItem>
@@ -215,6 +211,7 @@ export const itemColumns = (toggleModal: (id: string) => void, toggleDetail: (id
               onClick={() => {
                 toggleModal(row.getValue("id"));
               }}
+              className="hover:cursor-pointer"
             >
               Update item
             </DropdownMenuItem>
@@ -222,6 +219,7 @@ export const itemColumns = (toggleModal: (id: string) => void, toggleDetail: (id
               onClick={() => {
                 deleteItem(row.getValue("id"));
               }}
+              className="hover:cursor-pointer"
             >
               Delete item
             </DropdownMenuItem>
@@ -233,13 +231,6 @@ export const itemColumns = (toggleModal: (id: string) => void, toggleDetail: (id
 ];
 
 export const receiptColumns = (toggleDetail: (itemID: string) => void, toggleDelete: (id: string) => void): ColumnDef<Receipt>[] => [
-  {
-    id: "select",
-    header: ({ table }) => <Checkbox checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")} onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)} aria-label="Select all" />,
-    cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: "receipt_id",
     header: "Receipt ID",
@@ -282,6 +273,7 @@ export const receiptColumns = (toggleDetail: (itemID: string) => void, toggleDel
               onClick={() => {
                 toggleDetail(row.getValue("receipt_id"));
               }}
+              className="hover:cursor-pointer"
             >
               View receipt details
             </DropdownMenuItem>
@@ -289,6 +281,7 @@ export const receiptColumns = (toggleDetail: (itemID: string) => void, toggleDel
               onClick={() => {
                 toggleDelete(row.getValue("receipt_id"));
               }}
+              className="hover:cursor-pointer"
             >
               Delete receipt
             </DropdownMenuItem>
@@ -301,25 +294,18 @@ export const receiptColumns = (toggleDetail: (itemID: string) => void, toggleDel
 
 export const categoryColumn = (toggleEditModal: (itemID: number) => void, toggleDeleteModal: (id: number) => void): ColumnDef<Category>[] => [
   {
-    id: "select",
-    header: ({ table }) => <Checkbox checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")} onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)} aria-label="Select all" />,
-    cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     accessorKey: "id",
     header: "Item ID",
     cell: ({ row }) => <div className="capitalize">{row.getValue("id")}</div>,
   },
   {
     accessorKey: "category_name",
-    header: "Item ID",
+    header: "Category",
     cell: ({ row }) => <div className="capitalize">{row.getValue("category_name")}</div>,
   },
   {
     accessorKey: "created_at",
-    header: "Item ID",
+    header: "Created",
     cell: ({ row }) => <div className="capitalize">{row.getValue("created_at")}</div>,
   },
   {
@@ -346,6 +332,7 @@ export const categoryColumn = (toggleEditModal: (itemID: number) => void, toggle
 
                 toggleEditModal(category.id);
               }}
+              className="hover:cursor-pointer"
             >
               Update category
             </DropdownMenuItem>
@@ -353,6 +340,8 @@ export const categoryColumn = (toggleEditModal: (itemID: number) => void, toggle
               onClick={() => {
                 toggleDeleteModal(category.id);
               }}
+              className="hover:cursor-pointer"
+
             >
               Delete category
             </DropdownMenuItem>
@@ -364,13 +353,6 @@ export const categoryColumn = (toggleEditModal: (itemID: number) => void, toggle
 ];
 
 export const inventoryColumns = (toggleModal: (itemID: string) => void): ColumnDef<Inventory>[] => [
-  {
-    id: "select",
-    header: ({ table }) => <Checkbox checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")} onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)} aria-label="Select all" />,
-    cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: "item_id",
     header: "Item ID",
@@ -413,6 +395,7 @@ export const inventoryColumns = (toggleModal: (itemID: string) => void): ColumnD
               onClick={() => {
                 toggleModal(inventory.item_id);
               }}
+              className="hover:cursor-pointer"
             >
               Update item
             </DropdownMenuItem>
@@ -420,6 +403,7 @@ export const inventoryColumns = (toggleModal: (itemID: string) => void): ColumnD
               onClick={() => {
                 deleteInventory(inventory.item_id);
               }}
+              className="hover:cursor-pointer"
             >
               Delete item
             </DropdownMenuItem>
@@ -517,9 +501,6 @@ export function DataTable<TData, TValue>({ columns, data, filter, placeholder }:
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
         <div className="space-x-2">
           <div className="space-x-2">
             <div className="flex items-center justify-end space-x-2 py-4">

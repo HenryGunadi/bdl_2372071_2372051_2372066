@@ -42,7 +42,7 @@ const Sidebar: React.FC = () => {
     <div className="bg-gray-800 w-64 min-h-screen text-white flex flex-col">
       {/* Header */}
       <div className="p-4 flex flex-col items-center border-b border-gray-700">
-        <img src="https://via.placeholder.com/40" alt="Admin" className="rounded-full w-12 h-12 mb-2" />
+        <img src="./assets/user.png" alt="Admin" className="rounded-full w-12 h-12 mb-2" />
         <h3 className="text-white font-semibold">{role === "manager" ? "Manager" : "Admin"}</h3>
         <p className="text-green-400 text-sm">Online</p>
       </div>

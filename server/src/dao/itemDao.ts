@@ -46,6 +46,7 @@ export class ItemDao implements ItemStoreInterface {
 
   async updateItem(udpateValues: UpdateItemPayload): Promise<boolean | BadRequestError> {
     try {
+      console.log("UPDATE BUY PRICE : ", udpateValues.buy_price)
       const res = await this._dbConn
         .request()
         .input("id", udpateValues.id)

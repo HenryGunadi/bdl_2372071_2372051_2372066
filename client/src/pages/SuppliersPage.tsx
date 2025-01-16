@@ -40,7 +40,6 @@ const SuppliersPage: React.FC = () => {
 
       console.log("Added:", supplier);
       await viewSupplier(setSuppliers);
-      alert("Supplier created.");
       setShowAddForm(false);
     } catch (err) {
       console.error(err);
@@ -53,7 +52,6 @@ const SuppliersPage: React.FC = () => {
 
       // refetch latest data update
       await viewSupplier(setSuppliers);
-      alert("Supplier deleted.");
       setShowDeleteModal({ valueId: "", show: false });
     } catch (err) {
       console.error(err);
@@ -64,7 +62,6 @@ const SuppliersPage: React.FC = () => {
     try {
       await updateSupplier(supplier);
       await viewSupplier(setSuppliers);
-      alert("Supplier updated.");
       setShowEditForm(false);
       resetState(setEditSupplier, editSupplier);
     } catch (err) {

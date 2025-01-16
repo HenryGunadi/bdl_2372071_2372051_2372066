@@ -27,7 +27,6 @@ const ReceiptPage = () => {
     items: [],
   });
   const [receiptDetails, setReceiptDetails] = useState<ReceiptDetail[]>([]);
-
   const [showAddForm, setShowAddForm] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState<ModalType>({
     valueId: "",
@@ -144,18 +143,25 @@ const ReceiptPage = () => {
     if (makeReceipt.items.length > 0) {
       let subtotal = 0;
       let discount = 0;
-      let tax = 0;
 
+      // Calculate subtotal and discount based on items
       makeReceipt.items.forEach((item) => {
         subtotal += item.quantity * item.unit_price;
-
         discount += item.unit_price * item.quantity * item.unit_discount;
-
-        tax += (item.quantity * item.unit_price - item.unit_discount) * taxes.filter((value, key) => value.id === makeReceipt.tax_id)[0].tax_rate || 0;
       });
 
+      // Get the tax rate for the selected tax ID
+      const taxRate = taxes.find((value) => value.id === makeReceipt.tax_id)?.tax_rate || 0;
+      console.log("Tax rate : ", taxRate);
+
+      // Calculate tax based on the total subtotal after discount
+      const tax = (subtotal - discount) * taxRate;
+      console.log("TAX subtotal : ", (subtotal - discount) * taxRate);
+
+      // Calculate the total amount
       const amount = subtotal - discount + tax;
 
+      // Update the state with the recalculated totals
       setMakeReceipt((prev) => ({
         ...prev,
         total_subtotal: subtotal,
@@ -166,7 +172,7 @@ const ReceiptPage = () => {
 
       console.log("Receipt Items UPDATED: ", makeReceipt);
     }
-  }, [makeReceipt.items]);
+  }, [makeReceipt.items, makeReceipt.tax_id, taxes]);
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -191,6 +197,7 @@ const ReceiptPage = () => {
         {showAddForm && (
           <Form<CreateReceiptPayload, Receipt[], {}, {}>
             modal={handleShowModal}
+            data4={items}
             datas3={makeReceipt.items}
             datas2={taxes}
             datas={receipts}
@@ -216,6 +223,7 @@ const ReceiptPage = () => {
 
         {showReceiptDetail.show && showReceiptDetail.valueId && (
           <ReceiptDetailModal
+            taxes={taxes}
             receipt={receipts.filter((value, key) => value.receipt_id === showReceiptDetail.valueId)[0]}
             receiptDetail={receiptDetails.filter((value, key) => value.receipt_id === showReceiptDetail.valueId)}
             onClose={() => {

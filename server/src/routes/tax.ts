@@ -26,7 +26,7 @@ const taxRouter = (db: DB): Router => {
     taxController.getTax(req, res, next);
   });
 
-  router.delete("/delete", deleteTaxValidator, (req: Request, res: Response, next: NextFunction) => {
+  router.delete("/delete", (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const err = new BadRequestError({ code: 400, message: "Invalid tax payload validation", context: { error: errors.array() } });
@@ -36,7 +36,7 @@ const taxRouter = (db: DB): Router => {
     taxController.deleteTax(req, res, next);
   });
 
-  router.put("/update", updateTaxValidator, (req: Request, res: Response, next: NextFunction) => {
+  router.put("/update", (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const err = new BadRequestError({ code: 400, message: "Invalid tax payload validation", context: { error: errors.array() } });

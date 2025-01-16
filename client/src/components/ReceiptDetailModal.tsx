@@ -1,16 +1,20 @@
 import { useEffect } from "react";
-import { Receipt, ReceiptDetail } from "../types/types";
+import { Receipt, ReceiptDetail, Tax } from "../types/types";
 
 interface ReceiptDetailProps {
   receipt: Receipt;
+  taxes: Tax[]
   receiptDetail: ReceiptDetail[]; // Accepting receiptDetail as an array
   onClose: () => void;
 }
 
-export default function ReceiptDetailModal({ receipt, receiptDetail, onClose }: ReceiptDetailProps) {
+export default function ReceiptDetailModal({ taxes, receipt, receiptDetail, onClose }: ReceiptDetailProps) {
   useEffect(() => {
     console.log("HELOOOOO : ", receiptDetail);
   }, [receiptDetail]);
+
+  const tax = taxes.filter((value, key) => value.id === receipt.tax_id)[0].tax_rate
+  const total_tax = tax * (receipt.total_subtotal - receipt.total_discount)
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -34,6 +38,9 @@ export default function ReceiptDetailModal({ receipt, receiptDetail, onClose }: 
             </p>
             <p className="font-medium">
               Discount: <span className="font-normal">-${receipt.total_discount.toFixed(2)}</span>
+            </p>
+            <p className="font-medium">
+              Total Tax: <span className="font-normal">${total_tax}</span>
             </p>
             <p className="font-medium">
               Total Amount: <span className="font-normal">${receipt.total_amount.toFixed(2)}</span>

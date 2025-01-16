@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { backendBaseAPI } from "../utils/Item";
 
 type LoginPayload = {
   email: string;
@@ -19,7 +20,7 @@ const LoginPage: React.FC = () => {
     };
 
     try {
-      const response = await axios.post("http://localhost:8000/api/auth/login", payload, { withCredentials: true });
+      const response = await axios.post(`${backendBaseAPI}/api/auth/login`, payload, { withCredentials: true });
 
       const { token, role } = response.data;
 

@@ -92,7 +92,7 @@ class ItemController {
     try {
       const payload: UpdateItemPayload = req.body;
 
-      console.log("UPDATE PAYLOAD FROM FORMDATA? : ");
+      console.log("UPDATE PAYLOAD FROM FORMDATA? : ", payload);
 
       const imageURL = req.file ? req.file.path : "";
       const formattedImageURL = imageURL.split("\\").pop() || "";

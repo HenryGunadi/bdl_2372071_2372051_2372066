@@ -56,6 +56,7 @@ export async function createReceipt(payload: CreateReceiptPayload) {
     window.location.reload();
   } catch (err) {
     console.error(err);
-    alert(`Create receipt error : ${err}`);
+    alert(`Insufficient stock`);
+    window.location.reload();
   }
 }

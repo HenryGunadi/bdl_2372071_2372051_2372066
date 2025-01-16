@@ -41,7 +41,7 @@ async function createItem(item: CreateItemPayload) {
 
     console.log(response.data);
     alert("Item Created");
-    // window.location.reload(); // Refresh the page
+    window.location.reload(); // Refresh the page
   } catch (err) {
     console.error("Error creating an item : ", err);
     alert(`Error creating an item : ${err}`);
@@ -66,6 +66,7 @@ export async function deleteItem(id: string) {
 export async function updateItem(payload: UpdateItemPayload) {
   try {
     console.log("UPDATE PAYLOAD FROM FRONTEND : ", payload);
+    console.log("UPDATE PAYLOAD BUY PRICE : ", payload.buy_price)
 
     const formData = new FormData();
     formData.append("id", payload.id);
@@ -75,6 +76,7 @@ export async function updateItem(payload: UpdateItemPayload) {
     formData.append("description", payload.description);
     formData.append("discount", payload.discount?.toString() || "");
     formData.append("category_id", String(payload.category_id));
+    formData.append("buy_price", String(payload.buy_price))
     if (payload.image) {
       formData.append("image", payload.image);
     }

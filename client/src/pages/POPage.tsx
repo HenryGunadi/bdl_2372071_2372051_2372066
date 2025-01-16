@@ -55,7 +55,6 @@ const POPage = () => {
       await createPO(makePO);
       await viewPO(setPOS);
       setShowAddForm(false);
-      alert("Purchase order has been created.");
     } catch (err) {
       alert(`Error: ${err}`);
     }
@@ -205,6 +204,7 @@ const POPage = () => {
         {showAddForm && (
           <Form<CreatePO, PO[], {}, {}>
             modal={handleShowAddItem}
+            data4={items}
             datas3={makePO.items}
             datas2={suppliers}
             datas={pos}

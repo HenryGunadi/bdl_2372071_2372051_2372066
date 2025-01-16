@@ -24,8 +24,10 @@ export async function createSupplier(supplier: SupplierPayload) {
     });
 
     console.log(res.data);
+    alert("SUpplier created")
   } catch (err) {
     console.error("Error creating supplier : ", err);
+    alert(`Error creating supplier : ${err}`)
   }
 }
 
@@ -36,8 +38,9 @@ export async function updateSupplier(supplier: UpdateSupplierPayload): Promise<v
     });
 
     console.log(res.data);
+    alert("SUpplier updated")
   } catch (err) {
-    console.error("Error creating supplier : ", err);
+    console.error("Error updating supplier : ", err);
   }
 }
 

@@ -18,6 +18,7 @@ export async function viewTax(setState: React.Dispatch<SetStateAction<Tax[]>>) {
 
 export async function createTax(payload: TaxPayload) {
   try {
+    payload.tax_rate = payload.tax_rate * 0.01 
     const res = await axios.post(`${backendBaseAPI}/api/tax/create`, payload, {
       withCredentials: true,
     });
@@ -32,15 +33,16 @@ export async function createTax(payload: TaxPayload) {
 
 export async function updateTax(payload: TaxPayload) {
   try {
-    const res = await axios.patch(`${backendBaseAPI}/api/tax/update`, payload, {
+    const res = await axios.put(`${backendBaseAPI}/api/tax/update`, payload, {
       withCredentials: true,
     });
 
     console.log(res.data);
     alert("Tax updated");
-    // window.location.reload();
+    window.location.reload();
   } catch (err) {
     console.error(err);
+    alert(`Error updating category : ${err}`)
   }
 }
 

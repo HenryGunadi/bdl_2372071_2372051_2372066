@@ -2,6 +2,7 @@ import React, { SetStateAction, useEffect } from "react";
 import Combobox from "../ui/Combobox";
 
 interface AddFormProps<T extends { [key: string]: any }, P extends { [key: string]: any }, A extends { [key: string]: any }, B extends { [key: string]: any }> {
+  data4?: any[];
   datas?: P;
   datas2?: A[]; // It seems you want an array of strings
   datas3?: B[];
@@ -17,6 +18,7 @@ interface AddFormProps<T extends { [key: string]: any }, P extends { [key: strin
 }
 
 const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: any }, A extends { [key: string]: any }, B extends { [key: string]: any }>({
+  data4,
   datas3 = undefined,
   datas2 = undefined,
   datas = undefined,
@@ -108,8 +110,14 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
         return;
       }
 
-      // If it's quantity, ensure it's not 0
-      if (field === "quantity" && data[field] === 0 && page !== "inventory") {
+      // Ensure buy_price and price are not 0
+      if ((field === "buy_price" || field === "price") && Number(data[field]) === 0) {
+        alert(`The field "${field}" cannot be 0.`);
+        return;
+      }
+
+      // Ensure quantity is not 0 (if applicable)
+      if (field === "quantity" && Number(data[field]) === 0 && page !== "inventory") {
         alert("Quantity cannot be 0.");
         return;
       }
@@ -127,6 +135,7 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
       console.error(err);
     }
   };
+
   // Handle combobox item selection
   const handleComboboxSelect = (item: any) => {
     setData((prev) => ({
@@ -151,28 +160,18 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
     const updatedItems = [...datas3];
     updatedItems.splice(index, 1);
 
-    // Recalculate the totals based on the updated items
+    // Recalculate the subtotal
     const newSubtotal = updatedItems.reduce((acc, item) => acc + item.quantity * item.price, 0);
+
+    // Calculate total discount
     const newDiscount = updatedItems.reduce((acc, item) => acc + (item.discount || 0), 0);
 
-    let newTax = 0;
-    if ("total_subtotal" in data) {
-      // If it's a receipt (contains total_subtotal)
-      newTax = updatedItems.reduce((acc, item) => acc + (item.tax || 0), 0); // Recalculate tax for receipt
-    }
+    // Tax calculation from subtotal
+    const taxRate = 0.1; // Example: 10% tax
+    const newTax = newSubtotal * taxRate;
 
-    let totalAmount: number;
-
-    // Determine the total amount field based on the type of item (Receipt or PO)
-    if ("total_subtotal" in data) {
-      // Receipt type (contains total_subtotal)
-      totalAmount = newSubtotal - newDiscount + newTax; // Use total_amount
-    } else if ("total_amount_due" in data) {
-      // PO type (contains total_amount_due)
-      totalAmount = newSubtotal - newDiscount + newTax; // No tax for PO if needed
-    } else {
-      return; // If neither type, do nothing
-    }
+    // Calculate total amount
+    const totalAmount = newSubtotal - newDiscount + newTax;
 
     // Update the state with the recalculated totals
     setData((prev) => ({
@@ -180,8 +179,7 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
       items: updatedItems,
       total_subtotal: newSubtotal,
       total_discount: newDiscount,
-      total_tax: newTax, // Include total_tax only for Receipt
-      // Update the correct total based on the item type
+      total_tax: newTax,
       total_amount: "total_amount" in data ? totalAmount : undefined, // For Receipt type
       total_amount_due: "total_amount_due" in data ? totalAmount : undefined, // For PO type
     }));
@@ -238,7 +236,7 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
                   <input
                     required={(task === "add" || task === "update") && (page === "item" || page === "tax" || page === "categories") && key !== "image"}
                     key={key}
-                    type={key === "image" ? "file" : typeof value === "number" ? "number" : key.includes("date") ? "date" : "text"}
+                    type={key === "image" ? "file" : typeof value === "number" ? "number" : key.includes("date") ? "date" : key === "email" ? "email" : "text"}
                     name={key}
                     placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
                     value={key === "image" ? undefined : String(value ?? "")}
@@ -262,7 +260,7 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
                   <thead>
                     <tr>
                       <th className="px-4 py-2 border">#</th>
-                      <th className="px-4 py-2 border">Item ID</th>
+                      <th className="px-4 py-2 border">Item</th>
                       <th className="px-4 py-2 border">Quantity</th>
                       <th className="px-4 py-2 border">Action</th>
                     </tr>
@@ -271,7 +269,7 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
                     {datas3.map((value, index) => (
                       <tr key={index} className="text-center">
                         <td className="px-4 py-2 border">{index + 1}</td>
-                        <td className="px-4 py-2 border">{value.item_id ? value.item_id : value.items_id}</td>
+                        <td className="px-4 py-2 border">{value.item_id ? data4!.filter((item) => item.id === value.item_id)[0].nama : data4!.filter((item) => item.id === value.items_id)[0].nama}</td>
                         <td className="px-4 py-2 border">{value.quantity}</td>
                         <td className="px-4 py-2 border">
                           <button type="button" onClick={() => handleDeleteItem(index)} className="text-red-600 hover:underline">
@@ -290,6 +288,22 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
             <div className="mt-8 p-6 bg-zinc-100 rounded-md shadow-sm">
               <h3 className="text-lg font-semibold mb-4">Purchase Order Summary</h3>
               <ul>
+                {page === "receipt" && (
+                  <>
+                    <li className="flex justify-between py-2 border-b">
+                      <span className="font-medium">Total Subtotal:</span>
+                      <span className="text-lg font-semibold">${data.total_subtotal ? data.total_subtotal.toFixed(2) : "0.00"}</span>
+                    </li>
+                    <li className="flex justify-between py-2 border-b">
+                      <span className="font-medium">Total Discount:</span>
+                      <span className="text-lg font-semibold">${data.total_discount ? data.total_discount.toFixed(2) : "0.00"}</span>
+                    </li>
+                    <li className="flex justify-between py-2 border-b">
+                      <span className="font-medium">Total Tax:</span>
+                      <span className="text-lg font-semibold">${data.total_tax ? data.total_tax.toFixed(2) : "0.00"}</span>
+                    </li>
+                  </>
+                )}
                 <li className="flex justify-between py-2 border-b">
                   <span className="font-medium">Total Amount Due:</span>
                   <span className="text-lg font-semibold">${data.total_amount_due ? data.total_amount_due.toFixed(2) : data.total_amount ? data.total_amount.toFixed(2) : "0.00"}</span>
