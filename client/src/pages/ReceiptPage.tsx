@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
-import { ModalType, PO, CreatePO, UpdatePO, Supplier, AllItems, PODetailPayload, PODetails, Receipt, CreateReceiptPayload, ReceiptDetail, ReceiptDetailPayload, DeleteReceiptPayload, Tax } from "../types/types";
+import { ModalType, AllItems, Receipt, CreateReceiptPayload, ReceiptDetail, ReceiptDetailPayload, DeleteReceiptPayload, Tax } from "../types/types";
 import Form from "../components/CRUD/Form";
-import { createPO, deletePO, updatePO, viewPO, viewPODetails } from "../utils/poUtils";
-import { columns, DataTable, receiptColumns } from "../components/table/Table";
-import { viewSupplier } from "../utils/supplierUtils";
-import POModal from "../components/CRUD/POModal";
+import { DataTable, receiptColumns } from "../components/table/Table";
 import { fetchItems } from "../utils/Item";
 import DeleteModal from "../components/CRUD/DeleteModal";
 import { resetState } from "../utils/commonUtils";
-import UpdatePOModal from "../components/CRUD/UpdatePOModal";
-import PODetailModal from "../components/PODetailModal";
 import ReceiptDetailModal from "../components/ReceiptDetailModal";
 import { createReceipt, deleteReceipt, viewReceipt, viewReceiptDetails } from "../utils/receiptUtils";
 import ReceiptModal from "../components/CRUD/ReceiptModal";
@@ -71,16 +66,6 @@ const ReceiptPage = () => {
     return "";
   };
 
-  async function handleCreateReceipt() {
-    try {
-      await createReceipt(makeReceipt);
-      await viewReceipt(setReceipts);
-      await viewReceiptDetails(setReceiptDetails);
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
   const handelAddReceiptItem = (ReceiptDetail: ReceiptDetailPayload) => {
     console.log("RECEIPT DETAIL : ", ReceiptDetail);
 
@@ -116,10 +101,9 @@ const ReceiptPage = () => {
   async function handleAdd() {
     try {
       console.log("RECEIPT FINAL : ", makeReceipt);
-      await createReceipt(makeReceipt);
+      await createReceipt(makeReceipt, setMakeReceipt);
       await viewReceipt(setReceipts);
       setReceiptItemModal(false);
-      resetState(setMakeReceipt, makeReceipt);
     } catch (err) {
       console.error(err);
     }
@@ -224,8 +208,8 @@ const ReceiptPage = () => {
         {showReceiptDetail.show && showReceiptDetail.valueId && (
           <ReceiptDetailModal
             taxes={taxes}
-            receipt={receipts.filter((value, key) => value.receipt_id === showReceiptDetail.valueId)[0]}
-            receiptDetail={receiptDetails.filter((value, key) => value.receipt_id === showReceiptDetail.valueId)}
+            receipt={receipts.filter((value) => value.receipt_id === showReceiptDetail.valueId)[0]}
+            receiptDetail={receiptDetails.filter((value) => value.receipt_id === showReceiptDetail.valueId)}
             onClose={() => {
               setShowReceiptDetail({
                 valueId: "",

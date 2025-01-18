@@ -36,7 +36,7 @@ class TaxDao implements TaxStoreInterface {
 
   async updateTax(updateValue: TaxPayload): Promise<boolean | BadRequestError> {
     try {
-      console.log("UPDATE CATEGORY PAYLOAD : ", updateValue)
+      console.log("UPDATE CATEGORY PAYLOAD : ", updateValue);
       const res = this._dbConn.request();
 
       for (const [key, value] of Object.entries(updateValue)) {

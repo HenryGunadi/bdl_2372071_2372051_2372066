@@ -144,7 +144,7 @@ export type PO = {
   total_subtotal: number;
   total_amount_due: number;
   supplier_id: string;
-  status: "Ongoing" | "Accepted" | "Terminated";
+  status: "ongoing" | "accepted";
 };
 
 export type UpdatePO = {

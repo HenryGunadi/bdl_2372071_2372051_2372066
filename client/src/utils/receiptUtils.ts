@@ -2,6 +2,7 @@ import React, { SetStateAction } from "react";
 import { CreateReceiptPayload, DeleteReceiptPayload, Receipt, ReceiptDetail } from "../types/types";
 import axios from "axios";
 import { backendBaseAPI } from "./Item";
+import { resetState } from "./commonUtils";
 
 export async function viewReceipt(setState: React.Dispatch<SetStateAction<Receipt[]>>) {
   try {
@@ -9,7 +10,7 @@ export async function viewReceipt(setState: React.Dispatch<SetStateAction<Receip
       withCredentials: true,
     });
 
-    console.log(res.data);
+    console.log("RECEIPTS DATA : ", res.data.receipts);
     setState(res.data.receipts);
   } catch (err) {
     console.error(err);
@@ -45,7 +46,7 @@ export async function deleteReceipt(payload: DeleteReceiptPayload) {
   }
 }
 
-export async function createReceipt(payload: CreateReceiptPayload) {
+export async function createReceipt(payload: CreateReceiptPayload, setMakeReceipt: React.Dispatch<SetStateAction<CreateReceiptPayload>>) {
   try {
     const res = await axios.post(`${backendBaseAPI}/api/receipt/create`, payload, {
       withCredentials: true,
@@ -53,10 +54,11 @@ export async function createReceipt(payload: CreateReceiptPayload) {
 
     console.log(res.data);
     alert("Receipt created");
+    resetState(setMakeReceipt, payload);
     window.location.reload();
   } catch (err) {
     console.error(err);
     alert(`Insufficient stock`);
-    window.location.reload();
+    // window.location.reload();
   }
 }

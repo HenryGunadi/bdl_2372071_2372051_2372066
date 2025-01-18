@@ -62,7 +62,7 @@ const DashboardPage = () => {
   const stats = [
     { label: "ITEMS", value: items.length, color: "bg-blue-500", icon: "🛍️" },
     { label: "SUPPLIERS", value: suppliers.length, color: "bg-red-500", icon: <Package className="h-8 w-8" /> },
-    { label: "Ongoing POS", value: pos.length, color: "bg-green-500", icon: "🚚" },
+    { label: "Ongoing POS", value: pos.filter((po) => po.status === "ongoing").length, color: "bg-green-500", icon: "🚚" },
     { label: "USERS", value: users.length, color: "bg-orange-500", icon: "👥" },
   ];
 

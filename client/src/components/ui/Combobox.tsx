@@ -7,10 +7,9 @@ interface ComboboxProps<TData> {
   onSelect: (id: any) => void;
   searchKey: keyof TData;
   task: string;
-  task2?: string;
 }
 
-const Combobox = <TData extends { [key: string]: any }>({ data, onSelect, searchKey, task, value, task2 }: ComboboxProps<TData>) => {
+const Combobox = <TData extends { [key: string]: any }>({ data, onSelect, searchKey, task, value }: ComboboxProps<TData>) => {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   let selectionMade = false;

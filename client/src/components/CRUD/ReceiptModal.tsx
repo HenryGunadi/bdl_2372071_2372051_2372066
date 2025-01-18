@@ -1,5 +1,5 @@
-import React, { SetStateAction, useEffect, useState } from "react";
-import { PODetailPayload, ReceiptDetail, ReceiptDetailPayload } from "../../types/types";
+import React, { SetStateAction, useState } from "react";
+import { ReceiptDetailPayload } from "../../types/types";
 import Combobox from "../ui/Combobox";
 import { resetState } from "../../utils/commonUtils";
 
@@ -20,9 +20,17 @@ const ReceiptModal = <TData extends { [key: string]: any }, TData2 extends { [ke
   });
 
   // Toggle modal visibility
-  const toggleModal = () => setOpen(!open);
+  const toggleModal = () => {
+    resetState(setReceiptDetail, receiptDetail);
+    setOpen(!open);
+  };
 
-  const handleSelect = (itemID: string) => {
+  const handleSelect = (itemID: string | null) => {
+    if (!itemID) {
+      resetState<ReceiptDetailPayload>(setReceiptDetail, receiptDetail);
+      return;
+    }
+
     const filteredItemSelected = data.filter((value, key) => value.id === itemID);
 
     if (filteredItemSelected.length > 0) {
@@ -34,8 +42,6 @@ const ReceiptModal = <TData extends { [key: string]: any }, TData2 extends { [ke
         unit_price: filteredItemSelected[0].price,
         unit_discount: filteredItemSelected[0].discount,
       }));
-    } else {
-      console.error("No item selected or item not found");
     }
   };
 
@@ -79,6 +85,11 @@ const ReceiptModal = <TData extends { [key: string]: any }, TData2 extends { [ke
     // Check if the quantity is 0
     if (receiptDetail.quantity === 0) {
       alert("Quantity cannot be 0.");
+      return;
+    }
+
+    if (receiptDetail.quantity >= 99999) {
+      alert("Quantity cannot be larger than 99999");
       return;
     }
 

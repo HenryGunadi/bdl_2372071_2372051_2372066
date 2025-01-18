@@ -131,6 +131,13 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (page === "receipt") {
+      if (!data.tax_id) {
+        alert("Please renew your tax, tax must be supplied");
+        return;
+      }
+    }
+
     // Validate numeric fields
     const numericFields = ["discount", "price", "buy_price", "quantity"];
     for (const field of numericFields) {
@@ -179,8 +186,8 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
     }));
   };
 
-  const filteredCategory = datas3?.filter((category) => category.id === data.category_id);
-  const filteredSupplier = datas2?.filter((supplier) => supplier.id === data.supplier_id);
+  const filteredCategory = datas3 ? datas3?.filter((category) => category.id === data.category_id) : null;
+  const filteredSupplier = datas2 ? datas2?.filter((supplier) => supplier.id === data.supplier_id) : null;
 
   const handleCategorySelect = (id: number) => {
     setData((prev) => ({
@@ -227,16 +234,18 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
   }, []);
 
   useEffect(() => {
-    if (updateImage) {
-      setData((prev) => ({
-        ...prev,
-        image: "erased",
-      }));
-    } else {
-      setData((prev) => ({
-        ...prev,
-        image: null,
-      }));
+    if (page === "item") {
+      if (updateImage) {
+        setData((prev) => ({
+          ...prev,
+          image: "erased",
+        }));
+      } else {
+        setData((prev) => ({
+          ...prev,
+          image: null,
+        }));
+      }
     }
   }, [updateImage]);
 
@@ -310,13 +319,13 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
                       <input
                         required={(task === "add" || task === "update") && (page === "item" || page === "tax" || page === "categories") && key !== "image"}
                         key={key}
-                        type={key === "image" ? "file" : typeof value === "number" ? "number" : key.includes("date") ? "date" : key === "email" ? "email" : "text"}
-                        name={"HELLO"}
+                        type={key === "password" ? "password" : key === "image" ? "file" : typeof value === "number" ? "number" : key.includes("date") ? "date" : key === "email" ? "email" : "text"}
+                        name={key}
                         placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
                         value={key === "image" ? undefined : String(value ?? "")}
                         onChange={key === "image" ? handleUploadImg : handleChange}
                         className="w-full px-4 py-2 border rounded-lg focus:outline-none"
-                        readOnly={(key === "tax_id" && !!value) || (page === "inventory" && key === "item_id")}
+                        readOnly={key === "tax_id" || (page === "inventory" && key === "item_id")}
                       />
                     </>
                   )}

@@ -18,7 +18,7 @@ export async function viewTax(setState: React.Dispatch<SetStateAction<Tax[]>>) {
 
 export async function createTax(payload: TaxPayload) {
   try {
-    payload.tax_rate = payload.tax_rate * 0.01 
+    payload.tax_rate = payload.tax_rate * 0.01;
     const res = await axios.post(`${backendBaseAPI}/api/tax/create`, payload, {
       withCredentials: true,
     });
@@ -42,7 +42,7 @@ export async function updateTax(payload: TaxPayload) {
     window.location.reload();
   } catch (err) {
     console.error(err);
-    alert(`Error updating category : ${err}`)
+    alert(`Error updating category : ${err}`);
   }
 }
 
@@ -56,6 +56,7 @@ export async function deleteTax(id: string) {
     alert("Tax deleted");
     window.location.reload();
   } catch (err) {
+    alert("Cannot delete this item. It is currently in use or linked to other records.");
     console.error(err);
   }
 }

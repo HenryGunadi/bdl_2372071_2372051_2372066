@@ -10,7 +10,6 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { Input } from "../ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Category, Inventory, Items, PO, Receipt } from "../../types/types";
-import { deleteItem, fetchItems } from "../../utils/Item";
 import { deleteInventory } from "../../utils/inventoryUtils";
 
 export const columns = (toggleDelete: (id: string) => void, toggleUpdate: (id: string) => void, toggleDetail: (id: string) => void): ColumnDef<PO>[] => [
@@ -180,7 +179,6 @@ export const itemColumns = (toggleModal: (id: string) => void, toggleDetail: (id
     header: "Image",
     cell: ({ row }) => {
       const imageUrl = row.getValue("image_url");
-      console.log("IMAGE URL : ", imageUrl);
 
       return <img src={`assets/db/${row.getValue("image_url")}`} className="w-16 h-16" alt="" />;
     },
@@ -310,7 +308,16 @@ export const categoryColumn = (toggleEditModal: (itemID: number) => void, toggle
   {
     accessorKey: "created_at",
     header: "Created",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("created_at")}</div>,
+    cell: ({ row }) => {
+      let date: Date = row.getValue("created_at"); // Example input
+      if (!(date instanceof Date)) {
+        date = new Date(date); // Convert to Date object if not already one
+      }
+
+      const formattedDate = date.toISOString().split("T")[0];
+
+      return <div className="capitalize">{formattedDate}</div>;
+    },
   },
   {
     id: "actions",
