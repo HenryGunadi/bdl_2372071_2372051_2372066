@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { AllItems, Category, CreateItemPayload, Items, Supplier, UpdateItemPayload } from "../types/types";
-import { createItem, fetchItems, updateItem } from "../utils/Item";
+import { createItem, deleteItem, fetchItems, updateItem } from "../utils/Item";
 import { DataTable, itemColumns } from "../components/table/Table";
 import Form from "../components/CRUD/Form";
 import { viewSupplier } from "../utils/supplierUtils";
 import { resetState } from "../utils/commonUtils";
 import { viewCategories } from "../utils/categoryUtils";
 import ItemDetailModal from "../components/ItemDetailModal";
+import DeleteModal from "../components/CRUD/DeleteModal";
 
 function ItemDashboard() {
   const [items, setItems] = useState<AllItems[]>([]);
@@ -42,6 +43,10 @@ function ItemDashboard() {
     valueId: "",
     show: false,
   });
+  const [deleteItemAlert, setDeleteItemAlert] = useState<{ id: string; show: boolean }>({
+    id: "",
+    show: false,
+  });
 
   // handlers
   const handleSelectSupplier = (id: string) => {
@@ -65,6 +70,7 @@ function ItemDashboard() {
     });
 
     const filteredItem = items.filter((item) => item.id === id);
+    console.log("FILTERED ITEM UPDATE : ", filteredItem);
 
     if (items.length > 0) {
       setEditItem({
@@ -90,11 +96,22 @@ function ItemDashboard() {
     });
   }
 
+  function toggleDeleteItem(id: string) {
+    setDeleteItemAlert({
+      id: id,
+      show: true,
+    });
+  }
+
   useEffect(() => {
     fetchItems(setItems);
     viewSupplier(setSuppliers);
     viewCategories(setCategories);
   }, []);
+
+  useEffect(() => {
+    console.log("Edit Item : ", editItem);
+  }, [editItem]);
 
   useEffect(() => {
     console.log(items);
@@ -161,6 +178,7 @@ function ItemDashboard() {
           />
         )}
 
+        {/* show item detail */}
         {showItemDetailModal.show && showItemDetailModal.valueId && (
           <ItemDetailModal
             item={items.filter((value, key) => value.id === showItemDetailModal.valueId)[0]}
@@ -173,7 +191,23 @@ function ItemDashboard() {
           ></ItemDetailModal>
         )}
 
-        <DataTable columns={itemColumns(toggleEditModal, toggleItemDetailModal)} data={items} filter="category_name" placeholder="Search by category"></DataTable>
+        {/* delete item alert */}
+        {deleteItemAlert.show && deleteItemAlert.id && (
+          <DeleteModal
+            onDelete={() => {
+              deleteItem(deleteItemAlert.id);
+            }}
+            onCancel={() => {
+              setDeleteItemAlert({
+                id: "",
+                show: false,
+              });
+            }}
+            valueId={deleteItemAlert.id}
+          ></DeleteModal>
+        )}
+
+        <DataTable columns={itemColumns(toggleEditModal, toggleItemDetailModal, toggleDeleteItem)} data={items} filter="category_name" placeholder="Search by category"></DataTable>
       </div>
     </div>
   );

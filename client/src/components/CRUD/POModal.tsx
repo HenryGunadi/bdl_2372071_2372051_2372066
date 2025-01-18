@@ -36,9 +36,21 @@ const POModal = <TData extends { [key: string]: any }, TData2 extends { [key: st
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    // handle if name is quantity
+    let parsedValue: number | string = value;
+
+    if (name === "quantity") {
+      parsedValue = parseInt(value, 10);
+
+      if (isNaN(parsedValue) || parsedValue < 0) {
+        parsedValue = 0;
+      }
+    }
+
     setPODetail((prev) => ({
       ...prev,
-      [name]: value === "" ? null : value, // if value is empty string, set it to null
+      [name]: parsedValue === "" ? null : parsedValue, // if value is empty string, set it to null
     }));
   };
 
@@ -78,6 +90,11 @@ const POModal = <TData extends { [key: string]: any }, TData2 extends { [key: st
 
                 if (!PODetail.item_id) {
                   alert("Please select an item");
+                  return;
+                }
+
+                if (PODetail.quantity === 0) {
+                  alert("Quantity cannot be zero");
                   return;
                 }
 

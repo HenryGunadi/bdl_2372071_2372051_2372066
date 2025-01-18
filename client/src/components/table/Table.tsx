@@ -14,7 +14,6 @@ import { deleteItem, fetchItems } from "../../utils/Item";
 import { deleteInventory } from "../../utils/inventoryUtils";
 
 export const columns = (toggleDelete: (id: string) => void, toggleUpdate: (id: string) => void, toggleDetail: (id: string) => void): ColumnDef<PO>[] => [
-
   {
     accessorKey: "id",
     header: "PO ID",
@@ -85,10 +84,10 @@ export const columns = (toggleDelete: (id: string) => void, toggleUpdate: (id: s
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                const status = row.getValue("status")
+                const status = row.getValue("status");
                 if (status === "accepted") {
-                  alert("Status has been accepted")
-                  return
+                  alert("Status has been accepted");
+                  return;
                 }
                 toggleUpdate(row.getValue("id"));
               }}
@@ -111,7 +110,7 @@ export const columns = (toggleDelete: (id: string) => void, toggleUpdate: (id: s
   },
 ];
 
-export const itemColumns = (toggleModal: (id: string) => void, toggleDetail: (id: string) => void): ColumnDef<Items>[] => [
+export const itemColumns = (toggleModal: (id: string) => void, toggleDetail: (id: string) => void, toggleDeleteModal: (idL: string) => void): ColumnDef<Items>[] => [
   {
     accessorKey: "id",
     header: "Item ID",
@@ -179,7 +178,12 @@ export const itemColumns = (toggleModal: (id: string) => void, toggleDetail: (id
   {
     accessorKey: "image_url",
     header: "Image",
-    cell: ({ row }) => <img src={`/assets/db/${row.getValue("image_url")}`} className="w-16 h-16" alt="" />,
+    cell: ({ row }) => {
+      const imageUrl = row.getValue("image_url");
+      console.log("IMAGE URL : ", imageUrl);
+
+      return <img src={`assets/db/${row.getValue("image_url")}`} className="w-16 h-16" alt="" />;
+    },
   },
   {
     id: "actions",
@@ -217,7 +221,7 @@ export const itemColumns = (toggleModal: (id: string) => void, toggleDetail: (id
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                deleteItem(row.getValue("id"));
+                toggleDeleteModal(row.getValue("id"));
               }}
               className="hover:cursor-pointer"
             >
@@ -341,7 +345,6 @@ export const categoryColumn = (toggleEditModal: (itemID: number) => void, toggle
                 toggleDeleteModal(category.id);
               }}
               className="hover:cursor-pointer"
-
             >
               Delete category
             </DropdownMenuItem>

@@ -91,18 +91,26 @@ class ItemController {
   updateItem = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payload: UpdateItemPayload = req.body;
-
+      let image: string | null = "";
       console.log("UPDATE PAYLOAD FROM FORMDATA? : ", payload);
 
-      const imageURL = req.file ? req.file.path : "";
+      const imageURL = req.file ? req.file.path : ""; // if there is file
       const formattedImageURL = imageURL.split("\\").pop() || "";
-
       console.log("IMAGE URL : ", formattedImageURL);
+      image = formattedImageURL;
 
-      payload.image_url = formattedImageURL;
-      const queryRes = await this._store.updateItem(payload);
+      if (imageURL === "") {
+        image = null;
+      }
 
-      // check if there is internal server error
+      if (payload.image === "erased") {
+        image = "";
+      }
+
+      const UpdatedItem: Item = new Item(payload.nama, payload.price, payload.supplier_id, payload.description, image, payload.category_id, payload.discount, payload.buy_price, payload.id);
+
+      const queryRes = await this._store.updateItem(UpdatedItem);
+
       if (queryRes instanceof BadRequestError) {
         return next(queryRes);
       } else {

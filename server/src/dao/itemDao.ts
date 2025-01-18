@@ -44,20 +44,20 @@ export class ItemDao implements ItemStoreInterface {
     }
   }
 
-  async updateItem(udpateValues: UpdateItemPayload): Promise<boolean | BadRequestError> {
+  async updateItem(udpateValues: Item): Promise<boolean | BadRequestError> {
     try {
-      console.log("UPDATE BUY PRICE : ", udpateValues.buy_price)
+      console.log("UPDATE ITEM DAO : ", udpateValues);
       const res = await this._dbConn
         .request()
         .input("id", udpateValues.id)
         .input("nama", udpateValues.nama)
         .input("price", udpateValues.price)
-        .input("supplier_id", udpateValues.supplier_id)
-        .input("description", udpateValues.description)
+        .input("supplier_id", udpateValues.supplierId)
+        .input("description", udpateValues.desc)
         .input("discount", udpateValues.discount)
-        .input("image", udpateValues.image_url)
-        .input("category_id", udpateValues.category_id)
-        .input("buy_price", udpateValues.buy_price)
+        .input("image", udpateValues.imageUrl)
+        .input("category_id", udpateValues.categoryId)
+        .input("buy_price", udpateValues.buyPrice)
         .execute("sp_update_item");
 
       return res.rowsAffected[0] > 0;

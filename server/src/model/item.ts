@@ -5,11 +5,11 @@ class Item {
   private _supplier_id: string;
   private _desc: string;
   private _discount: number | null = null;
-  private _image_url: string;
+  private _image_url: string | null;
   private _category_id: number;
   private _buy_price: number;
 
-  constructor(nama: string, price: number, supplier_id: string, desc: string, image_url: string, category_id: number, discount: number | null, buy_price: number, id?: string) {
+  constructor(nama: string, price: number, supplier_id: string, desc: string, image_url: string | null, category_id: number, discount: number | null, buy_price: number, id?: string) {
     this._id = id;
     this._nama = nama;
     this._buy_price = buy_price;
@@ -46,7 +46,7 @@ class Item {
     return this._discount;
   }
 
-  get imageUrl(): string {
+  get imageUrl(): string | null {
     return this._image_url;
   }
 

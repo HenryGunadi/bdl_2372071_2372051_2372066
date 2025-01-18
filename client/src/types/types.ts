@@ -16,7 +16,7 @@ export type UpdateItemPayload = {
   supplier_id: string;
   description: string;
   discount: number;
-  image: File | null;
+  image: File | null | string;
   category_id: number;
   buy_price: number;
 };

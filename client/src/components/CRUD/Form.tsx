@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import Combobox from "../ui/Combobox";
 
 interface AddFormProps<T extends { [key: string]: any }, P extends { [key: string]: any }, A extends { [key: string]: any }, B extends { [key: string]: any }> {
@@ -32,15 +32,24 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
   callback,
   page,
 }: AddFormProps<T, P, A, B>) => {
+  const [updateImage, setUpdateImage] = useState<boolean>(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     // Check if the field should be numeric
     const numericFields = ["discount", "price", "buy_price", "tax_rate", "quantity"];
     if (numericFields.includes(name)) {
+      let parsedValue: string | number = value;
+
       if (name === "quantity") {
         // Ensure that quantity is a positive integer or zero (not negative)
-        const parsedValue = value === "" ? 0 : parseInt(value, 10); // Default to 0 if the value is empty
+        parsedValue = value === "" ? 0 : parseInt(value, 10); // Default to 0 if the value is empty
+
+        if (parsedValue > 9999999) {
+          alert("The maximum allowed value is 9,999,999.");
+          return;
+        }
 
         if (parsedValue < 0) {
           alert("Quantity cannot be negative.");
@@ -52,20 +61,40 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
           [name]: parsedValue,
         }));
         return;
-      }
+      } else {
+        // For other numeric fields, ensure it's a valid decimal number
+        const decimalValue = value.replace(/^0+(?![.]|$)/, ""); // Remove leading zeros but allow decimals
+        if (decimalValue !== "" && isNaN(Number(decimalValue))) {
+          alert(`The field "${name}" must be a valid number.`);
+          return;
+        }
 
-      // For other numeric fields, ensure it's a valid decimal number
-      const decimalValue = value.replace(/^0+(?![.]|$)/, ""); // Remove leading zeros but allow decimals
-      if (decimalValue !== "" && isNaN(Number(decimalValue))) {
-        alert(`The field "${name}" must be a valid number.`);
+        if (parseFloat(decimalValue) <= 0 && name != "discount") {
+          alert(`The field ${name} must be greater than zero`);
+          return;
+        }
+
+        if (parseFloat(decimalValue) > 9999999 && name != "discount") {
+          alert("The maximum allowed value is 9,999,999.");
+          return;
+        }
+
+        if (parseFloat(decimalValue) >= 1 && name == "discount") {
+          alert("Discount field cannot be greater than or equal to 1");
+          return;
+        }
+
+        if (parseFloat(decimalValue) < 0 && name == "discount") {
+          alert("Discount field cannot be negative value");
+          return;
+        }
+
+        setData((prev) => ({
+          ...prev,
+          [name]: decimalValue === "" ? 0 : decimalValue, // Default to 0 if empty
+        }));
         return;
       }
-
-      setData((prev) => ({
-        ...prev,
-        [name]: decimalValue === "" ? 0 : decimalValue, // Default to 0 if empty
-      }));
-      return;
     }
 
     // Handle non-numeric fields
@@ -119,6 +148,12 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
       // Ensure quantity is not 0 (if applicable)
       if (field === "quantity" && Number(data[field]) === 0 && page !== "inventory") {
         alert("Quantity cannot be 0.");
+        return;
+      }
+
+      // price must be greater than buy price
+      if (field === "price" && data[field] <= data["buy_price"]) {
+        alert("The item price must be greater than the buy price!");
         return;
       }
     }
@@ -188,7 +223,22 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
   useEffect(() => {
     console.log("FILTERED CATEGORY : ", filteredCategory);
     console.log("FILTERED supplier : ", filteredSupplier);
+    console.log("UPDATE DATA : ", data);
   }, []);
+
+  useEffect(() => {
+    if (updateImage) {
+      setData((prev) => ({
+        ...prev,
+        image: "erased",
+      }));
+    } else {
+      setData((prev) => ({
+        ...prev,
+        image: null,
+      }));
+    }
+  }, [updateImage]);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
@@ -229,21 +279,47 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
               key !== "category_id" &&
               key !== "created_at" && (
                 <div key={key}>
-                  <label htmlFor={key} className="block text-sm font-medium text-gray-700">
-                    {key.charAt(0).toUpperCase() + key.slice(1)}
-                  </label>
+                  {key === "image" && task === "update" && page == "item" ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          setUpdateImage((prev) => !prev);
+                        }}
+                        className="px-3 py-2 rounded-md hover:cursor-pointer bg-zinc-800 hover:opacity-90 transition duration-150 text-zinc-100 font-semibold"
+                        type="button"
+                      >
+                        {updateImage ? "Cancel" : "Update image"}
+                      </button>
 
-                  <input
-                    required={(task === "add" || task === "update") && (page === "item" || page === "tax" || page === "categories") && key !== "image"}
-                    key={key}
-                    type={key === "image" ? "file" : typeof value === "number" ? "number" : key.includes("date") ? "date" : key === "email" ? "email" : "text"}
-                    name={key}
-                    placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
-                    value={key === "image" ? undefined : String(value ?? "")}
-                    onChange={key === "image" ? handleUploadImg : handleChange}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none"
-                    readOnly={(key === "tax_id" && !!value) || (page === "inventory" && key === "item_id")}
-                  />
+                      {updateImage && (
+                        <>
+                          <label htmlFor={key} className="block text-sm font-medium text-gray-700">
+                            {key.charAt(0).toUpperCase() + key.slice(1)}
+                          </label>
+
+                          <input key={key} type="file" name={key} placeholder={key.charAt(0).toUpperCase() + key.slice(1)} value={undefined} onChange={handleUploadImg} className="w-full px-4 py-2 border rounded-lg focus:outline-none" />
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <label htmlFor={key} className="block text-sm font-medium text-gray-700">
+                        {key.charAt(0).toUpperCase() + key.slice(1)}
+                      </label>
+
+                      <input
+                        required={(task === "add" || task === "update") && (page === "item" || page === "tax" || page === "categories") && key !== "image"}
+                        key={key}
+                        type={key === "image" ? "file" : typeof value === "number" ? "number" : key.includes("date") ? "date" : key === "email" ? "email" : "text"}
+                        name={"HELLO"}
+                        placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
+                        value={key === "image" ? undefined : String(value ?? "")}
+                        onChange={key === "image" ? handleUploadImg : handleChange}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none"
+                        readOnly={(key === "tax_id" && !!value) || (page === "inventory" && key === "item_id")}
+                      />
+                    </>
+                  )}
                 </div>
               )
             )
@@ -324,10 +400,10 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
           </div>
         )}
 
-        {page === "item" && task === "update" && datas && callback && filteredCategory && filteredSupplier && (
+        {page === "item" && task === "update" && datas && callback && (
           <div>
-            {filteredCategory.length > 0 && <Combobox value={filteredCategory[0].category_name} task="Category" data={datas3 === undefined ? [] : datas3} onSelect={handleCategorySelect} searchKey={"category_name"} />}
-            {filteredSupplier.length > 0 && <Combobox value={filteredSupplier[0].name} task="Supplier" data={datas2 === undefined ? [] : datas2} onSelect={callback} searchKey={"name"} />}
+            <Combobox value={filteredCategory && filteredCategory.length > 0 ? filteredCategory[0].category_name : ""} task="Category" data={datas3 || []} onSelect={handleCategorySelect} searchKey={"category_name"} />
+            <Combobox value={filteredSupplier && filteredSupplier.length > 0 ? filteredSupplier[0].name : ""} task="Supplier" data={datas2 || []} onSelect={callback} searchKey={"name"} />
           </div>
         )}
 

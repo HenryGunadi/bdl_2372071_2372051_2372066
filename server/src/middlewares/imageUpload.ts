@@ -1,6 +1,6 @@
 import multer from "multer";
 
-const imageUploadPath = "C:/Users/syehan_new/Desktop/bdl/bdl_2372071_2372051_2372066/client/public/assets/db";
+const imageUploadPath = "D:/file_kuliah2_henry/rpl/final_project_rpl/client/public/assets/db/";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {

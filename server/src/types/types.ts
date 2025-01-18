@@ -24,7 +24,7 @@ export interface AdminStoreInterface {
 
 export interface ItemStoreInterface {
   insertItem(item: Item): Promise<boolean | BadRequestError>;
-  updateItem(updateValues: UpdateItemPayload): Promise<boolean | BadRequestError>;
+  updateItem(updateValues: Item): Promise<boolean | BadRequestError>;
   deleteItem(id: string): Promise<boolean | BadRequestError>;
   viewItems(): Promise<IRecordSet<Item> | BadRequestError>;
 }
@@ -238,15 +238,14 @@ export type CreateItemPayload = {
 
 export type UpdateItemPayload = {
   id: string;
-  nama?: string;
-  qrcode?: string;
-  price?: number;
-  supplier_id?: string;
-  description?: string;
-  discount?: number | null;
-  image_url?: string;
-  category_id?: string;
-  buy_price?: number;
+  nama: string;
+  price: number;
+  supplier_id: string;
+  description: string;
+  discount: number;
+  image: string | null;
+  category_id: number;
+  buy_price: number;
 };
 
 export type FindItemByName = {

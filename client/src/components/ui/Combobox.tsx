@@ -7,11 +7,13 @@ interface ComboboxProps<TData> {
   onSelect: (id: any) => void;
   searchKey: keyof TData;
   task: string;
+  task2?: string;
 }
 
-const Combobox = <TData extends { [key: string]: any }>({ data, onSelect, searchKey, task, value }: ComboboxProps<TData>) => {
+const Combobox = <TData extends { [key: string]: any }>({ data, onSelect, searchKey, task, value, task2 }: ComboboxProps<TData>) => {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
+  let selectionMade = false;
 
   const filteredData = data.filter((item) => item[searchKey].toLowerCase().includes(search.toLowerCase()));
 
@@ -27,7 +29,28 @@ const Combobox = <TData extends { [key: string]: any }>({ data, onSelect, search
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    setSearch(inputValue); // Allow all input values
+    setSearch(inputValue);
+    setOpen(true);
+  };
+
+  const handleBlur = () => {
+    setTimeout(() => {
+      if (!selectionMade) {
+        if (search !== value || filteredData.some((item) => item[searchKey] !== search)) {
+          onSelect(null);
+          setSearch("");
+        }
+        setOpen(false);
+      }
+      selectionMade = false;
+    }, 200);
+  };
+
+  const handleSelect = (item: TData) => {
+    onSelect(item.id);
+    setSearch(item[searchKey]);
+    setOpen(false);
+    selectionMade = true;
   };
 
   return (
@@ -36,32 +59,14 @@ const Combobox = <TData extends { [key: string]: any }>({ data, onSelect, search
       <label htmlFor={task} className="block text-sm font-medium text-gray-700 my-4">
         {task.charAt(0).toUpperCase() + task.slice(1)}
       </label>
-      <input
-        id={task}
-        type="text"
-        value={search}
-        onChange={handleSearchChange}
-        onFocus={() => setOpen(true)}
-        onBlur={() => setTimeout(() => setOpen(false), 200)}
-        className="w-full px-4 py-2 border rounded-lg focus:outline-none"
-        placeholder="Search..."
-      />
+      <input id={task} type="text" value={search} onChange={handleSearchChange} onFocus={() => setOpen(true)} onBlur={handleBlur} className="w-full px-4 py-2 border rounded-lg focus:outline-none" placeholder="Search..." />
 
       {/* Dropdown list */}
       {open && filteredData.length > 0 && (
         <ul className="absolute left-0 right-0 bg-white border border-gray-300 rounded-lg mt-2 max-h-60 overflow-y-auto shadow-lg z-10">
           {filteredData.map((item, index) => (
-            <li
-              key={index}
-              onClick={() => {
-                onSelect(item.id);
-                setSearch(item[searchKey]);
-                setOpen(false);
-                alert(`ID : ${item.id}`);
-              }}
-              className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
-            >
-              {item[searchKey]} {/* Display value of the 'searchKey' */}
+            <li key={index} onClick={() => handleSelect(item)} className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
+              {item[searchKey]}
             </li>
           ))}
         </ul>

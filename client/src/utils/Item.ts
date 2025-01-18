@@ -21,6 +21,16 @@ async function createItem(item: CreateItemPayload) {
   try {
     console.log("ITEM PAYLOAD FRONTEND: ", item);
 
+    if (!item.category_id) {
+      alert("Please select a category");
+      return;
+    }
+
+    if (!item.supplier_id) {
+      alert("Please select a supplier");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("nama", item.nama);
     formData.append("price", String(item.price));
@@ -56,17 +66,38 @@ export async function deleteItem(id: string) {
 
     console.log(res);
     alert("Item deleted.");
-    window.location.reload(); // Refresh the page
+    window.location.reload();
   } catch (err) {
     console.error(err);
     alert("Cannot delete this item. It is currently in use or linked to other records.");
+    window.location.reload();
   }
 }
 
 export async function updateItem(payload: UpdateItemPayload) {
   try {
-    console.log("UPDATE PAYLOAD FROM FRONTEND : ", payload);
-    console.log("UPDATE PAYLOAD BUY PRICE : ", payload.buy_price)
+    console.log("UPDATE PAYLOAD : ", payload); // incorrect
+    let imagePayload: string | File = "";
+
+    if (!payload.category_id) {
+      alert("Please select a category");
+      return;
+    }
+
+    if (!payload.supplier_id) {
+      alert("Please select a supplier");
+      return;
+    }
+
+    if (payload.image === null) {
+      imagePayload = "";
+    } else if (payload.image instanceof File) {
+      imagePayload = payload.image;
+    } else {
+      imagePayload = "erased";
+    }
+
+    console.log("NEW IMAGE PAYLOAD : ", imagePayload);
 
     const formData = new FormData();
     formData.append("id", payload.id);
@@ -76,10 +107,8 @@ export async function updateItem(payload: UpdateItemPayload) {
     formData.append("description", payload.description);
     formData.append("discount", payload.discount?.toString() || "");
     formData.append("category_id", String(payload.category_id));
-    formData.append("buy_price", String(payload.buy_price))
-    if (payload.image) {
-      formData.append("image", payload.image);
-    }
+    formData.append("buy_price", String(payload.buy_price));
+    formData.append("image", imagePayload);
 
     const response = await axios.post(`${backendBaseAPI}/api/items/update`, formData, {
       headers: {

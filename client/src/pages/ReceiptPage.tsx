@@ -235,7 +235,7 @@ const ReceiptPage = () => {
           ></ReceiptDetailModal>
         )}
 
-        <DataTable columns={receiptColumns(handleToggleDetail, handleToggleDelete)} data={receipts} filter="receipt_id" placeholder="Filter by status"></DataTable>
+        <DataTable columns={receiptColumns(handleToggleDetail, handleToggleDelete)} data={receipts} filter="receipt_id" placeholder="Filter by ID"></DataTable>
       </div>
     </div>
   );
