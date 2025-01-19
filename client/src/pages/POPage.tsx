@@ -10,6 +10,7 @@ import DeleteModal from "../components/CRUD/DeleteModal";
 import { resetState } from "../utils/commonUtils";
 import UpdatePOModal from "../components/CRUD/UpdatePOModal";
 import PODetailModal from "../components/PODetailModal";
+import UpdatePOItemModal from "../components/CRUD/UpdatPOItemModal";
 
 const POPage = () => {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
@@ -47,6 +48,18 @@ const POPage = () => {
   const [showPODetail, setShowPODetail] = useState<{ valueId: string; show: boolean }>({
     valueId: "",
     show: true,
+  });
+  const [updateCart, setUpdateCart] = useState<PODetailPayload>({
+    item_id: "",
+    quantity: 0,
+    unit_price: 0,
+  });
+  const [openUpdatePOModal, setOpenUpdatePOModal] = useState<{
+    index: number;
+    open: boolean;
+  }>({
+    index: -1,
+    open: false,
   });
 
   // helpers
@@ -181,6 +194,35 @@ const POPage = () => {
     console.log("PO UPDATED: ", makePO);
   }, [makePO]); // This will log the updated state after makePO is updated
 
+  const handleUpdateCart = (index: number) => {
+    setOpenUpdatePOModal({
+      index: index,
+      open: true,
+    });
+
+    const selectedItem: PODetailPayload = makePO.items[index];
+    setUpdateCart(selectedItem);
+  };
+
+  const handleSubmitUpdateCart = (updatedItem: PODetailPayload) => {
+    setMakePO((prev) => {
+      if (!prev.items || openUpdatePOModal.index < 0 || openUpdatePOModal.index >= prev.items.length) {
+        console.error("Invalid index or items array is missing in state");
+        return prev; // Do nothing if items are missing or index is out of bounds
+      }
+
+      const updatedItems = [...prev.items]; // Copy the items array to avoid mutation
+      updatedItems[openUpdatePOModal.index] = updatedItem; // Update the item at the specified index
+
+      console.log("Updated Items Array:", updatedItems);
+
+      return {
+        ...prev,
+        items: updatedItems,
+      };
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* <Combobox data={} onSelect={}></Combobox> */}
@@ -198,7 +240,11 @@ const POPage = () => {
         </button> */}
         </div>
 
+        {/* Create Modal */}
         <POModal open={openPOItemModal} setOpen={setOpenPOItemModal} data={items} supplier_id={makePO.supplier_id} onSubmit={handleAddPOItem}></POModal>
+
+        {/* Update Modal */}
+        {openUpdatePOModal.open && <UpdatePOItemModal data={items} setOpen={setOpenUpdatePOModal} onSubmit={handleSubmitUpdateCart} updatedItem={updateCart} setUpdateItem={setUpdateCart} supplier_id={makePO.supplier_id} />}
 
         {/* Add Form */}
         {showAddForm && (
@@ -215,6 +261,7 @@ const POPage = () => {
             setData={setMakePO}
             onSubmit={handleAdd}
             onCancel={() => setShowAddForm(false)}
+            handleUpdateCart={handleUpdateCart}
           />
         )}
 

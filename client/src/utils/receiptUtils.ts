@@ -56,9 +56,8 @@ export async function createReceipt(payload: CreateReceiptPayload, setMakeReceip
     alert("Receipt created");
     resetState(setMakeReceipt, payload);
     window.location.reload();
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
-    alert(`Insufficient stock`);
-    // window.location.reload();
+    alert(err.response.data.err.precedingErrors[1].originalError.info.message);
   }
 }

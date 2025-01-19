@@ -36,6 +36,7 @@ const Combobox = <TData extends { [key: string]: any }>({ data, onSelect, search
     setTimeout(() => {
       if (!selectionMade) {
         if (search !== value || filteredData.some((item) => item[searchKey] !== search)) {
+          console.log("BLURRED");
           onSelect(null);
           setSearch("");
         }

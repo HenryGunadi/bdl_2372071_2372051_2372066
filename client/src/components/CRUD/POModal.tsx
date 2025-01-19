@@ -22,7 +22,16 @@ const POModal = <TData extends { [key: string]: any }, TData2 extends { [key: st
   // Toggle modal visibility
   const toggleModal = () => setOpen(!open);
 
-  const handleSelect = (itemID: string) => {
+  const handleSelect = (itemID: string | null) => {
+    if (!itemID) {
+      setPODetail((prev) => ({
+        ...prev,
+        item_id: "",
+      }));
+      resetState(setPODetail, PODetail);
+      return;
+    }
+
     const selectedItem = data?.find((item) => item.id === itemID); // Find the selected item
     if (selectedItem) {
       setPODetail((prev) => ({
@@ -57,6 +66,11 @@ const POModal = <TData extends { [key: string]: any }, TData2 extends { [key: st
   // Submit form data
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!PODetail.item_id) {
+      alert("Please select an item");
+      return;
+    }
+
     onSubmit(PODetail);
     resetState(setPODetail, PODetail);
     toggleModal(); // Close modal after submission

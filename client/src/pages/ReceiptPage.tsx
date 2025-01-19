@@ -9,6 +9,7 @@ import ReceiptDetailModal from "../components/ReceiptDetailModal";
 import { createReceipt, deleteReceipt, viewReceipt, viewReceiptDetails } from "../utils/receiptUtils";
 import ReceiptModal from "../components/CRUD/ReceiptModal";
 import { viewTax } from "../utils/TaxUtils";
+import UpdateReceiptItemModal from "../components/CRUD/UpdateReceiptItemModal";
 
 const ReceiptPage = () => {
   const [receipts, setReceipts] = useState<Receipt[]>([]);
@@ -33,6 +34,19 @@ const ReceiptPage = () => {
   const [showReceiptDetail, setShowReceiptDetail] = useState<{ valueId: string; show: boolean }>({
     valueId: "",
     show: true,
+  });
+  const [openUpdateReceiptItem, setOpenUpdateReceiptItem] = useState<{
+    index: number;
+    open: boolean;
+  }>({
+    index: -1,
+    open: false,
+  });
+  const [updatedItem, setUpdatedItem] = useState<ReceiptDetailPayload>({
+    items_id: "",
+    quantity: 0,
+    unit_price: 0,
+    unit_discount: 0,
   });
 
   function handleToggleDetail(id: string) {
@@ -158,6 +172,35 @@ const ReceiptPage = () => {
     }
   }, [makeReceipt.items, makeReceipt.tax_id, taxes]);
 
+  const handleSubmitUpdateCart = (updatedItem: ReceiptDetailPayload) => {
+    setMakeReceipt((prev) => {
+      if (!prev.items || openUpdateReceiptItem.index < 0 || openUpdateReceiptItem.index >= prev.items.length) {
+        console.error("Invalid index or items array is missing in state");
+        return prev; // Do nothing if items are missing or index is out of bounds
+      }
+
+      const updatedItems = [...prev.items]; // Copy the items array to avoid mutation
+      updatedItems[openUpdateReceiptItem.index] = updatedItem; // Update the item at the specified index
+
+      console.log("Updated Items Array:", updatedItems);
+
+      return {
+        ...prev,
+        items: updatedItems,
+      };
+    });
+  };
+
+  const handleUpdateCart = (index: number) => {
+    setOpenUpdateReceiptItem({
+      index: index,
+      open: true,
+    });
+
+    const selectedItem: ReceiptDetailPayload = makeReceipt.items[index];
+    setUpdatedItem(selectedItem);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* <Combobox data={} onSelect={}></Combobox> */}
@@ -192,6 +235,7 @@ const ReceiptPage = () => {
             setData={setMakeReceipt}
             onSubmit={handleAdd}
             onCancel={() => setShowAddForm(false)}
+            handleUpdateCart={handleUpdateCart}
           />
         )}
 
@@ -204,6 +248,8 @@ const ReceiptPage = () => {
             }}
           ></DeleteModal>
         )}
+
+        {openUpdateReceiptItem.open && <UpdateReceiptItemModal data={items} setOpen={setOpenUpdateReceiptItem} setUpdateItem={setUpdatedItem} updatedItem={updatedItem} onSubmit={handleSubmitUpdateCart} />}
 
         {showReceiptDetail.show && showReceiptDetail.valueId && (
           <ReceiptDetailModal

@@ -9,7 +9,7 @@ export const errorMiddleware = (err: Error, req: Request, res: Response, next: N
     return res
       .status(err.statusCode | 400)
       .setHeader("Content-Type", "application/json")
-      .json(err.errors);
+      .json(err.context);
   }
 
   // handle the unexpected error

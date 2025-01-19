@@ -139,7 +139,7 @@ const ReceiptModal = <TData extends { [key: string]: any }, TData2 extends { [ke
                           : String(value ?? "")
                       }
                       onChange={handleChange}
-                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none ${key === "unit_price" || key === "unit_discount" ? "bg-gray-200 cursor-not-allowed" : ""}`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none`}
                       readOnly={key === "unit_price" || key === "unit_discount"} // Make readonly for these fields
                     />
                   </div>

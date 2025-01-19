@@ -59,7 +59,7 @@ class ReceiptDao implements ReceiptStoreInterface {
 
       return result.rowsAffected[0] > 0;
     } catch (err) {
-      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { error: `Error creating receipt : ${err}` } });
+      const error = new BadRequestError({ code: 500, message: "Internal server error", context: { err } });
       console.error("Error creating receipt : ", err);
       return error;
     }

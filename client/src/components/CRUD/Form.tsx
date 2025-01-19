@@ -15,6 +15,7 @@ interface AddFormProps<T extends { [key: string]: any }, P extends { [key: strin
   page: string;
   modal?: () => void;
   callback?: (id: string) => void;
+  handleUpdateCart?: (index: number) => void;
 }
 
 const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: any }, A extends { [key: string]: any }, B extends { [key: string]: any }>({
@@ -31,6 +32,7 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
   modal,
   callback,
   page,
+  handleUpdateCart,
 }: AddFormProps<T, P, A, B>) => {
   const [updateImage, setUpdateImage] = useState<boolean>(false);
 
@@ -326,6 +328,7 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
                         onChange={key === "image" ? handleUploadImg : handleChange}
                         className="w-full px-4 py-2 border rounded-lg focus:outline-none"
                         readOnly={key === "tax_id" || (page === "inventory" && key === "item_id")}
+                        maxLength={key === "phone_number" ? 13 : 255}
                       />
                     </>
                   )}
@@ -354,10 +357,25 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
                     {datas3.map((value, index) => (
                       <tr key={index} className="text-center">
                         <td className="px-4 py-2 border">{index + 1}</td>
-                        <td className="px-4 py-2 border">{value.item_id ? data4!.filter((item) => item.id === value.item_id)[0].nama : data4!.filter((item) => item.id === value.items_id)[0].nama}</td>
+                        <td className="px-4 py-2 border">{value.item_id ? data4!.find((item) => item.id === value.item_id)?.nama : data4!.find((item) => item.id === value.items_id)?.nama}</td>
                         <td className="px-4 py-2 border">{value.quantity}</td>
                         <td className="px-4 py-2 border">
-                          <button type="button" onClick={() => handleDeleteItem(index)} className="text-red-600 hover:underline">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (handleUpdateCart) {
+                                handleUpdateCart(index);
+                              }
+                            }} // Pass the index directly
+                            className="text-white font-semibold py-2 px-3 rounded-md hover:cursor-pointer hover:opacity-80 transition duration-150 bg-green-500 mx-2"
+                          >
+                            Update
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteItem(index)} // Use the index for deletion
+                            className="text-white font-semibold py-2 px-3 rounded-md hover:cursor-pointer hover:opacity-80 transition duration-150 bg-red-500 mx-2"
+                          >
                             Delete
                           </button>
                         </td>
