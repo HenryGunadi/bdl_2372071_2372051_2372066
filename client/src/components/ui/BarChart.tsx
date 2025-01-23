@@ -49,7 +49,7 @@ export function BarChartComponent({ data }: { data: any[] }) {
   return (
     <Card className="w-2/3">
       <CardHeader>
-        <CardTitle>Sales</CardTitle>
+        <CardTitle>Sales $</CardTitle>
         <CardDescription>
           {currentMonth} - {currentYear}
         </CardDescription>

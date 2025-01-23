@@ -17,9 +17,9 @@ export async function viewReceipt(setState: React.Dispatch<SetStateAction<Receip
   }
 }
 
-export async function viewReceiptDetails(setState: React.Dispatch<SetStateAction<ReceiptDetail[]>>) {
+export async function viewReceiptDetails(setState: React.Dispatch<SetStateAction<ReceiptDetail[]>>, receiptID: string) {
   try {
-    const res = await axios.get(`${backendBaseAPI}/api/receipt/view_details`, {
+    const res = await axios.get(`${backendBaseAPI}/api/receipt/view_details?id=${receiptID}`, {
       withCredentials: true,
     });
 

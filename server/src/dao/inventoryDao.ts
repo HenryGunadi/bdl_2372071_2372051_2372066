@@ -33,9 +33,9 @@ class InventoryDao implements InventoryStoreInterface {
     }
   }
 
-  async updateInventory(value: UpdateInventoryPayload): Promise<boolean | BadRequestError> {
+  async updateInventory(value: Inventory): Promise<boolean | BadRequestError> {
     try {
-      const res = await this._dbConn.request().input("item_id", sql.VarChar, value.item_id).input("quantity", value.quantity).input("add_stock", sql.Bit, 0).execute("sp_update_inventory");
+      const res = await this._dbConn.request().input("item_id", sql.VarChar, value.itemId).input("quantity", value.quantity).input("add_stock", sql.Bit, 0).execute("sp_update_inventory");
 
       const success = res.rowsAffected[0] > 0;
       return success;

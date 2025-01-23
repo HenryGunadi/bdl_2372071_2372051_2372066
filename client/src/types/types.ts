@@ -145,6 +145,7 @@ export type PO = {
   total_amount_due: number;
   supplier_id: string;
   status: "ongoing" | "accepted";
+  name: string;
 };
 
 export type UpdatePO = {
@@ -171,6 +172,7 @@ export type PODetails = {
   unit_price: number;
   total: number;
   created_at: Date;
+  nama: string;
 };
 
 export type UpdatePODetails = {
@@ -191,6 +193,8 @@ export type Inventory = {
   image_urlL: string;
   category_id: number;
   category_name: string;
+  price: number;
+  discount: number;
 };
 
 export type InventoryPayload = {
@@ -243,6 +247,7 @@ export type Receipt = {
   total_discount: number;
   total_amount: number;
   tax_id: string;
+  tax_rate: number;
   created_at: Date;
 };
 
@@ -255,6 +260,7 @@ export type ReceiptDetail = {
   unit_discount: number;
   total: number;
   created_at?: Date;
+  nama: string;
 };
 
 export type DeleteReceiptPayload = {

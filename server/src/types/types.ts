@@ -34,19 +34,19 @@ export interface CategoryStoreInterface {
   deleteCategory(category_id: number): Promise<boolean | BadRequestError>;
   insertCategory(category: Category): Promise<boolean | BadRequestError>;
   getCategoryByName(category_name: string): Promise<IRecordSet<Category> | BadRequestError>;
-  updateCategory(updated_category: UpdateCategoryPayload): Promise<boolean | BadRequestError>;
+  updateCategory(updated_category: Category): Promise<boolean | BadRequestError>;
 }
 
 export interface InventoryStoreInterface {
   getInventories(): Promise<IRecordSet<ViewInventory> | BadRequestError>;
-  updateInventory(value: UpdateInventoryPayload): Promise<boolean | BadRequestError>;
+  updateInventory(value: Inventory): Promise<boolean | BadRequestError>;
   insertInventory(inventory: Inventory): Promise<boolean | BadRequestError>;
   deleteInventory(id: string): Promise<boolean | BadRequestError>;
 }
 
 export interface ReceiptStoreInterface {
   getReceipt(): Promise<IRecordSet<Receipt> | BadRequestError>;
-  getReceiptDetails(): Promise<IRecordSet<ReceiptDetail> | BadRequestError>;
+  getReceiptDetails(receiptID: string): Promise<IRecordSet<ReceiptDetail> | BadRequestError>;
   createReceipt(receipt: CreateReceiptPayload): Promise<boolean | BadRequestError>;
   deleteReceipt(payload: DeletePOReceiptPayload): Promise<boolean | BadRequestError>;
 }
@@ -70,7 +70,7 @@ export interface PurchaseOrderStoreInterface {
   deletePO(payload: DeletePOReceiptPayload): Promise<boolean | BadRequestError>;
   updatePO(payload: UpdatePOPayload): Promise<boolean | BadRequestError>;
   getPO(): Promise<IRecordSet<PurchaseOrder> | BadRequestError>;
-  viewPODetails(): Promise<IRecordSet<PODetails> | BadRequestError>;
+  viewPODetails(poID: string): Promise<IRecordSet<PODetails> | BadRequestError>;
 }
 
 export interface SupplierStoreInterface {
@@ -95,6 +95,7 @@ export type DeletePOReceiptPayload = {
   undo: 1 | 0;
 };
 
+// delete later
 export type UpdateSupplierPayload = {
   id: string;
   name: string;
@@ -184,6 +185,7 @@ export type CreateReceiptPayload = {
   ];
 };
 
+// delete later
 export type UpdateInventoryPayload = {
   item_id: string;
   quantity: number;
@@ -260,6 +262,7 @@ export type CategoryPayload = {
   category_name: string;
 };
 
+// delete category
 export type UpdateCategoryPayload = {
   id: number;
   category_name: string;

@@ -1,20 +1,20 @@
 class Category {
-  private _id: string | undefined = undefined;
+  private _id: number | undefined = undefined;
   private _category_name: string;
   private _created_at: Date | undefined = undefined;
 
-  constructor(category_name: string, created_at?: Date, id?: string) {
+  constructor(category_name: string, created_at?: Date, id?: number) {
     this._id = id;
     this._category_name = category_name;
     this._created_at = created_at;
   }
 
   // Getter and setter for _id
-  get id(): string | undefined {
+  get id(): number | undefined {
     return this._id;
   }
 
-  set id(value: string | undefined) {
+  set id(value: number | undefined) {
     this._id = value;
   }
 

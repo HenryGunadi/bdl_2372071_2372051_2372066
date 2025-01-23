@@ -47,6 +47,9 @@ export default function PODetailModal({ po, poDetail, onClose }: PODetailModalPr
                       Item ID: <span className="font-normal">{detail.item_id}</span>
                     </p>
                     <p className="font-medium">
+                      Item Name: <span className="font-normal">{detail.nama}</span>
+                    </p>
+                    <p className="font-medium">
                       Quantity: <span className="font-normal">{detail.quantity}</span>
                     </p>
                     <p className="font-medium">

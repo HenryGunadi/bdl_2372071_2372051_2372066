@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import BadRequestError from "../classes/BadReqError";
 import { CreatePOPayload, DeletePOReceiptPayload, UpdatePOPayload } from "../types/types";
 import PurchaseOrderDao from "../dao/purchaseOrderDao";
+import PurchaseOrder from "../model/purchaseOrder";
 
 class PurchaseOrderController {
   private _store: PurchaseOrderDao;
@@ -27,7 +28,8 @@ class PurchaseOrderController {
 
   viewPODetails = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const queryRes = await this._store.viewPODetails();
+      const payload = req.query as { id: string };
+      const queryRes = await this._store.viewPODetails(payload.id);
 
       if (queryRes instanceof BadRequestError) {
         return next(queryRes);

@@ -67,8 +67,8 @@ export class CategoryController {
   updateCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payload = req.body as UpdateCategoryPayload;
-
-      const queryRes = await this._store.updateCategory(payload);
+      const updatedCategory = new Category(payload.category_name, undefined, payload.id);
+      const queryRes = await this._store.updateCategory(updatedCategory);
 
       if (queryRes instanceof BadRequestError) {
         return next(queryRes);

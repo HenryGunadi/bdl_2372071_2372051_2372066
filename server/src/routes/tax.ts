@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { DB } from "../db/db";
 import express from "express";
-import { createTaxValidator, deleteTaxValidator, updateTaxValidator } from "../validators/taxValidator";
 import { validationResult } from "express-validator";
 import BadRequestError from "../classes/BadReqError";
 import TaxDao from "../dao/taxDao";

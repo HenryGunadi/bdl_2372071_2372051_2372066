@@ -60,7 +60,7 @@ export class CategoryDao implements CategoryStoreInterface {
     }
   }
 
-  async updateCategory(updated_category: UpdateCategoryPayload): Promise<boolean | BadRequestError> {
+  async updateCategory(updated_category: Category): Promise<boolean | BadRequestError> {
     try {
       const res = await this._dbConn.request().input("id", updated_category.id).input("category_name", updated_category.category_name).execute("sp_update_category");
 

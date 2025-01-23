@@ -31,7 +31,9 @@ const ReceiptModal = <TData extends { [key: string]: any }, TData2 extends { [ke
       return;
     }
 
-    const filteredItemSelected = data.filter((value, key) => value.id === itemID);
+    console.log("ITEM ID RECEIPT SELECTED : ", itemID);
+    const filteredItemSelected = data.filter((value, key) => value.item_id === itemID); // wrong itemID
+    console.log("FILTERED ITEMS SELECTED : ", filteredItemSelected);
 
     if (filteredItemSelected.length > 0) {
       console.log("Selected Item: ", filteredItemSelected[0]);
@@ -48,22 +50,30 @@ const ReceiptModal = <TData extends { [key: string]: any }, TData2 extends { [ke
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
-    // For quantity, ensure it's a valid integer and prevent decimals
     let parsedValue: number | string = value;
 
     if (name === "quantity") {
-      parsedValue = parseInt(value, 10); // Use parseInt to ensure it is an integer
+      parsedValue = parseInt(value, 10); // Ensure it's an integer
 
-      // Ensure parsed value is not NaN and is a valid positive integer
+      // Ensure parsed value is a valid positive integer
       if (isNaN(parsedValue) || parsedValue < 0) {
         parsedValue = 0; // Set to 0 if invalid
+      }
+
+      // Find the selected item's available quantity
+      const selectedItem = data.find((item) => item.item_id === receiptDetail.items_id);
+      const availableQuantity = selectedItem?.quantity ?? 0;
+
+      // Ensure the entered quantity does not exceed available stock
+      if (parsedValue > availableQuantity) {
+        alert(`Quantity cannot exceed available stock (${availableQuantity}).`);
+        parsedValue = availableQuantity; // Set to max available
       }
     }
 
     setReceiptDetail((prev) => ({
       ...prev,
-      [name]: parsedValue === "" ? null : parsedValue, // if value is empty string, set it to null
+      [name]: parsedValue === "" ? null : parsedValue, // If empty string, set to null
     }));
   };
 
@@ -119,7 +129,15 @@ const ReceiptModal = <TData extends { [key: string]: any }, TData2 extends { [ke
                 handleSubmit(e);
               }}
             >
-              {data && <Combobox task={"Item"} data={data} onSelect={handleSelect} searchKey={"nama"} />}
+              {data && <Combobox task={"Item"} data={data} onSelect={handleSelect} searchKey={"nama"} page="receipt" />}
+
+              {/* Label for showing selected item quantity */}
+              {receiptDetail.items_id && (
+                <div className="mb-4">
+                  <label className="block text-gray-700 mb-2">Available Quantity:</label>
+                  <p className="text-lg font-semibold">{data.find((item) => item.item_id === receiptDetail.items_id)?.quantity ?? "N/A"}</p>
+                </div>
+              )}
               {Object.entries(receiptDetail)
                 .filter(([key]) => key !== "items_id") // Filter out items_id
                 .map(([key, value]) => (
@@ -131,13 +149,7 @@ const ReceiptModal = <TData extends { [key: string]: any }, TData2 extends { [ke
                       type={key === "image" ? "file" : typeof value === "number" ? "number" : key === "exp_date" ? "date" : "text"}
                       name={key}
                       placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
-                      value={
-                        key === "image"
-                          ? undefined
-                          : key === "exp_date" && value
-                          ? new Date(value).toISOString().slice(0, 10) // Convert to YYYY-MM-DD
-                          : String(value ?? "")
-                      }
+                      value={key === "image" ? undefined : String(value ?? "")}
                       onChange={handleChange}
                       className={`w-full px-4 py-2 border rounded-lg focus:outline-none`}
                       readOnly={key === "unit_price" || key === "unit_discount"} // Make readonly for these fields

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { parseEnv } from "util";
 
 // Generic ComboboxProps to accept any type
 interface ComboboxProps<TData> {
@@ -7,9 +8,10 @@ interface ComboboxProps<TData> {
   onSelect: (id: any) => void;
   searchKey: keyof TData;
   task: string;
+  page?: string;
 }
 
-const Combobox = <TData extends { [key: string]: any }>({ data, onSelect, searchKey, task, value }: ComboboxProps<TData>) => {
+const Combobox = <TData extends { [key: string]: any }>({ data, onSelect, searchKey, task, value, page }: ComboboxProps<TData>) => {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   let selectionMade = false;
@@ -47,7 +49,11 @@ const Combobox = <TData extends { [key: string]: any }>({ data, onSelect, search
   };
 
   const handleSelect = (item: TData) => {
-    onSelect(item.id);
+    if (page === "receipt") {
+      onSelect(item.item_id);
+    } else {
+      onSelect(item.id);
+    }
     setSearch(item[searchKey]);
     setOpen(false);
     selectionMade = true;

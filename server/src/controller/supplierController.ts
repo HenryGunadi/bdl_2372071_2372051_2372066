@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import SupplierStore from "../dao/supplierDao";
 import BadRequestError from "../classes/BadReqError";
 import { SupplierPayload, UpdateSupplierPayload } from "../types/types";
+import Supplier from "../model/supplier";
 
 class SupplierController {
   private _store: SupplierStore;

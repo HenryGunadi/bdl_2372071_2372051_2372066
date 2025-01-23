@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { DataTable, inventoryColumns } from "../components/table/Table";
 import { Inventory, InventoryPayload } from "../types/types";
-import { updateInventory, viewInventories } from "../utils/inventoryUtils";
+import { deleteInventory, updateInventory, viewInventories } from "../utils/inventoryUtils";
 import Form from "../components/CRUD/Form";
 import { resetState } from "../utils/commonUtils";
+import DeleteModal from "../components/CRUD/DeleteModal";
 
 export default function InventoryPage() {
   const [inventories, setInventories] = useState<Inventory[]>([]);
@@ -12,6 +13,10 @@ export default function InventoryPage() {
     quantity: 0,
   });
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<{ id: string; show: boolean }>({
+    id: "",
+    show: false,
+  });
 
   async function handleUpdateInventory() {
     try {
@@ -29,6 +34,13 @@ export default function InventoryPage() {
     setEditInventory({
       item_id: filteredInventory[0].item_id,
       quantity: filteredInventory[0].quantity,
+    });
+  }
+
+  function toggleDeleteModal(itemID: string) {
+    setShowDeleteModal({
+      id: itemID,
+      show: true,
     });
   }
 
@@ -59,6 +71,19 @@ export default function InventoryPage() {
           />
         )}
 
+        {/* Delete Alert */}
+        {showDeleteModal.show && (
+          <DeleteModal
+            valueId={showDeleteModal.id}
+            onDelete={() => {
+              deleteInventory(showDeleteModal.id);
+            }}
+            onCancel={() => {
+              resetState(setShowDeleteModal, showDeleteModal);
+            }}
+          />
+        )}
+
         {/* Buttons */}
         <div className="mb-4 flex gap-4">
           {/* <button onClick={() => setShowAddForm(true)} className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
@@ -69,7 +94,7 @@ export default function InventoryPage() {
         </button> */}
         </div>
 
-        <DataTable columns={inventoryColumns(toggleModal)} data={inventories} filter="item_id" placeholder="Search by ID"></DataTable>
+        <DataTable columns={inventoryColumns(toggleModal, toggleDeleteModal)} data={inventories} filter="nama" placeholder="Search by item name"></DataTable>
       </div>
     </div>
   );

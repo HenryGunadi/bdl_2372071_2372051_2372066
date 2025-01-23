@@ -1,6 +1,10 @@
 import React, { SetStateAction, useEffect, useState } from "react";
 import Combobox from "../ui/Combobox";
 
+const maxLength50 = ["name", "email", "address", "nama", "category_name"];
+const maxLength30 = ["country", "city"];
+const maxLength20 = ["postal_code"];
+
 interface AddFormProps<T extends { [key: string]: any }, P extends { [key: string]: any }, A extends { [key: string]: any }, B extends { [key: string]: any }> {
   data4?: any[];
   datas?: P;
@@ -40,7 +44,7 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
     const { name, value } = e.target;
 
     // Check if the field should be numeric
-    const numericFields = ["discount", "price", "buy_price", "tax_rate", "quantity"];
+    const numericFields = ["discount", "price", "buy_price", "tax_rate", "quantity", "phone_number"];
     if (numericFields.includes(name)) {
       let parsedValue: string | number = value;
 
@@ -61,6 +65,37 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
         setData((prev) => ({
           ...prev,
           [name]: parsedValue,
+        }));
+        return;
+      } else if (name === "phone_number") {
+        // Ensure only numbers (no decimals or special characters)
+        if (!/^\d*$/.test(value)) {
+          alert("Phone number must contain only digits.");
+          return;
+        }
+
+        setData((prev) => ({
+          ...prev,
+          [name]: value === "" ? null : value, // Default to null if empty
+        }));
+        return;
+      } else if (name === "tax_rate") {
+        // Ensure only whole numbers (no decimals)
+        if (!/^\d*$/.test(value)) {
+          alert("Tax rate must be a whole number.");
+          return;
+        }
+
+        const taxValue = value === "" ? 0 : parseInt(value, 10);
+
+        if (taxValue < 0 || taxValue > 100) {
+          alert("Tax rate must be between 0 and 100.");
+          return;
+        }
+
+        setData((prev) => ({
+          ...prev,
+          [name]: taxValue, // Keep as whole number
         }));
         return;
       } else {
@@ -261,7 +296,7 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
           .filter(([key]) => key !== "id" && !key.includes("total"))
           .map(([key, value]) =>
             key === "role" ? (
-              <select key={key} name={key} value={value || ""} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:outline-none">
+              <select key={key} name={key} value={value || ""} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:outline-none" required>
                 <option value="" disabled>
                   Select {key}
                 </option>
@@ -269,7 +304,7 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
                 <option value="manager">Manager</option>
               </select>
             ) : key === "payment_method" ? (
-              <select key={key} name={key} value={value || ""} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:outline-none">
+              <select key={key} name={key} value={value || ""} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:outline-none" required>
                 <option value="" disabled>
                   Select Payment Method
                 </option>
@@ -277,7 +312,7 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
                 <option value="CREDIT">CREDIT</option>
               </select>
             ) : key === "currency" ? (
-              <select key={key} name={key} value={value || ""} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:outline-none">
+              <select key={key} name={key} value={value || ""} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:outline-none" required>
                 <option value="" disabled>
                   Select Currency
                 </option>
@@ -319,7 +354,7 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
                       </label>
 
                       <input
-                        required={(task === "add" || task === "update") && (page === "item" || page === "tax" || page === "categories") && key !== "image"}
+                        required={(task === "add" || task === "update") && (page === "item" || page === "tax" || page === "categories" || page === "supplier" || (page === "admin" && task === "add")) && key !== "image"}
                         key={key}
                         type={key === "password" ? "password" : key === "image" ? "file" : typeof value === "number" ? "number" : key.includes("date") ? "date" : key === "email" ? "email" : "text"}
                         name={key}
@@ -328,7 +363,7 @@ const AddForm = <T extends { [key: string]: any }, P extends { [key: string]: an
                         onChange={key === "image" ? handleUploadImg : handleChange}
                         className="w-full px-4 py-2 border rounded-lg focus:outline-none"
                         readOnly={key === "tax_id" || (page === "inventory" && key === "item_id")}
-                        maxLength={key === "phone_number" ? 13 : 255}
+                        maxLength={maxLength50.includes(key) ? 50 : maxLength30.includes(key) ? 30 : maxLength20.includes(key) ? 20 : key === "phone_number" ? 15 : 255}
                       />
                     </>
                   )}

@@ -17,7 +17,6 @@ class ItemController {
   insertItem = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payload: CreateItemPayload = req.body;
-
       console.log("PAYLOAD FROM FORMDATA? : ", payload);
 
       const imageURL = req.file ? req.file.path : "";

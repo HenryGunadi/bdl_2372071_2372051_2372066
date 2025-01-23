@@ -1,0 +1,15 @@
+1. add view supplier details (v)
+2. fix receipt (v)
+3. fix po (v)
+4. fix combobox receipt to inventories (v)
+5. Make requirement gathering (v)
+6. fix dashboard (v)
+9. max length cek lagi sesuai database ()
+11. delete inventory alert (v)
+12. tax dalam integer -> koma (v)
+13. required payment method (v)
+14. fix admin ()
+15. fix update receipt modal (v)
+
+TESTING
+- supplier ()

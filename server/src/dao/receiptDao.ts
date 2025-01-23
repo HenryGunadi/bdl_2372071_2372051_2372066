@@ -21,9 +21,15 @@ class ReceiptDao implements ReceiptStoreInterface {
     }
   }
 
-  async getReceiptDetails(): Promise<sql.IRecordSet<ReceiptDetail> | BadRequestError> {
+  async getReceiptDetails(receiptID: string): Promise<sql.IRecordSet<ReceiptDetail> | BadRequestError> {
     try {
-      const res = await this._dbConn.request().query("SELECT * FROM receipt_items");
+      let res: any;
+
+      if (receiptID !== "") {
+        res = await this._dbConn.request().input("ReceiptID", sql.VarChar, receiptID).query("SELECT * FROM dbo.GetReceiptDetails(@ReceiptID)");
+      } else {
+        res = await this._dbConn.request().query("SELECT * FROM view_receipt_item_details");
+      }
 
       return res.recordset;
     } catch (err) {

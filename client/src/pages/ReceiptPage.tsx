@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ModalType, AllItems, Receipt, CreateReceiptPayload, ReceiptDetail, ReceiptDetailPayload, DeleteReceiptPayload, Tax } from "../types/types";
+import { ModalType, AllItems, Receipt, CreateReceiptPayload, ReceiptDetail, ReceiptDetailPayload, DeleteReceiptPayload, Tax, Inventory } from "../types/types";
 import Form from "../components/CRUD/Form";
 import { DataTable, receiptColumns } from "../components/table/Table";
 import { fetchItems } from "../utils/Item";
@@ -10,6 +10,7 @@ import { createReceipt, deleteReceipt, viewReceipt, viewReceiptDetails } from ".
 import ReceiptModal from "../components/CRUD/ReceiptModal";
 import { viewTax } from "../utils/TaxUtils";
 import UpdateReceiptItemModal from "../components/CRUD/UpdateReceiptItemModal";
+import { viewInventories } from "../utils/inventoryUtils";
 
 const ReceiptPage = () => {
   const [receipts, setReceipts] = useState<Receipt[]>([]);
@@ -48,12 +49,14 @@ const ReceiptPage = () => {
     unit_price: 0,
     unit_discount: 0,
   });
+  const [inventories, setInventories] = useState<Inventory[]>([]);
 
   function handleToggleDetail(id: string) {
     setShowReceiptDetail({
       valueId: id,
       show: true,
     });
+    viewReceiptDetails(setReceiptDetails, id);
   }
 
   function handleToggleDelete(id: string) {
@@ -91,9 +94,9 @@ const ReceiptPage = () => {
 
   useEffect(() => {
     viewReceipt(setReceipts);
-    viewReceiptDetails(setReceiptDetails);
     fetchItems(setItems);
     viewTax(setTaxes);
+    viewInventories(setInventories);
   }, []);
 
   useEffect(() => {
@@ -203,7 +206,6 @@ const ReceiptPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      {/* <Combobox data={} onSelect={}></Combobox> */}
       <div className="bg-white rounded-lg shadow p-6">
         <h1 className="text-2xl font-bold text-gray-800">Receipt Purchases</h1>
         <p className="text-sm text-gray-500 mb-4">Manage and track your receipt purchases here.</p>
@@ -213,12 +215,9 @@ const ReceiptPage = () => {
           <button onClick={() => setShowAddForm(true)} className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
             + Add Receipt Purchase
           </button>
-          {/* <button onClick={() => setShowDeleteModal(true)} className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
-          Delete Supplier
-        </button> */}
         </div>
 
-        <ReceiptModal open={openReceiptItemModal} setOpen={setReceiptItemModal} data={items} onSubmit={handelAddReceiptItem}></ReceiptModal>
+        <ReceiptModal open={openReceiptItemModal} setOpen={setReceiptItemModal} data={inventories} onSubmit={handelAddReceiptItem}></ReceiptModal>
 
         {/* Add Form */}
         {showAddForm && (
@@ -249,13 +248,13 @@ const ReceiptPage = () => {
           ></DeleteModal>
         )}
 
-        {openUpdateReceiptItem.open && <UpdateReceiptItemModal data={items} setOpen={setOpenUpdateReceiptItem} setUpdateItem={setUpdatedItem} updatedItem={updatedItem} onSubmit={handleSubmitUpdateCart} />}
+        {openUpdateReceiptItem.open && <UpdateReceiptItemModal data={inventories} setOpen={setOpenUpdateReceiptItem} setUpdateItem={setUpdatedItem} updatedItem={updatedItem} onSubmit={handleSubmitUpdateCart} />}
 
         {showReceiptDetail.show && showReceiptDetail.valueId && (
           <ReceiptDetailModal
             taxes={taxes}
             receipt={receipts.filter((value) => value.receipt_id === showReceiptDetail.valueId)[0]}
-            receiptDetail={receiptDetails.filter((value) => value.receipt_id === showReceiptDetail.valueId)}
+            receiptDetail={receiptDetails}
             onClose={() => {
               setShowReceiptDetail({
                 valueId: "",

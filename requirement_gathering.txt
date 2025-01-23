@@ -1,0 +1,68 @@
+Title: Basic Sales & Inventory System
+Date: December 2024 - January 2025
+Objective: Improve the functionality and usability of the Sales & Inventory System, ensuring smooth inventory tracking and simple transaction recording for walk-in sales businesses.
+Problem statement: Enhance the system to streamline inventory management, simplify sales transaction processes, and improve user experience for businesses using the platform.
+Business needs: Efficient inventory tracking, smooth sales recording, secure database management
+Short-term goals: Identify key areas for improving the sales recording process and inventory management UI.
+Long-term goals: Optimize the system for scalability, improve data security, and ensure simple and efficient reporting features.
+
+Stakeholders:
+End-users: Businesses using the inventory system
+Higher management: Project stakeholders, team leads
+Project team members: Developers, System Architects, UX/UI designers, system administrators
+Other stakeholders: Database administrators, third-party service providers (e.g., shipping integrations)
+
+Method(s):
+Consultation with a college professor: Sought expert insights on best practices for inventory management systems and recommendations for optimizing database queries.
+Online Research — Searched the internet to gather insights into best practices for walk-in sales and inventory management.
+
+Key insights and requirements gathered:
+The current inventory tracking system is cumbersome, especially with large inventories.
+The sales transaction process is not streamlined, leading to increased time spent on each transaction.
+Users have difficulty navigating the system due to lack of intuitive UI and unclear instructions.
+Data validations are important in applications
+
+Prioritizing requirements:
+Theme 1: Inventory management improvement
+High priority: Implement real-time inventory tracking
+Medium priority: Add bulk inventory upload functionality
+Low priority: Implement automated stock level alerts
+Theme 2: Sales recording process
+
+High priority: Simplify sales transaction steps
+Medium priority: Enhance Simple Transaction
+Low priority: Offer simple and efficient reporting features
+Theme 3: UI/UX improvement
+
+High priority: Simplify user interface and improve navigation
+Medium priority: Add tooltips and on-screen guides for new users
+Low priority: Redesign the dashboard with customizable views
+
+Team feedback:
+-Development team stressed the need for better scalability in the system, particularly for businesses with larger inventories.
+-UX/UI designers emphasized improving the sales transaction flow to reduce user frustration.
+-Database administrators suggested optimizing database queries for faster performance.
+-Data validation inputs
+
+Challenges faced and solutions implemented:
+Challenge 1: Difficulty prioritizing features due to the broad scope of the system.
+Solution: Organized requirements into themes and used a priority matrix for ranking features.
+Challenge 2: Balancing security and user experience.
+Solution: Ensured secure database configurations and user authentication while keeping the UI simple.
+Challenge 3: Limited feedback from users during early testing phases.
+Solution: Increased communication and provided incentives to encourage more testers to participate in the feedback process.
+Challenge 4: Data validation input problem during development
+Solution : Implement many manual testings to prevent unintended behaviours from the app in UX
+
+Tools used for requirements gathering and management:
+Discord - For managing development and streamline process
+
+Analysis:
+The requirement gathering process for the Basic Sales & Inventory System has provided valuable insights into the key areas that need improvement. The focus on inventory management, sales transaction efficiency, and UI/UX enhancements will ensure a better experience for businesses relying on the system for walk-in sales.
+
+Key takeaways from this analysis include:
+Inventory management optimizations such as real-time tracking and bulk inventory uploads will improve efficiency for businesses with large stock volumes.
+Sales transaction simplifications will reduce processing time and enhance the usability of the system.
+UI/UX improvements will make the system more intuitive and accessible, reducing the learning curve for new users.
+Data validation measures are crucial for preventing errors and ensuring reliable transaction records.
+Moving forward, the development team will focus on implementing prioritized features, conducting rigorous testing for data validation and security, and continuously refining the system based on user feedback. By leveraging expert insights, online research, and iterative testing, the system will be optimized to meet the needs of walk-in sales businesses while maintaining scalability, security, and efficiency.

@@ -1,20 +1,15 @@
-import { useEffect } from "react";
 import { Receipt, ReceiptDetail, Tax } from "../types/types";
 
 interface ReceiptDetailProps {
   receipt: Receipt;
-  taxes: Tax[]
+  taxes: Tax[];
   receiptDetail: ReceiptDetail[]; // Accepting receiptDetail as an array
   onClose: () => void;
 }
 
 export default function ReceiptDetailModal({ taxes, receipt, receiptDetail, onClose }: ReceiptDetailProps) {
-  useEffect(() => {
-    console.log("HELOOOOO : ", receiptDetail);
-  }, [receiptDetail]);
-
-  const tax = taxes.filter((value, key) => value.id === receipt.tax_id)[0].tax_rate
-  const total_tax = tax * (receipt.total_subtotal - receipt.total_discount)
+  const tax = taxes.filter((value) => value.id === receipt.tax_id)[0].tax_rate;
+  const total_tax = tax * (receipt.total_subtotal - receipt.total_discount);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -49,6 +44,9 @@ export default function ReceiptDetailModal({ taxes, receipt, receiptDetail, onCl
               Tax ID: <span className="font-normal">{receipt.tax_id}</span>
             </p>
             <p className="font-medium">
+              Tax ID: <span className="font-normal">{receipt.tax_rate}</span>
+            </p>
+            <p className="font-medium">
               Created At: <span className="font-normal">{new Date(receipt.created_at).toLocaleDateString()}</span>
             </p>
           </div>
@@ -63,6 +61,9 @@ export default function ReceiptDetailModal({ taxes, receipt, receiptDetail, onCl
                   <div className="space-y-2">
                     <p className="font-medium">
                       Item ID: <span className="font-normal">{detail.items_id}</span>
+                    </p>
+                    <p className="font-medium">
+                      Item Name: <span className="font-normal">{detail.nama}</span>
                     </p>
                     <p className="font-medium">
                       Quantity: <span className="font-normal">{detail.quantity}</span>

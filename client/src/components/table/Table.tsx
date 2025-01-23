@@ -5,7 +5,6 @@ import { ColumnDef, ColumnFiltersState, SortingState, VisibilityState, flexRende
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
 import { Button } from "../ui/button";
-import { Checkbox } from "../ui/checkbox";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Input } from "../ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
@@ -19,16 +18,9 @@ export const columns = (toggleDelete: (id: string) => void, toggleUpdate: (id: s
     cell: ({ row }) => <div className="capitalize">{row.getValue("id")}</div>,
   },
   {
-    accessorKey: "supplier_id",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Supplier ID
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="uppercase">{row.getValue("supplier_id")}</div>,
+    accessorKey: "name",
+    header: "Supplier",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "total_amount_due",
@@ -244,14 +236,40 @@ export const receiptColumns = (toggleDetail: (itemID: string) => void, toggleDel
     cell: ({ row }) => <div className="capitalize">{row.getValue("payment_method")}</div>,
   },
   {
-    accessorKey: "tax_id",
-    header: "tax_id",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("tax_id")}</div>,
+    accessorKey: "created_at",
+    header: "Created",
+    cell: ({ row }) => {
+      let date: Date = row.getValue("created_at");
+      if (!(date instanceof Date)) {
+        date = new Date(date);
+      }
+
+      const formattedDate = date.toISOString().split("T")[0];
+
+      return <div className="capitalize">{formattedDate}</div>;
+    },
   },
   {
     accessorKey: "total_amount",
-    header: "Total Amount",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("total_amount")}</div>,
+    header: ({ column }) => {
+      return (
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Total Amount
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("total_amount"));
+
+      // Format the amount as a dollar amount
+      const formatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(amount);
+
+      return <div className="text-left font-medium">{formatted}</div>;
+    },
   },
   {
     id: "actions",
@@ -362,7 +380,7 @@ export const categoryColumn = (toggleEditModal: (itemID: number) => void, toggle
   },
 ];
 
-export const inventoryColumns = (toggleModal: (itemID: string) => void): ColumnDef<Inventory>[] => [
+export const inventoryColumns = (toggleModal: (itemID: string) => void, toggleDeleteModal: (itemID: string) => void): ColumnDef<Inventory>[] => [
   {
     accessorKey: "item_id",
     header: "Item ID",
@@ -375,8 +393,17 @@ export const inventoryColumns = (toggleModal: (itemID: string) => void): ColumnD
   },
   {
     accessorKey: "quantity",
-    header: "Quantity",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("quantity")}</div>,
+    header: ({ column }) => {
+      return (
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Quantity
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return <div className="text-left font-medium">{row.getValue("quantity")}</div>;
+    },
   },
   {
     accessorKey: "image_url",
@@ -411,7 +438,7 @@ export const inventoryColumns = (toggleModal: (itemID: string) => void): ColumnD
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                deleteInventory(inventory.item_id);
+                toggleDeleteModal(inventory.item_id);
               }}
               className="hover:cursor-pointer"
             >

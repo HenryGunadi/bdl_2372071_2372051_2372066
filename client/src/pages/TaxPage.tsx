@@ -14,7 +14,7 @@ export default function TaxPage() {
     end_date: null,
   });
   const [toggleCreateForm, setToggleCreateForm] = useState<boolean>(false);
-  const [active, setActive] = useState<boolean>(false)
+  const [active, setActive] = useState<boolean>(false);
 
   const [toggleDelete, setToggleDelete] = useState<{ valueId: string; show: boolean }>({
     valueId: "",
@@ -57,7 +57,7 @@ export default function TaxPage() {
 
     setMakeTax({
       id: filterTax[0].id,
-      tax_rate: filterTax[0].tax_rate,
+      tax_rate: filterTax[0].tax_rate * 100,
       start_date: filterTax[0].start_date,
       end_date: filterTax[0].end_date,
     });
@@ -68,10 +68,10 @@ export default function TaxPage() {
       const isActive = isTaxActive(tax.start_date, tax.end_date); // Check if tax is active
 
       if (isActive) {
-        setActive(true)
+        setActive(true);
       }
-    })
-  }, [taxes])
+    });
+  }, [taxes]);
 
   useEffect(() => {
     viewTax(setTaxes);
@@ -89,8 +89,8 @@ export default function TaxPage() {
             className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600"
             onClick={() => {
               if (active) {
-                alert("There is an active tax, remove or update the tax.")
-                return
+                alert("There is an active tax, remove or update the tax.");
+                return;
               }
               setToggleCreateForm(true);
             }}

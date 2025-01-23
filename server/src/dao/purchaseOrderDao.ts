@@ -12,7 +12,7 @@ class PurchaseOrderDao implements PurchaseOrderStoreInterface {
 
   async getPO(): Promise<sql.IRecordSet<PurchaseOrder> | BadRequestError> {
     try {
-      const res = await this._dbConn.request().query("SELECT * FROM purchase_order");
+      const res = await this._dbConn.request().query("SELECT * FROM view_supplier_po");
 
       return res.recordset;
     } catch (err) {
@@ -25,9 +25,9 @@ class PurchaseOrderDao implements PurchaseOrderStoreInterface {
     }
   }
 
-  async viewPODetails(): Promise<sql.IRecordSet<PODetails> | BadRequestError> {
+  async viewPODetails(poID: string): Promise<sql.IRecordSet<PODetails> | BadRequestError> {
     try {
-      const res = await this._dbConn.request().query("SELECT * FROM purchase_order_details");
+      const res = await this._dbConn.request().input("PurchaseOrderID", sql.VarChar, poID).query("SELECT * FROM dbo.GetPODetails(@PurchaseOrderID)");
 
       return res.recordset;
     } catch (err) {

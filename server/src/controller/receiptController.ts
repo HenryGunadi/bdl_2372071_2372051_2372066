@@ -65,7 +65,13 @@ class ReceiptController {
 
   getReceiptDetails = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const queryRes = await this._store.getReceiptDetails();
+      const payload = req.query as { id: string };
+      let queryRes: any;
+      if (payload.id === "") {
+        queryRes = await this._store.getReceiptDetails("");
+      } else {
+        queryRes = await this._store.getReceiptDetails(payload.id);
+      }
 
       return res.status(200).json({ message: "success", receipts: queryRes });
     } catch (err) {

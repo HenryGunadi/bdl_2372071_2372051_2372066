@@ -53,8 +53,9 @@ class InventoryController {
     try {
       const payload = req.body as UpdateInventoryPayload;
       console.log("INVENT PAYLOAD BACKEND : ", payload);
+      const updatedInventory = new Inventory(payload.item_id, payload.quantity, undefined);
 
-      const queryRes = await this._store.updateInventory(payload);
+      const queryRes = await this._store.updateInventory(updatedInventory);
 
       if (queryRes instanceof BadRequestError) {
         return next(queryRes);

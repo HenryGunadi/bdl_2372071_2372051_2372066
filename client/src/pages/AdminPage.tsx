@@ -171,7 +171,7 @@ const AdminPage = () => {
                             setEditAdmin({
                               id: selectedAdmin.id,
                               name: selectedAdmin.name,
-                              password: null, // Keep password null for security reasons
+                              password: null,
                               email: selectedAdmin.email,
                               phone_number: selectedAdmin.phone_number,
                               role: selectedAdmin.role,

@@ -3,7 +3,6 @@ import express from "express";
 import { DB } from "../db/db";
 import ItemController from "../controller/itemController";
 import { ItemDao } from "../dao/itemDao";
-import { deleteItemValidator, insertItemValidator, updateItemValidator } from "../validators/itemValidator";
 import { validationResult } from "express-validator";
 import BadRequestError from "../classes/BadReqError";
 import imageUpload from "../middlewares/imageUpload";

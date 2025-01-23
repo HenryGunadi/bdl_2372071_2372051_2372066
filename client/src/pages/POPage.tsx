@@ -112,6 +112,7 @@ const POPage = () => {
       valueId: id,
       show: true,
     });
+    viewPODetails(setPODetails, id);
   };
 
   const handleUpdate = async () => {
@@ -154,7 +155,7 @@ const POPage = () => {
   useEffect(() => {
     viewPO(setPOS);
     viewSupplier(setSuppliers);
-    viewPODetails(setPODetails);
+    // viewPODetails(setPODetails);
     fetchItems(setItems);
   }, []);
 

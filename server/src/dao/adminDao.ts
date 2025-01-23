@@ -64,11 +64,15 @@ class AdminDao implements AdminStoreInterface {
 
   async updateAdmin(admin: Admin): Promise<boolean | BadRequestError> {
     try {
-      const hashedPass = await bcrypt.hash(admin.password, 10);
+      let hashedPass: string = "";
+
+      if (admin.password) {
+        hashedPass = await bcrypt.hash(admin.password, 10);
+      }
       const request = this._dbConn.request();
 
       for (const [key, value] of Object.entries(admin)) {
-        if (key === "password") {
+        if (key === "password" && hashedPass) {
           request.input(key, hashedPass);
         } else {
           request.input(key, value);

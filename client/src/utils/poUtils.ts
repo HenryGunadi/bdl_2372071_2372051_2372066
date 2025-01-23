@@ -17,9 +17,9 @@ export async function viewPO(setPO: React.Dispatch<SetStateAction<PO[]>>) {
   }
 }
 
-export async function viewPODetails(setPO: React.Dispatch<SetStateAction<PODetails[]>>) {
+export async function viewPODetails(setPO: React.Dispatch<SetStateAction<PODetails[]>>, poID: string) {
   try {
-    const res = await axios.get<{ message: string; purchase_order_details: PODetails[] }>(`${baseAPI}/api/purchase_order/view_details`, {
+    const res = await axios.get<{ message: string; purchase_order_details: PODetails[] }>(`${baseAPI}/api/purchase_order/view_details?id=${poID}`, {
       withCredentials: true,
     });
 

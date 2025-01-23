@@ -33,6 +33,7 @@ export async function createTax(payload: TaxPayload) {
 
 export async function updateTax(payload: TaxPayload) {
   try {
+    payload.tax_rate = payload.tax_rate * 0.01;
     const res = await axios.put(`${backendBaseAPI}/api/tax/update`, payload, {
       withCredentials: true,
     });

@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Form from "../components/CRUD/Form";
 import DeleteModal from "../components/CRUD/DeleteModal";
 import { createSupplier, deleteSupplier, updateSupplier, viewSupplier } from "../utils/supplierUtils";
 import { ModalType, Supplier, SupplierPayload, UpdateSupplierPayload } from "../types/types";
-import { UpdatePayload } from "vite/types/hmrPayload.js";
 import { resetState } from "../utils/commonUtils";
+import SupplierDetailModal from "../components/SupplierDetailModal";
 
 const SuppliersPage: React.FC = () => {
   const [suppliers, setSuppliers] = React.useState<Supplier[]>([]);
@@ -33,6 +33,31 @@ const SuppliersPage: React.FC = () => {
     valueId: "",
     show: false,
   });
+  const [toggleDetail, setToggleDetail] = useState<{
+    supplier: Supplier | null;
+    show: boolean;
+  }>({
+    supplier: null,
+    show: true,
+  });
+
+  function handleToggleDetail(supplierID: string) {
+    if (suppliers.length > 0) {
+      const selectedSupplier = suppliers.filter((supplier) => supplier.id === supplierID)[0];
+
+      setToggleDetail({
+        supplier: selectedSupplier,
+        show: true,
+      });
+    }
+  }
+
+  function CloseToggleDetail() {
+    setToggleDetail({
+      supplier: null,
+      show: false,
+    });
+  }
 
   const handleAdd = async (supplier: SupplierPayload) => {
     try {
@@ -137,26 +162,28 @@ const SuppliersPage: React.FC = () => {
             {suppliers.length > 0 &&
               suppliers.map((supplier: Supplier, index: number) => {
                 return (
-                  <tr key={supplier.id || index}>
+                  <tr key={supplier.id || index} onClick={() => handleToggleDetail(supplier.id)} className="hover:cursor-pointer z-10">
                     <td className="border px-4 py-2 text-center">{index + 1}</td>
                     <td className="border px-4 py-2">{supplier.name}</td>
                     <td className="border px-4 py-2">{supplier.email}</td>
                     <td className="border px-4 py-2 text-center space-x-2">
                       <button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevents triggering row click event
                           console.log("SUPPLIER ID : ", supplier.id);
                           setShowEditForm(true);
                           handleUpdate(supplier.id);
                         }}
-                        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 z-50"
                       >
                         Edit
                       </button>
                       <button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevents triggering row click event
                           setShowDeleteModal({ valueId: supplier.id, show: true });
                         }}
-                        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 z-50"
                       >
                         Delete
                       </button>
@@ -167,6 +194,9 @@ const SuppliersPage: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Supplier Detail Modal */}
+      {toggleDetail.show && <SupplierDetailModal supplier={toggleDetail.supplier} isOpen={toggleDetail.show} onClose={CloseToggleDetail} />}
     </div>
   );
 };

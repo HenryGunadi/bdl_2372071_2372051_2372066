@@ -7,6 +7,7 @@ import { viewAdmin } from "../utils/adminUtils";
 import { viewPO, viewPODetails } from "../utils/poUtils";
 import { viewReceiptDetails } from "../utils/receiptUtils";
 import { Package } from "lucide-react";
+import LowStockAlert from "../components/LowStockComponent";
 
 const DashboardPage = () => {
   const [items, setItems] = useState<AllItems[]>([]);
@@ -34,7 +35,7 @@ const DashboardPage = () => {
         if (existing) {
           existing.total += receipt.total; // Sum the total for each items_id
         } else {
-          acc[receipt.items_id] = { name: receipt.items_id, total: receipt.total };
+          acc[receipt.items_id] = { name: receipt.nama, total: receipt.total };
         }
         return acc;
       }, {} as { [key: string]: { name: string; total: number } });
@@ -50,7 +51,7 @@ const DashboardPage = () => {
     viewSupplier(setSuppliers);
     viewAdmin(setUsers);
     viewPO(setPOs);
-    viewReceiptDetails(setReceipts);
+    viewReceiptDetails(setReceipts, "");
   }, []);
 
   useEffect(() => {
@@ -91,8 +92,9 @@ const DashboardPage = () => {
       <div className="px-6 w-full">
         <div className="bg-white p-6 rounded-lg shadow w-full">
           <h2 className="text-lg font-semibold mb-4">Overview</h2>
-          <div className="w-full flex">
+          <div className="w-full flex gap-12">
             <BarChartComponent data={top6Receipts} />
+            <LowStockAlert />
           </div>
         </div>
       </div>
